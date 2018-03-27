@@ -8,6 +8,7 @@ import router from './router'
 import api from './api/index.js'
 import state from './vuex/state'
 
+Vue.use(Vuex);
 const store = new Vuex.Store({
 	state
 })

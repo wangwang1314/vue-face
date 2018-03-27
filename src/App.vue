@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <img src="./assets/logo.png">
+    <img src="./assets/logo.png">是在V型从不出现
     <router-view/>
   </div>
 </template>
