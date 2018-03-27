@@ -1,7 +1,7 @@
 <template>
   <div id="app">
-    <img src="./assets/logo.png">是在V型从不出现
-    <router-view/>
+   
+    <router-view></router-view>
   </div>
 </template>
 
