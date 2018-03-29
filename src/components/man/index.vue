@@ -1,11 +1,13 @@
 <template>
-  <div class="hello">
+  <common>
+     <div class="hello" slot="main">
 
-    <router-link to="/man/person">普通人员列表</router-link>
-    <router-link to="/man/good">白名单列表</router-link>
-    <router-link to="/man/bad">黑名单列表</router-link>
-    <router-view></router-view>
-  </div>
+      <router-link to="/man/person">普通人员列表</router-link>
+      <router-link to="/man/good">白名单列表</router-link>
+      <router-link to="/man/bad">黑名单列表</router-link>
+      <router-view></router-view>
+    </div>
+  </common> 
 </template>
 
 <script>

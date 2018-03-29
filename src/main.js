@@ -7,13 +7,18 @@ import router from './router'
 // 请求封装文件
 import api from './api/index.js'
 import state from './vuex/state'
+import common from './components/common/common.vue'
+import ElementUI from 'element-ui';
+import 'element-ui/lib/theme-chalk/index.css';
+import './assets/css/reset.css'
 
 Vue.use(Vuex);
 const store = new Vuex.Store({
 	state
 })
 
-
+Vue.use(ElementUI);
+Vue.component("common",common)
 // 将API方法绑定到全局
 Vue.prototype.$api = api
 

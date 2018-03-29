@@ -1,9 +1,12 @@
 <template>
-  <div class="hello">
+ 
+    <div class="hello" >
 
    普通人员列表
    
-  </div>
+    </div>
+  
+  
 </template>
 
 <script>
