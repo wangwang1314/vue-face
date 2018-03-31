@@ -67,6 +67,7 @@ export default {
 </script>
 <style lang='scss' scoped>
   .sur{
+      margin:19px;
       padding-left: 32px;
       background-color: #fff;
       display: flex;
@@ -164,7 +165,7 @@ export default {
     margin-bottom: 50px;
     overflow: hidden;
     div{
-      width: 46%;
+      width: 48%;
       height: 292px;
       float: left;
       border-radius: 6px ;
@@ -197,5 +198,9 @@ export default {
     div:first-child{
       margin-right: 2%;
     }
+    div:last-child{
+      float: right;
+    }
+
   }
 </style>

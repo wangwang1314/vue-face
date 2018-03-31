@@ -77,6 +77,7 @@ export default {
     background-color: #fff;
     height: 140px!important;
     border-bottom: 2px solid #378EEF;
+    z-index: 3;
   }
   .el-aside {
     width:240px;
@@ -85,7 +86,6 @@ export default {
   }
   .el-main {
     color: #333;
-    margin:19px;
     overflow: auto;
   }
 
