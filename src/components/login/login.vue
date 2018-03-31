@@ -21,7 +21,7 @@
           <el-button type="primary" class="sub-class"  round @click="submitFn">登录</el-button>
           <p class="remb">
             <span><i></i>记住账户</span>
-            <a href="">忘记密码?</a>
+            <!-- <a href="">忘记密码?</a> -->
           </p>
       </div>
     </div>
