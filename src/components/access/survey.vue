@@ -1,7 +1,7 @@
 <template>
   <div class="hello">
 
-    出入记录
+    出入概况
   </div>
 </template>
 

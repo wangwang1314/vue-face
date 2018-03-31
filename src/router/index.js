@@ -10,6 +10,9 @@ import Person from '@/components/man/person'
 import Good from '@/components/man/good'
 import Bad from '@/components/man/bad'
 
+import Accsurvey from '@/components/access/survey'
+import Accrecord from '@/components/access/record'
+import Acc from '@/components/access/index'
 Vue.use(Router)
 
 export default new Router({
@@ -37,6 +40,27 @@ export default new Router({
         {
           path:"",
           redirect:"/home/survey"
+        }
+      ]
+    },
+     {
+      path: '/acc',
+      name: 'acc',
+      component: Acc,
+      children:[
+        {
+          path:"accsurvey",
+          name:"accsurvey",
+          component:Accsurvey
+        },
+        {
+          path:"accrecord",
+          name:"accrecord",
+          component:Accrecord
+        },
+        {
+          path:"",
+          redirect:"/acc/accsurvey"
         }
       ]
     },

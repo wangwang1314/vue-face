@@ -6,14 +6,16 @@
       <img src="../../assets/images/slider-logo.png">
     </div>
     <ul class="slider-ul">
-      <router-link to="/organizational" tag="li">机构管理</router-link>
-      <router-link to="/teacher" tag="li">师资管理</router-link>     
+      <router-link to="/home" tag="li">首页</router-link>
+      <router-link to="/acc" tag="li">出入管理</router-link>
+      <router-link to="/man" tag="li">人员管理</router-link>      
     </ul>
   </el-aside>
   <el-container>
     <el-header>
       <div class="nav-tit">
-        <span class="tit">考官及培训师管理</span>
+        <slot name="title"></slot>
+        <!-- <span class="tit">考官及培训师管理</span> -->
         <div class="super-adm">
           <div class="admin-name">
             <div class="adm-le">
@@ -24,7 +26,7 @@
           </div>
         </div>
       </div>
-      <ul class="nav-class">
+     <!--  <ul class="nav-class">
         <li><router-link to="/userman" tag="a">用户管理</router-link></li> 
      
         <li><router-link to="/organizational/list" tag="a">会员列表</router-link></li> 
@@ -32,7 +34,8 @@
         <li><a href="#/home/idset" class="router-link-active">会员身份配置</a></li> 
         <li><a href="#/home/growset" class="">成长体系</a></li> 
         <li><a href="#/home/interests" class="">权益配置</a></li>
-      </ul>
+      </ul> -->
+      <slot name="nav"></slot>
     </el-header>
     <el-main>
       <slot name="main"></slot>
@@ -81,10 +84,9 @@ export default {
     color:#fff;
   }
   .el-main {
-    background-color: #fff;
     color: #333;
-    text-align: center;
     margin:19px;
+    overflow: auto;
   }
 
   .slider-lt{
