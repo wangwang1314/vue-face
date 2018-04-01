@@ -73,13 +73,14 @@ export default {
       display: flex;
       flex: 1;
       align-self:stretch;
-      min-width: 1220px;
+    
       .left{
         flex: 3;
         border-right:1px solid #ccc;
         align-self:stretch;
       }
       .right{
+        min-width: 300px;
         flex: 1;
         align-self:stretch;
         .com{

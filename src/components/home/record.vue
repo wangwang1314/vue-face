@@ -13,7 +13,7 @@ export default {
     }
   },
   mounted(){
-    this.$api.post("/Login",{account:13949096002,password:"e10adc3949ba59abbe56e057f20f883e"},su=>{console.log(su.info)},err=>{},{})
+    
   }
 }
 </script>

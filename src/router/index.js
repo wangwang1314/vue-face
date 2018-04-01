@@ -89,6 +89,10 @@ export default new Router({
           redirect:"/man/person"
         }
       ]
+    },
+    {
+      path:"*",
+      redirect:"/home"
     }
   ]
 })

@@ -14,6 +14,5 @@ export default {
 <style>
 	.el-main{
 		padding: 0;
-		display: flex;
 	}
 </style>
