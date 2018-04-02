@@ -271,7 +271,7 @@ export default {
   .sur{
     background-color: #fff;
     margin:19px;
-    min-height: 650px;
+    min-height: 700px;
     padding: 30px 32px 50px 30px;
     .header{
       background:rgba(234,234,234,1);
