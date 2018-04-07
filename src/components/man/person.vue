@@ -20,11 +20,13 @@
          <span>删除人员</span>
          <span>设置权限</span>
        </p>
+       <p class="chose-num"><i></i>已选择<span>13</span>项</p>
        <table class="sort-tab">
              <thead>
                <tr>
-                 <td>拍摄时间</td>
+                 <td><i class="not-all"></i></td>
                  <td>头像</td>
+                 <td>出入人姓名</td>
                  <td>类型</td>
                  <td>入库时间</td>
                  <td>更新时间</td>
@@ -32,8 +34,19 @@
              </thead>
              <tbody>
                <tr>
-                 <td>2018-03-11 22:00:00</td>
+                 <td><i></i></td>
                  <td><img src="../../assets/images/sur-bg1.png"></td>
+                 <td>于文文1号</td>
+                 <td>2018-03-11 22:00:00</td>
+                 <td>于文文1号</td>
+                 <td>
+                   2018-03-11 22:00:00
+                 </td>
+               </tr>
+               <tr>
+                 <td><i class="chose"></i></td>
+                 <td><img src="../../assets/images/sur-bg1.png"></td>
+                 <td>于文文1号</td>
                  <td>2018-03-11 22:00:00</td>
                  <td>于文文1号</td>
                  <td>
@@ -152,6 +165,18 @@ export default {
     border: 1px solid #E6E6E6;
     margin-top: 18px;
     margin-bottom: 70px;
+    i{
+      display: inline-block;
+      height: 16px;
+      width: 16px;
+      background: url(../../assets/images/unchose-l.png);
+    }
+    i.not-all{
+      background: url(../../assets/images/not-all.png);
+    }
+    i.chose{
+      background: url(../../assets/images/chose-l.png);
+    }
     thead{
       tr{
          height:60px; 
@@ -181,5 +206,26 @@ export default {
   }
   .page{
     text-align: center;
+  }
+  .chose-num{
+    height:34px; 
+    background:rgba(206,223,246,0.3);
+    border-radius: 2px;
+    color: #000;
+    font-size: 12px;
+    line-height: 34px;
+    text-indent: 8px;
+    i{
+      display:inline-block;
+      height: 18px;
+      width: 18px;
+      background: url(../../assets/images/th.png);
+      position: relative;
+      top:3px;
+      margin-right: 9px;
+    }
+    span{
+      color: #FEAD56;
+    } 
   }
 </style>
