@@ -31,7 +31,7 @@
                </tr>
              </thead>
              <tbody>
-               <tr>
+               <tr @click="show">
                  <td><i></i></td>
                  <td><img src="../../assets/images/sur-bg1.png"></td>
                  <td>于文文1号</td>
@@ -41,7 +41,7 @@
                    2018-03-11 22:00:00
                  </td>
                </tr>
-               <tr>
+               <tr @click="show">
                  <td><i class="chose"></i></td>
                  <td><img src="../../assets/images/sur-bg1.png"></td>
                  <td>于文文1号</td>
@@ -64,6 +64,11 @@
               :total="1000">
             </el-pagination>
           </div>
+          <transition name="fade">
+            <div class="slider-box" v-if="slider">
+              <p class="close-p"><i @click="closeFn">×</i></p>
+            </div>
+        </transition>
     </div>
 </template>
 
@@ -87,11 +92,24 @@ export default {
           value: '选项5',
           label: '北京烤鸭'
         }],
-      value4:""
+      value4:"",
+      slider:false,
+      page:0,
     }
   },
   mounted(){
     
+  },
+  methods:{
+    handleSizeChange(){
+
+    },
+    handleCurrentChange(){
+
+    },
+    show(){
+      console.log(22)
+    }
   }
 }
 </script>
@@ -225,5 +243,39 @@ export default {
     span{
       color: #FEAD56;
     } 
+  }
+
+  .slider-box{
+    width: 944px;
+    height: 1056px;
+    position: absolute;
+    top:0;
+    right: 0;
+    background: #fff;
+    z-index: 10;
+    border: 1px solid #ccc;
+    padding:40px 40px 40px 71px;
+    box-sizing: border-box;
+  }
+  .close-p{
+    text-align: right;
+  }
+  .close-p i{
+    display: inline-block;
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+    text-align: center;
+    line-height: 18px;
+    font-size: 24px;
+  }
+  .fade-enter-active {
+      transition: all .5s ease;
+  }
+  .fade-leave-active {
+      transition: all .6s ease;
+  }
+  .fade-enter, .fade-leave-to {
+    transform: translateX(944px);
   }
 </style>

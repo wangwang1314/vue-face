@@ -33,7 +33,7 @@
                </tr>
              </thead>
              <tbody>
-               <tr>
+               <tr @click="show">
                  <td><i></i></td>
                  <td><img src="../../assets/images/sur-bg1.png"></td>
                  <td>于文文1号</td>
@@ -43,7 +43,7 @@
                    2018-03-11 22:00:00
                  </td>
                </tr>
-               <tr>
+               <tr @click="show">
                  <td><i class="chose"></i></td>
                  <td><img src="../../assets/images/sur-bg1.png"></td>
                  <td>于文文1号</td>
@@ -66,6 +66,72 @@
               :total="1000">
             </el-pagination>
           </div>
+
+          <transition name="fade">
+            <div class="slider-box" v-if="slider">
+              <p class="close-p"><i @click="closeFn">×</i></p>
+              <div class="info">
+                <img src="../../assets/images/sur-bg1.png">
+                <div>
+                  <p class="name">鹿晗</p>
+                  <img src="../../assets/images/fk.png">
+                  <div>
+                    <p>
+                      <span>入库时间：</span>
+                      2018-03-21 08：00：00
+                    </p>
+                    <p>
+                      <span>更新时间：</span>
+                      2018-03-21 08：00：00
+                    </p>
+                    <button>编辑</button>
+                  </div>
+                </div>
+              </div>
+              <div>
+                 <el-tabs v-model="activeName" @tab-click="handleClick">
+                  <el-tab-pane label="线路轨迹" name="first">
+                    <div class="time-div">
+                      <p>
+                        <span>出入时间 ：</span>
+                         2018-03-10
+                      </p>
+                      <div>
+                        <span>线路轨迹 :</span>
+                      </div>
+                    </div>
+                  </el-tab-pane>
+                  <el-tab-pane label="出入记录" name="second">
+                    <div class="time-div record">
+                      <p>
+                        <span>出入时间 ：</span>
+                         2018-03-10
+                      </p>
+                      <div>
+                        <p>设备地址 ： B口</p>
+                        <p>场地名称 ： 足球场</p>
+                        <p>出入类型 ： <span class="red">出</span></p>
+                        <img src="../../assets/images/out.png">
+                      </div>
+                    </div>
+                    <div class="time-div record">
+                      <p>
+                        <span>出入时间 ：</span>
+                         2018-03-10
+                      </p>
+                      <div>
+                        <p>设备地址 ： B口</p>
+                        <p>场地名称 ： 足球场</p>
+                        <p>出入类型 ： <span class="red">入</span></p>
+                        <img src="../../assets/images/to.png">
+                      </div>
+                    </div>
+                  </el-tab-pane>
+                  <el-tab-pane label="出入权限" name="third"></el-tab-pane>
+                </el-tabs>
+              </div>
+            </div>
+         </transition>
     </div>
 </template>
 
@@ -89,11 +155,31 @@ export default {
           value: '选项5',
           label: '北京烤鸭'
         }],
-      value4:""
+      value4:"",
+      slider:false,
+      page:0,
+      activeName:"first"
     }
   },
   mounted(){
     
+  },
+  methods:{
+    handleSizeChange(){
+
+    },
+    handleCurrentChange(){
+
+    },
+    show(){
+      this.slider = true;
+    },
+    closeFn(){
+       this.slider = false;
+    },
+    handleClick(){
+
+    }
   }
 }
 </script>
@@ -105,6 +191,7 @@ export default {
     margin:19px;
     min-height: 700px;
     padding: 30px 32px 50px 30px;
+    position: relative;
     .header{
       background:rgba(234,234,234,1);
       height: 80px;
@@ -227,5 +314,123 @@ export default {
     span{
       color: #FEAD56;
     } 
+  }
+  .slider-box{
+    width: 922px;
+    height: 1037px;
+    position: absolute;
+    top:0;
+    right: 0;
+    background: #fff;
+    z-index: 10;
+    border: 1px solid #ccc;
+    padding:33px 33px 33px 71px;
+    box-sizing: border-box;
+  }
+  .close-p{
+    text-align: right;
+  }
+  .close-p i{
+    display: inline-block;
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+    text-align: center;
+    line-height: 18px;
+    font-size: 24px;
+  }
+  .fade-enter-active {
+      transition: all .5s ease;
+  }
+  .fade-leave-active {
+      transition: all .6s ease;
+  }
+  .fade-enter, .fade-leave-to {
+    transform: translateX(944px);
+  }
+  .info{
+    >img{
+      width: 170px;
+      height: 170px;
+      border-radius: 50%;
+    }
+    >div{
+      display: inline-block;
+      vertical-align: top;
+      margin-left: 31px;
+      .name{
+        margin-top: 27px;
+        font-size:24px;
+        color:rgba(26,26,26,1);
+      }
+      >img{
+        width: 59px;
+        height: 26px;
+        margin-top: 16px;
+      }
+      >div{
+        margin-top: 29px;
+        width: 388px;
+        p{
+          color: #4D4D4D;
+          font-size: 14px;
+          line-height: 22px;
+          span{
+            color: #999999;
+          }
+        }
+        button{
+          width: 106px;
+          height: 36px;
+          background:#378EEF;
+          border: none;
+          outline: none;
+          cursor: pointer;
+          border-radius: 2px;
+          color: #fff;
+          float: right;
+         position: relative;
+         top:-36px;
+        }
+      }
+    }
+  }
+  .time-div{
+    margin-top: 25px;
+    border: 1px solid #ccc;
+    >p{
+      height:39px; 
+      background:rgba(237,237,237,1);
+      color: #4D4D4D;
+      text-indent: 29px;
+      line-height: 39px;
+    }
+    >div{
+      line-height: 116px;
+      >span{
+        padding-left: 29px;
+      }
+    }
+  }
+  .record{
+    >div{
+      padding: 5px;
+      >img{
+        float: right;
+        position: relative;
+        top:-82px;
+        right: 34px;
+      }
+      >p{
+        line-height: 34px;
+        text-indent: 29px;
+        .red{
+          color: #F84C4C;
+        }
+        .green{
+          color: #98C56B;
+        }
+      }
+    }
   }
 </style>
