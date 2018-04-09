@@ -4,6 +4,10 @@ import Login from '@/components/login/login'
 import Survey from '@/components/home/survey'
 import Record from '@/components/home/record'
 import Home from '@/components/home/index'
+import Structor from '@/components/structure/index'
+import OpenList from '@/components/openList/OpenList'
+import Places from '@/components/openList/places'
+import Equipment from '@/components/openList/equipment'
 
 import Man from '@/components/man/index'
 import Person from '@/components/man/person'
@@ -21,6 +25,22 @@ export default new Router({
       path:"/login",
       name:"login",
       component:Login
+    },
+      {
+       path:'/openlist',
+       name:"openlist",
+       component:OpenList
+
+    },
+    {
+      path:"/Places",
+      name:"Places",
+      component:Places
+    },
+    {
+      path:"/Equipment",
+      name:"Equipment",
+      component:Equipment
     },
     {
       path: '/home',
