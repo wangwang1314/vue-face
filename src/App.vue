@@ -15,4 +15,11 @@ export default {
 	.el-main{
 		padding: 0;
 	}
+	.el-message-box__btns button:nth-child(1) {
+	    float: right;
+	} 
+	.el-message-box__btns button:nth-child(2) {
+	    float: right;
+	    margin-right:10px;
+	} 
 </style>

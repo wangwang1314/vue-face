@@ -22,7 +22,7 @@
               <p>欢迎进入管理平台（出入系统）！</p> 
               <p><span>13949096002</span></p>
             </div> 
-            <a class="adm-ri">退出</a>
+            <a class="adm-ri" @click="exit">退出</a>
           </div>
         </div>
       </div>
@@ -54,8 +54,20 @@ export default {
     }
   },
   methods:{
-     routerFn(){
+    routerFn(){
     
+    },
+    exit(){
+       this.$confirm('确定要退出吗？', '', {
+                confirmButtonText: '确定',     
+                cancelButtonText: '取消', 
+                type: ''
+              }).then(() => {
+                    
+                  
+              }).catch(()=>{
+               
+              });
     }
   },
   mounted(){
