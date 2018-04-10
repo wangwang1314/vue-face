@@ -1,5 +1,5 @@
 <template> 
-  <div>
+<div>
     <el-container class="container-warp">
    <el-aside width="239px">
     <div class="slider-lt">
@@ -20,29 +20,43 @@
           <div class="admin-name">
             <div class="adm-le">
               <p>欢迎进入管理平台（出入系统）！</p> 
-              <p><span>13949096002</span></p>
+              <p @click="reset"><span>13949096002</span></p>
             </div> 
             <a class="adm-ri" @click="exit">退出</a>
           </div>
         </div>
       </div>
-     <!--  <ul class="nav-class">
-        <li><router-link to="/userman" tag="a">用户管理</router-link></li> 
-     
-        <li><router-link to="/organizational/list" tag="a">会员列表</router-link></li> 
-        <li><router-link to="/teacher/list" tag="a">套餐交易流水</router-link></li>
-        <li><a href="#/home/idset" class="router-link-active">会员身份配置</a></li> 
-        <li><a href="#/home/growset" class="">成长体系</a></li> 
-        <li><a href="#/home/interests" class="">权益配置</a></li>
-      </ul> -->
       <slot name="nav"></slot>
     </el-header>
     <el-main>
       <slot name="main"></slot>
     </el-main>
+    <el-dialog
+      title="修改密码"
+      :visible.sync="dialogVisible"
+      width="550px">
+      <table>
+        <tr>
+          <td>旧密码</td>
+          <td><input type="text" name="" placeholder="请输入你的原始登录密码"></td>
+        </tr>
+        <tr>
+          <td>新密码</td>
+          <td><input type="text" name="" placeholder="请输入你的新密码，50个字符以内"></td>
+        </tr>
+        <tr>
+          <td>重复新密码</td>
+          <td><input type="text" name="" placeholder="请再次输入你的新密码，50个字符以内"></td>
+        </tr>
+      </table>
+      <span slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
+        <el-button @click="dialogVisible = false">取 消</el-button> 
+      </span>
+    </el-dialog>
   </el-container>
 </el-container>
-  </div>
+</div>
   
 
 </template>
@@ -50,7 +64,8 @@
 export default {
   data () {
     return {
-      arr:['1','2','3']
+      arr:['1','2','3'],
+      dialogVisible:false
     }
   },
   methods:{
@@ -58,7 +73,7 @@ export default {
     
     },
     exit(){
-       this.$confirm('确定要退出吗？', '', {
+       this.$confirm('确定要退出当前账号吗？', '退出账号', {
                 confirmButtonText: '确定',     
                 cancelButtonText: '取消', 
                 type: ''
@@ -68,6 +83,9 @@ export default {
               }).catch(()=>{
                
               });
+    },
+    reset(){
+      this.dialogVisible = true;
     }
   },
   mounted(){
