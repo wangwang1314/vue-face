@@ -302,6 +302,7 @@ export default {
     font-size: 12px;
     line-height: 34px;
     text-indent: 8px;
+    margin-top: 20px;
     i{
       display:inline-block;
       height: 18px;

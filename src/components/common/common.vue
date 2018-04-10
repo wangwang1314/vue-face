@@ -31,29 +31,32 @@
     <el-main>
       <slot name="main"></slot>
     </el-main>
-    <el-dialog
-      title="修改密码"
-      :visible.sync="dialogVisible"
-      width="550px">
-      <table>
-        <tr>
-          <td>旧密码</td>
-          <td><input type="text" name="" placeholder="请输入你的原始登录密码"></td>
-        </tr>
-        <tr>
-          <td>新密码</td>
-          <td><input type="text" name="" placeholder="请输入你的新密码，50个字符以内"></td>
-        </tr>
-        <tr>
-          <td>重复新密码</td>
-          <td><input type="text" name="" placeholder="请再次输入你的新密码，50个字符以内"></td>
-        </tr>
-      </table>
-      <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
-        <el-button @click="dialogVisible = false">取 消</el-button> 
-      </span>
-    </el-dialog>
+    <div class="box">
+      <el-dialog
+        title="修改密码"
+        :visible.sync="dialogVisible"
+        width="550px">
+        <table class="tab-dalog">
+          <tr>
+            <td >旧密码</td>
+            <td><input type="text" name="" placeholder="请输入你的原始登录密码"></td>
+          </tr>
+          <tr>
+            <td>新密码</td>
+            <td><input type="text" name="" placeholder="请输入你的新密码，50个字符以内"></td>
+          </tr>
+          <tr>
+            <td>重复新密码</td>
+            <td><input type="text" name="" placeholder="请再次输入你的新密码，50个字符以内"></td>
+          </tr>
+        </table>
+        <span slot="footer" class="dialog-footer">
+          <span class="warn-box"><i></i>旧密码不正确</span>
+          <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
+          <el-button @click="dialogVisible = false">取 消</el-button> 
+        </span>
+      </el-dialog>
+    </div>
   </el-container>
 </el-container>
 </div>
@@ -216,5 +219,44 @@ export default {
       }
     }
 
+}
+.tab-dalog{
+  font-size:14px;
+  color:rgba(77,77,77,1);
+  line-height: 50px;
+  td:first-child{
+    width:80px;
+    text-align: right;
+  }
+  td:nth-child(2){
+    text-align:left;
+    padding-left:16px;
+    input{
+      width: 410px;
+      height: 34px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      text-indent: 8px;
+    } 
+  }
+}
+.box .el-dialog__footer{
+  box-shadow: 0 0 4px #ccc;
+}
+.warn-box{
+  font-size: 12px;
+  color: #F84C4C;
+  float: left;
+  position: relative;
+  top:13px;
+  i{
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    background:url(../../assets/images/err-icon.png);
+    margin-right: 12px;
+    position: relative;
+    top:4px;
+  }
 }
 </style>
