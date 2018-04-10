@@ -8,6 +8,7 @@ import router from './router'
 import api from './api/index.js'
 import state from './vuex/state'
 import common from './components/common/common.vue'
+import open from './components/common/commonopen.vue'
 import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
 import './assets/css/reset.css'
@@ -19,6 +20,7 @@ const store = new Vuex.Store({
 
 Vue.use(ElementUI);
 Vue.component("common",common)
+Vue.component("open",open)
 // 将API方法绑定到全局
 Vue.prototype.$api = api
 

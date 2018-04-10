@@ -5,9 +5,7 @@ import Survey from '@/components/home/survey'
 import Record from '@/components/home/record'
 import Home from '@/components/home/index'
 import Structor from '@/components/structure/index'
-import OpenList from '@/components/openList/OpenList'
-import Places from '@/components/openList/places'
-import Equipment from '@/components/openList/equipment'
+
 
 import Man from '@/components/man/index'
 import Person from '@/components/man/person'
@@ -17,6 +15,14 @@ import Bad from '@/components/man/bad'
 import Accsurvey from '@/components/access/survey'
 import Accrecord from '@/components/access/record'
 import Acc from '@/components/access/index'
+
+//开户
+import OpenListindex from '@/components/openList/index'
+import OpenList from '@/components/openList/OpenList'
+import Places from '@/components/openList/places'
+import Equipment from '@/components/openList/equipment'
+
+
 Vue.use(Router)
 
 export default new Router({
@@ -26,22 +32,32 @@ export default new Router({
       name:"login",
       component:Login
     },
-      {
-       path:'/openlist',
-       name:"openlist",
-       component:OpenList
-
-    },
     {
-      path:"/Places",
-      name:"Places",
-      component:Places
-    },
-    {
-      path:"/Equipment",
-      name:"Equipment",
-      component:Equipment
-    },
+      path:"/openListindex",
+      name:"OpenListindex",
+      component:OpenListindex,
+      children:[
+        {
+           path:'openlist',
+           name:"openlist",
+           component:OpenList
+        },
+        {
+          path:"places",
+          name:"Places",
+          component:Places
+        },
+        {
+          path:"equipment",
+          name:"Equipment",
+          component:Equipment
+        },
+        {
+          path:"/",
+          redirect:"/openListindex/openlist"
+        }
+      ]
+    },     
     {
       path: '/home',
       name: 'home',
