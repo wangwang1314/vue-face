@@ -127,7 +127,99 @@
                       </div>
                     </div>
                   </el-tab-pane>
-                  <el-tab-pane label="出入权限" name="third"></el-tab-pane>
+                  <el-tab-pane label="出入权限" name="third">
+                    <div class="edit-class">权限1
+                      <button>删除</button>
+                      <button class="color">编辑</button>             
+                    </div>
+                    <div class="rep-class">
+                        <p class="per-p">
+                          <i></i>
+                          <span>出入时间段</span> 
+                          <el-date-picker
+                            v-model="value3"
+                            type="datetimerange"
+                            range-separator="至"
+                            start-placeholder="开始日期"
+                            end-placeholder="结束日期">
+                          </el-date-picker>
+                        </p>
+                        <p class="per-p">
+                          <i></i>
+                          <span>入口权限</span> 
+                        </p>
+                        <div class="con-box">
+                          <p><el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" @change="handleCheckAllChange">全选</el-checkbox></p>
+                          <div style="margin-left:15px;">
+                            <p><el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" @change="handleCheckAllChange">场地名称1</el-checkbox></p>
+                            <div class="check-box">
+                              <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
+                              <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
+                              <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
+                              <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
+                              <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
+                              <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
+                              <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
+                              <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
+                              <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
+                              <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
+                              <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
+                            </div>
+                            <p><el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" @change="handleCheckAllChange">场地名称2</el-checkbox></p>
+                            <div class="check-box">
+                              <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
+                              <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
+                              <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
+                              <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
+                              <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
+                              <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
+                              <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
+                              <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
+                              <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
+                              <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
+                              <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
+                            </div>
+                          </div>
+                        </div>
+                        <p class="per-p">
+                          <i></i>
+                          <span>出口权限</span> 
+                        </p> 
+                         <div class="con-box">
+                          <p><el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" @change="handleCheckAllChange">全选</el-checkbox></p>
+                          <div style="margin-left:15px;">
+                            <p><el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" @change="handleCheckAllChange">场地名称1</el-checkbox></p>
+                            <div class="check-box">
+                              <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
+                              <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
+                              <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
+                              <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
+                              <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
+                              <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
+                              <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
+                              <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
+                              <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
+                              <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
+                              <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
+                            </div>
+                            <p><el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" @change="handleCheckAllChange">场地名称2</el-checkbox></p>
+                            <div class="check-box">
+                              <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
+                              <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
+                              <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
+                              <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
+                              <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
+                              <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
+                              <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
+                              <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
+                              <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
+                              <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
+                              <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
+                            </div>
+                          </div>
+                        </div> 
+                    </div>
+                  </el-tab-pane>
                 </el-tabs>
               </div>
             </div>
@@ -158,7 +250,11 @@ export default {
       value4:"",
       slider:false,
       page:0,
-      activeName:"first"
+      activeName:"first",
+      value3:"",
+      isIndeterminate:true,
+      checkAll:false
+
     }
   },
   mounted(){
@@ -318,7 +414,7 @@ export default {
   }
   .slider-box{
     width: 922px;
-    height: 1037px;
+    min-height: 1037px;
     position: absolute;
     top:0;
     right: 0;
@@ -432,6 +528,77 @@ export default {
           color: #98C56B;
         }
       }
+    }
+  }
+  .edit-class{
+    height:60px; 
+    background:rgba(241,243,244,1);
+    border-radius: 2px;
+    line-height: 60px;
+    text-indent: 22px;
+    margin-top: 12px;
+    color: #000;
+    button{
+      width:106px;
+      height:36px; 
+      background:rgba(255,255,255,1);
+      border-radius: 2px;
+      color: #4D4D4D;
+      float: right;
+      position: relative;
+      top:12px;
+      border: 1px solid #ccc;
+      margin-right: 12px;
+      cursor: pointer;
+    }
+    button.color{
+      border: 1px solid #378EEF;
+      color: #fff;
+      background: #378EEF;
+    } 
+  }
+  .rep-class{
+    padding-left: 23px;
+  }
+  .per-p{
+    font-size:16px;
+    font-weight: bold;
+    color:rgba(26,26,26,1);
+    line-height: 40px;
+    margin-top: 18px;
+    >i{
+      display: inline-block;
+      width:4px;
+      height:16px; 
+      background:rgba(55,142,239,1);
+      margin-right: 12px;
+    }
+    >span{
+      margin-right: 18px;
+    }
+  }
+  .con-box{
+    margin-left: 15px;
+    p{
+      margin-top: 20px;
+    }
+  }
+  .check-box{
+    width:600px;
+    height:160px; 
+    border-radius: 4px;
+    border: 1px solid #CCCCCC;
+    overflow: auto;
+    margin:17px 0 5px 15px;
+    line-height: 43px;
+    padding: 0 29px;
+    box-sizing: border-box;
+    >p{
+      display: inline-block;
+      margin-right: 54px;
+    }
+    >p:nth-child(4n){
+      margin-right: 0;
     }
   }
 </style>

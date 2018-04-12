@@ -36,10 +36,12 @@ export default {
       phone:"",
       check:{
         isphone:false,
-        ispass:false
+        ispass:false,
+
         
       },
-      errtit:"sdsdsdsd"
+      errtit:"sdsdsdsd",
+      password:""
     }
   },
   mounted(){

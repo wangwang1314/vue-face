@@ -98,7 +98,7 @@ devMiddleware.waitUntilValid(() => {
     server = app.listen(port)
 
     var c = require('child_process');
-    c.exec('start http://localhost:8000');
+    c.exec('start http://localhost:8030');
     _resolve()
   })
 })
