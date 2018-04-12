@@ -43,7 +43,14 @@ export default {
     }
   },
   mounted(){
-   
+      this.$api.post("/common_login_api",{
+          "user_id":"admin",
+          "passwd":"123456"
+        },su=>{
+
+        },er=>{
+
+        })
   },
   methods:{
     submitFn(){

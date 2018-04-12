@@ -12,7 +12,7 @@ module.exports = {
     assetsPublicPath: '/',
     proxyTable: {
        '/rank': {
-                target: 'http://rank.harfax.built', // 你接口的域名
+                target: 'http://123.207.17.133:18889', // 你接口的域名
                 secure: false,
                 changeOrigin: true,
                 pathRewrite:{'/rank':""}
