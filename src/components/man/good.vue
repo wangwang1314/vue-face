@@ -15,7 +15,7 @@
       </div>
        <p class="su-tit">共 <span>992</span> 条数据</p>
        <p class="sur-num">
-         <span>添加白名单</span>
+         <span @click="addman">添加白名单</span>
          <span>删除白名单</span>
        </p>
        <p class="chose-num"><i></i>已选择<span>13</span>项</p>
@@ -69,6 +69,31 @@
               <p class="close-p"><i @click="closeFn">×</i></p>
             </div>
         </transition>
+
+       <!--  添加白名单 -->
+       <div class="box">
+          <el-dialog
+          title="添加白名单"
+          :visible.sync="dialogVisible"
+          width="550px">
+          <div class="content-up">
+            <div class="img-box">
+              <img src="../../assets/images/icon-tou.png">
+              <div><img src="../../assets/images/camera.png"></div>
+            </div>
+            <p class="tit-tou"><i class="red">*</i>上传头像</p>
+            <p class="name-ipt">
+              <span><i class="red">*</i>姓名</span>
+              <input type="text" name="" placeholder="请输入姓名，20子以内，必须填">
+            </p>
+          </div>
+          <span slot="footer" class="dialog-footer">
+            <span class="warn-box"><i></i>旧密码不正确</span>
+            <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
+            <el-button @click="dialogVisible = false">取 消</el-button> 
+          </span>
+        </el-dialog>
+      </div>
     </div>
 </template>
 
@@ -95,6 +120,7 @@ export default {
       value4:"",
       slider:false,
       page:0,
+      dialogVisible:false,
     }
   },
   mounted(){
@@ -109,6 +135,9 @@ export default {
     },
     show(){
       console.log(22)
+    },
+    addman(){
+      this.dialogVisible = true;
     }
   }
 }
@@ -279,4 +308,86 @@ export default {
   .fade-enter, .fade-leave-to {
     transform: translateX(944px);
   }
+
+  .warn-box{
+  font-size: 12px;
+  color: #F84C4C;
+  float: left;
+  position: relative;
+  top:13px;
+  i{
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    background:url(../../assets/images/err-icon.png);
+    margin-right: 12px;
+    position: relative;
+    top:4px;
+  }
+}
+.box .el-dialog__footer{
+  box-shadow: 0 0 4px #ccc;
+}
+.content-up{
+  text-align: center;
+   .img-box:hover{
+      >div{
+        display: block;
+      }
+    }
+  .img-box{
+    display: inline-block;
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    font-size:16px;
+    color:rgba(77,77,77,1);
+    position: relative;
+
+    >div{
+      width: 120px;
+      height: 120px;
+      position: absolute;
+      background:rgba(0,0,0,1);
+      opacity:0.55;
+      display: none;
+      top:0;
+      border-radius: 50%;
+      line-height: 140px;
+      img{
+        width: 46px;
+        height: 40px;
+      }
+    }
+    >img{
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+    }
+  }
+  .tit-tou{
+    color: RGBA(77, 77, 77, 1);
+    font-size: 16px;
+  }
+  .name-ipt{
+    font-size:14px;
+    color:rgba(153,153,153,1);
+    margin-top: 26px;
+    span{
+      margin-right: 10px;
+    }
+    input{
+      width:372px;
+      height:34px; 
+      background:rgba(255,255,255,1);
+      border-radius: 4px;
+      border:1px solid RGBA(204, 204, 204, 1); 
+      text-indent: 10px;
+    }
+  }
+}
+.red{
+  color: RGBA(229, 56, 56, 1);
+  margin-right: 3px;
+}
 </style>
