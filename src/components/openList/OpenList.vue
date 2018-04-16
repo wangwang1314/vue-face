@@ -188,36 +188,34 @@
    <h3>公司信息</h3>
    <div>
    	  <span class="mst-w">公司名称</span>
-   	  <input type="" placeholder="35字以内，例如：深圳一二三有限公司" name="" class="cpn-ip">
+   	  <input type="" v-model="userName" maxlength="35" @keydown="showErr(1)" :class="{'bd-red':userName.length==0 && addErrtext.length>0}" placeholder="35字以内，例如：深圳一二三有限公司" name="" class="cpn-ip">
    </div>
    <div>
    	  <span class="mst-w">管理密码</span>
-   	  <input type="" placeholder="请输入管理密码" name="" class="cpn-ip">
+   	  <input type="" v-model="userPwd" maxlength="50" @keydown="showErr(2)" placeholder="请输入管理密码" name="" class="cpn-ip">
    </div>
     <div>
    	  <span>公司电话</span>
-   	  <input type="" placeholder="请输入公司座机" name="" class="cpn-ip">
+   	  <input type="" v-model="tel" maxlength="20" placeholder="请输入公司座机" name="" class="cpn-ip">
    </div>
 
      <h3 class="ct-info">联系人信息</h3>
      <div>
      	<span>联系人姓名</span>
-     	 <input type="" placeholder="请输入姓名" name="" class="person-ip">
+     	 <input type="" v-model="person" maxlength="10" placeholder="请输入姓名" name="" class="person-ip">
      </div>
       <div>
      	<span>联系人号码</span>
-     	 <input type="" placeholder="请输入座机或手机号" name="" class="person-ip">
+     	 <input type="" v-model="mobile" maxlength="20" placeholder="请输入座机或手机号" name="" class="person-ip">
      </div>
 
-
-  	
   </div>
   <span slot="footer" class="dialog-footer">
     <span class="add-err">
-    	<i class="el-icon-warning"></i>
-    	 存在相同的公司名称
+    	<i class="el-icon-warning" v-show="errWorn==true"></i>
+    	 {{addErrtext}}
     </span>
-     <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
+     <el-button type="primary" @click="comfirmAdd">确 定</el-button>
     <el-button @click="dialogVisible = false">取 消</el-button>
   
   </span>
@@ -261,7 +259,14 @@ export default{
          pawerr:true,
          dialogVisible:false,
          currentPage2: 5,
-         delet:true,
+         delet:false,
+         userName:"",//开户接口，公司名称
+         userPwd:'',//密码
+         tel:'',//公司电话
+         person:"",//联系人姓名
+         mobile:"",//联系电话
+         addErrtext:"",
+         errWorn:false,
          tableData3: [
            {
            	cpnName:"飞马科技sdfsdfsdfsdfsdf",
@@ -337,7 +342,47 @@ export default{
             });
           }
         });
+      },
+      //开户
+      comfirmAdd(){
+         if(!this.userName){
+            this.errWorn=true;
+            this.addErrtext="公司名称不能为空";
+            return
+         }
+         if(!this.userPwd){
+            this.errWorn=true;
+            this.addErrtext="管理密码不能为空";
+            return
+         }
+
+         this.$api.post('/admin_register_api',{
+             user_name:this.userName,
+             user_pwd:this.userPwd,
+             tel:this.tel,
+             person:this.person,
+             mobile:this.mobile
+         },su=>{
+          console.log(su)
+          if(su.code==200){
+              this.dialogVisible = false;
+              this.$message({
+              message: '开户成功！',
+              type: 'success'
+            });
+          }
+         },err=>{
+             this.$message.error('开户失败，请稍后再试！');
+         },)
+
+      },
+      //添加错误
+      showErr(){
+            this.errWorn=false;
+            this.addErrtext="";
+        
       }
+
 	}
 
 }
@@ -710,5 +755,8 @@ export default{
 
     .add-err{
     	margin-top:10px;
+    }
+    .bd-red{
+      border:1px solid #F84C4C !important;
     }
 </style>
