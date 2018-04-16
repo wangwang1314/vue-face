@@ -25,6 +25,19 @@ Vue.component("open",open)
 Vue.prototype.$api = api
 
 Vue.config.productionTip = false
+
+router.beforeEach((to, from, next) => {
+  if(to.path=="/login"){
+  	next()
+  }else{
+  	if(!sessionStorage.getItem("users")){
+  		next({path: '/login'})
+  	}else{
+  		next();
+  	}
+  	
+  }
+})
 /* eslint-disable no-new */
 new Vue({
   el: '#app',

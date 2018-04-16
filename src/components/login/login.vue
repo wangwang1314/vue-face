@@ -5,7 +5,7 @@
       <p class="tit">登录</p>
       <div class="ipt-con">
           <div  class="el-input el-input--prefix" :class="{'red-bo':check.isphone}">
-            <input autocomplete="off" placeholder="请输入手机号" type="text" rows="2"  class="el-input__inner" v-model="phone" maxlength="11">
+            <input autocomplete="off" placeholder="请输入账号" type="text" rows="2"  class="el-input__inner" v-model="phone" maxlength="11">
           <span class="el-input__prefix">
           <i 
            class="el-input__icon telico"></i>
@@ -16,11 +16,11 @@
               <span class="el-input__prefix"><i  class="el-input__icon pswico"></i><!----></span>
           </div>
           <p class="tip-p">
-            <span class="tip-span"><i></i>{{errtit}}</span>
+            <span class="tip-span" v-show="err"><i></i>{{errtit}}</span>
           </p>
           <el-button type="primary" class="sub-class"  round @click="submitFn">登录</el-button>
           <p class="remb">
-            <span><i></i>记住账户</span>
+            <span @click="rembFn()"><i :class="{'chose':ischose}"></i>记住账户</span>
             <!-- <a href="">忘记密码?</a> -->
           </p>
       </div>
@@ -36,27 +36,67 @@ export default {
       phone:"",
       check:{
         isphone:false,
-        ispass:false,
-
-        
+        ispass:false,  
       },
       errtit:"sdsdsdsd",
-      password:""
+      password:"",
+      err:false,
+      ischose:true
     }
   },
   mounted(){
-      this.$api.post("/common_login_api",{
-          "user_id":"admin",
-          "passwd":"123456"
-        },su=>{
-
-        },er=>{
-
-        })
+      this.phone = localStorage.getItem("phone",this.phone);
   },
   methods:{
     submitFn(){
+      this.err = false;
+      if(!this.phone){
+          this.err = true;
+          this.errtit = "请输入账号"
+          return
+      }
+      if(!this.password){
+          this.err = true;
+          this.errtit = "请输入请输入密码"
+          return
+      }
+      //1是客流，2出入出台的日常业务管理系统，10000表示平台运营系统
+      this.$api.post("/common_login_api",{
+          "user_id":this.phone,
+          "passwd":this.password
+        },su=>{
+          if(this.ischose){
+            localStorage.setItem("phone",this.phone)
+          }else{
+            localStorage.removeItem("phone")
+          }
+          if(su.code===200){
+            let code = su.author_app[0].type;
+            sessionStorage.setItem("users",this.phone);
+            if(code==1){
 
+            }else if(code==2){
+              this.$router.push({path:"/openListindex/openlist"})
+            }else if(code==10000){
+
+              this.$router.push({path:"/home"})
+            }
+          }else{
+            this.err = true;
+            this.errtit = su.msg
+          }
+          
+        },er=>{
+            this.err = true;
+            this.errtit = su.msg
+        })
+    },
+    rembFn(){
+      if(this.ischose){
+        this.ischose = false;
+      }else{
+        this.ischose = true;
+      }
     }
   }
 }
@@ -129,6 +169,7 @@ export default {
   width: 100%;
   border-radius: 6px;
   background-color: #378EEF;
+  margin-top: 5px;
 }
 .tip-p{
   height: 50px;
