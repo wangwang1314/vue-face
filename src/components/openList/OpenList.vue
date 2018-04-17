@@ -20,14 +20,13 @@
        <template>
 		  <el-table
 		    ref="multipleTable"
-		    :data="tableData3"
+		    :data="companyList"
 		    tooltip-effect="dark"
 		    class="text-center"
 		    style="width: 100%"
 		    @selection-change="handleSelectionChange"
-            @row-click="rowFn(tableData3)"
+            @row-click="rowFn(companyList)"
 		    >
-
 		    <el-table-column
 		      type="selection"
 		      width="55">
@@ -36,42 +35,42 @@
 		    <el-table-column
 		      label="公司名称"
 		      show-overflow-tooltip
-		      prop="cpnName">
-		       <template slot-scope="scope">
-		          <router-link to="EuquiList" class="eq-link">飞马科技</router-link>
-		      </template>
+		      prop="user_name">
+		     <template slot-scope="scope">
+             <router-link to="EuquiList" class="eq-link">{{scope.row.user_name}}</router-link>
+         </template>
 		    </el-table-column>
 
 		    <el-table-column
-		      prop="cpnId"
+		      prop="company_id"
 		      label="企业ID"
 		      show-overflow-tooltip
 		       >
 		    </el-table-column>
 
 		    <el-table-column
-		      prop="cpnTel"
+		      prop="tel"
 		      label="公司电话"
 		      show-overflow-tooltip
 		     >
 		    </el-table-column>
 
 		    <el-table-column
-		      prop="conetTel"
+		      prop="mobile"
 		      label="联系电话"
 		      show-overflow-tooltip
 		     >
 		    </el-table-column>
 		
 		  <el-table-column
-		      prop="conetName"
+		      prop="person"
 		      label="联系人"
 		      show-overflow-tooltip
 		     >
 		    </el-table-column>
 
 		    <el-table-column
-		      prop="openTime"
+		      prop="build_time"
 		      label="开户时间"
 		      show-overflow-tooltip
 		      >
@@ -257,6 +256,7 @@ export default{
          notEdite:false,
          cpnerr:true,
          pawerr:true,
+         userId:'admin',//通过用户的ID去查询列表
          dialogVisible:false,
          currentPage2: 5,
          delet:false,
@@ -309,13 +309,14 @@ export default{
            	equipment:"摄像头"
            }
          ],
+        companyList:[], //列表
         multipleSelection: []
       }
       
 
 	},
 	mounted(){
- 
+    this.initList();
 	},
 	methods:{
 		
@@ -332,6 +333,9 @@ export default{
       handleCurrentChange(val) {
         console.log(`当前页: ${val}`);
       },
+      handleClose(){
+
+      },
        open() {
         this.$alert('请至少选择1家公司进行操作！', '删除公司', {
           confirmButtonText: '知道了',
@@ -342,6 +346,19 @@ export default{
             });
           }
         });
+      },
+      //初始化开户列表
+      initList(){
+        this.$api.post("/admin_query_api",{"user_id":this.userId},su=>{
+            console.log(su);
+            if(su.code==200){
+              this.companyList = su.data;
+            }else{
+               this.$message.error(su.msg);
+            }
+        },err=>{
+            this.$message.error(su.msg);
+        })
       },
       //开户
       comfirmAdd(){
