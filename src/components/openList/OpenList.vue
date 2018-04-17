@@ -25,7 +25,7 @@
 		    class="text-center"
 		    style="width: 100%"
 		    @selection-change="handleSelectionChange"
-            @row-click="rowFn(companyList)"
+            @row-click="rowFn"
 		    >
 		    <el-table-column
 		      type="selection"
@@ -82,7 +82,7 @@
 		      show-overflow-tooltip
 		      >
 		      <template slot-scope="scope">
-		          <router-link to="Places" class="eq-link">场地1</router-link>
+		          <router-link to="Places" class="eq-link">场地设置</router-link>
 		      </template>
 		    </el-table-column>
  
@@ -92,7 +92,7 @@
 		      show-overflow-tooltip
 		    >
 		     <template slot-scope="scope">
-		          <router-link to="Equipment" class="eq-link">设备1</router-link>
+		          <router-link to="Equipment" class="eq-link">设备管理</router-link>
 		      </template>
 		    </el-table-column>
 
@@ -101,13 +101,13 @@
 
 		 <transition name="slide-fade">
 		      <div v-if="slideFlag" class="slideout">
-		      	 <h3>深圳飞马科技有限公司</h3>
+		      	 <h3>{{editList.user_name}}</h3>
 		      	 <div class="sli-head-cont">
 			      	 <div class="li-cpnid">
-			      	 	企业ID：<span>123456</span>
+			      	 	企业ID：<span>{{editList.company_id}}</span>
 			      	 </div>
 			      	 <div class="optime">
-			      	 	 开户时间：<span>2018-03-21 08：00：00</span>
+			      	 	 开户时间：<span>{{editList.build_time}}</span>
 			      	 </div>
 			      	 <button type="button">编辑</button>
 		      	 </div>
@@ -267,50 +267,9 @@ export default{
          mobile:"",//联系电话
          addErrtext:"",
          errWorn:false,
-         tableData3: [
-           {
-           	cpnName:"飞马科技sdfsdfsdfsdfsdf",
-           	cpnId:110,
-           	cpnTel:"0775-8789443",
-           	conetTel:13686800944,
-           	conetName:"jack",
-           	openTime:"2018-01-21 08:00:00",
-           	places:"宝体",
-           	equipment:"摄像头"
-           },
-           {
-           	cpnName:"飞马科技",
-           	cpnId:110,
-           	cpnTel:"0775-8789443",
-           	conetTel:13686800944,
-           	conetName:"jack",
-           	openTime:"2018-01-21 08:00:00",
-           	places:"宝体",
-           	equipment:"摄像头"
-           },
-           {
-           	cpnName:"飞马科技",
-           	cpnId:110,
-           	cpnTel:"0775-8789443",
-           	conetTel:13686800944,
-           	conetName:"jack",
-           	openTime:"2018-01-21 08:00:00",
-           	places:"宝体",
-           	equipment:"摄像头"
-           },
-           {
-           	cpnName:"飞马科技",
-           	cpnId:110,
-           	cpnTel:"0775-8789443",
-           	conetTel:13686800944,
-           	conetName:"jack",
-           	openTime:"2018-01-21 08:00:00",
-           	places:"宝体",
-           	equipment:"摄像头"
-           }
-         ],
-        companyList:[], //列表
-        multipleSelection: []
+         companyList:[], //列表
+         multipleSelection: [],
+         editList:[]
       }
       
 
@@ -323,9 +282,11 @@ export default{
        handleSelectionChange(val) {
         this.multipleSelection = val;
       },
-      rowFn(item){
+      //点击列表编辑
+      rowFn(row){
       	this.slideFlag = !this.slideFlag;
-      	console.log(item);
+        this.editList = row ;
+      	console.log(row);
       },
         handleSizeChange(val) {
         console.log(`每页 ${val} 条`);
