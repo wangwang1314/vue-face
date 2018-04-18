@@ -41,7 +41,7 @@ export default {
       errtit:"sdsdsdsd",
       password:"",
       err:false,
-      ischose:true
+      ischose:false
     }
   },
   mounted(){
