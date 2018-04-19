@@ -73,6 +73,7 @@ export default {
           if(su.code===200){
             let code = su.author_app[0].type;
             sessionStorage.setItem("users",this.phone);
+            sessionStorage.setItem("type",code);
             if(code==1){
 
             }else if(code==2){
@@ -168,7 +169,6 @@ export default {
 .sub-class{
   width: 100%;
   border-radius: 6px;
-  background-color: #378EEF;
   margin-top: 5px;
 }
 .tip-p{

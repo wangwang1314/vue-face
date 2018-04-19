@@ -1,5 +1,5 @@
 <template> 
-<div>
+<div @click="closedia">
     <el-container class="container-warp">
    <el-aside width="239px">
     <div class="slider-lt">
@@ -20,7 +20,15 @@
           <div class="admin-name">
             <div class="adm-le">
               <p>欢迎进入管理平台（出入系统）！</p> 
-              <p @click="reset"><span>13949096002</span></p>
+              <p >
+                <span @click.stop="changeFn">{{name}}
+                    <i class="rotate" >›
+                    </i>
+                    <div class="change" v-show="change">
+                        <p @click.stop="reset">修改密码</p>
+                    </div>
+                </span>
+              </p>
             </div> 
             <a class="adm-ri" @click="exit">退出</a>
           </div>
@@ -39,20 +47,20 @@
         <table class="tab-dalog">
           <tr>
             <td >旧密码</td>
-            <td><input type="text" name="" placeholder="请输入你的原始登录密码"></td>
+            <td><input type="password" name="" placeholder="请输入你的原始登录密码" v-model="reseted.pass" :class="{'border-red':check.pass}"></td>
           </tr>
           <tr>
             <td>新密码</td>
-            <td><input type="text" name="" placeholder="请输入你的新密码，50个字符以内"></td>
+            <td><input type="password" name="" placeholder="请输入你的新密码，50个字符以内" v-model="reseted.new" :class="{'border-red':check.new}"></td>
           </tr>
           <tr>
             <td>重复新密码</td>
-            <td><input type="text" name="" placeholder="请再次输入你的新密码，50个字符以内"></td>
+            <td><input type="password" name="" placeholder="请再次输入你的新密码，50个字符以内"  v-model="reseted.res" :class="{'border-red':check.res}"></td>
           </tr>
         </table>
         <span slot="footer" class="dialog-footer">
-          <span class="warn-box"><i></i>旧密码不正确</span>
-          <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
+          <span class="warn-box" v-show="err"><i></i>{{errtit}}</span>
+          <el-button type="primary" @click="changecon">确 定</el-button>
           <el-button @click="dialogVisible = false">取 消</el-button> 
         </span>
       </el-dialog>
@@ -68,7 +76,22 @@ export default {
   data () {
     return {
       arr:['1','2','3'],
-      dialogVisible:false
+      dialogVisible:false,
+      id:"",
+      name:"",
+      change:false,
+      err:false,
+      errtit:"",
+      reseted:{
+        pass:"",
+        new:"",
+        res:""
+      },
+      check:{
+        pass:false,
+        new:false,
+        res:false
+      }
     }
   },
   methods:{
@@ -81,7 +104,8 @@ export default {
                 cancelButtonText: '取消', 
                 type: ''
               }).then(() => {
-                    
+                  sessionStorage.removeItem("users");
+                  this.$router.push({path:"/login"})  
                   
               }).catch(()=>{
                
@@ -89,10 +113,68 @@ export default {
     },
     reset(){
       this.dialogVisible = true;
+      this.change = false;
+    },
+    getInfo(){
+      this.$api.post("/admin_register_api",
+        {
+        }
+      ,su=>{
+
+      },
+      err=>{
+
+      })
+    },
+    changeFn(){
+      this.change = true;
+    },
+    closedia(){
+      this.change = false
+    },
+    initcheck(){
+      this.err = false;
+      this.check.pass = false;
+      this.check.new = false;
+      this.check.res = false;
+    },
+    changecon(){
+      this.initcheck();
+      if(!this.reseted.pass){
+          this.err = true;
+          this.errtit = "请输入旧密码";
+          this.check.pass = true;
+          return
+      }
+      if(!this.reseted.new){
+          this.err = true;
+          this.errtit = "请输入新密码";
+          this.check.new = true;
+          return
+      }
+      if(/\s/g.test(this.reseted.new)){
+            this.err = true;
+            this.errtit = "密码中不能含有空格";
+            this.check.new = true;
+            return
+          }
+      if(!this.reseted.res){
+          this.err = true;
+          this.errtit = "请重复密码";
+          this.check.res = true;
+          return
+      }
+      if(this.reseted.res!=this.reseted.new){
+          this.err = true;
+          this.errtit = "两次密码输入不一致";
+          return
+      }
+
     }
   },
   mounted(){
-
+      this.name = sessionStorage.getItem("users");
+      this.getInfo();
   },
   watch:{
     
@@ -182,19 +264,22 @@ export default {
     height: 24px;
     font-weight: 700;
     color: #378eef;
-    margin-top: 30px;
+    margin-top: 36px;
     cursor: pointer;
 }
 .adm-le p, .adm-ri {
     font-size: 14px;
     line-height: 1;
 }
-.adm-le p {
+.adm-le>p {
     color: #2f323a;
     margin-top: 8px;
     text-align: right;
     margin-right:28px;
-    white-space:nowrap; 
+    white-space:nowrap;
+    span{
+      position: relative;
+    } 
 }
 .nav-class {
     li {
@@ -237,6 +322,9 @@ export default {
       border: 1px solid #ccc;
       border-radius: 4px;
       text-indent: 8px;
+    }
+    input.border-red{
+      border-color:red;
     } 
   }
 }
@@ -258,5 +346,32 @@ export default {
     position: relative;
     top:4px;
   }
+}
+.rotate{
+    transform: rotate(90deg);
+    display: inline-block;
+    font-size: 22px;
+    margin-left: 14px;
+    width: 12px;
+    height: 23px;
+}
+.change{
+    width: 128px;
+    height: 60px;
+    position: absolute;
+    border: 1px solid #ccc;
+    background: #fff;
+    right: 0;
+    >p{
+      height: 44px;
+      line-height: 44px;
+      text-align: center;
+      cursor: pointer;
+    }
+    >p:hover{
+      color: #fff;
+      margin-top: 2px;
+      background: #378eef;
+    }
 }
 </style>
