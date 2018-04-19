@@ -7,7 +7,7 @@
        </div>
        <p class="data-all">共 <span>992</span>条数据</p>
        <div class="add-del">
-       	   <button type="button" @click="dialogVisible=true">新增用户</button>
+       	   <button type="button" @click="addNew">新增用户</button>
        	   <button type="button"  @click="open">删除公司</button>
        </div>
        <div class="has-slect">
@@ -101,7 +101,7 @@
 
 		 <transition name="slide-fade">
 		      <div v-if="slideFlag" class="slideout">
-		      	 <h3>{{editList.user_name}}</h3>
+		      	 <h3>{{userName}}</h3>
 		      	 <div class="sli-head-cont">
 			      	 <div class="li-cpnid">
 			      	 	企业ID：<span>{{editList.company_id}}</span>
@@ -109,47 +109,49 @@
 			      	 <div class="optime">
 			      	 	 开户时间：<span>{{editList.build_time}}</span>
 			      	 </div>
-			      	 <button type="button">编辑</button>
+			      	 <button type="button" @click="editFlag=true">编辑</button>
 		      	 </div>
 
 		      	 <h4 class="sld-info-tt">公司名称</h4>
 		      	 <dl>
 		      	 	<dd>
+
+               
 		      	 		<span class="le-text ms-write">公司名称：</span>
-		      	 		<span class="ri-text"  v-show="notEdite==true">深圳飞马科技有限公司</span>
-		      	 		<input type="text" name="cpnname" :class="{'ip-err':cpnerr==true}">
-		      	 		<span class="err"><i class="el-icon-warning"></i>存在相同的公司名称</span>
+		      	 		<span class="ri-text"  v-show="editFlag==false">{{editList.user_name}}</span>
+		      	 		<input type="text" @keydown="ed_cpnerr=false"  v-model="ed_cpn_name" v-show="editFlag==true" name="cpnname" :class="{'ip-err':ed_cpnerr==true}">
+		      	 		<span class="err" v-show="ed_cpnerr==true"><i class="el-icon-warning"></i>{{ed_cpnert}}</span>
 		      	 	</dd>
 		      	 	<dd>
 		      	 		<span class="le-text ms-write">管理密码：</span>
-		      	 		<span class="ri-text" v-show="notEdite==true">123455</span>
-		      	 		<input type="text" name="password" :class="{'ip-err':pawerr==true}">
-		      	 		<span class="err"><i class="el-icon-warning"></i>管理密码不能为空</span>
+		      	 		<span class="ri-text" v-show="editFlag==false">{{editList.user_pwd}}</span>
+		      	 		<input type="text" @keydown="ed_pawerr=false" v-model="ed_psw" v-show="editFlag==true" name="password" :class="{'ip-err':ed_pawerr==true}">
+		      	 		<span class="err" v-show="ed_pawerr==true"><i class="el-icon-warning"></i>{{ed_pswert}}</span>
 		      	 	</dd>
 		      	 	<dd>
 		      	 		<span class="le-text" style="margin-left:12px">公司电话：</span>
-		      	 		<span class="ri-text" v-show="notEdite==true">0775-8789443</span>
-		      	 		<input type="text" name="cpmtel">
+		      	 		<span class="ri-text"  v-show="editFlag==false">{{editList.tel}}</span>
+		      	 		<input type="text" v-model="ed_tel" v-show="editFlag==true" name="cpmtel">
 		      	 	</dd>
 		      	 </dl>
 		      	 <h4 class="sld-info-tt">联系人信息</h4>
 		      	 <dl>
 		      	 	<dd>
 		      	 		<span class="le-text">联系人姓名：</span>
-		      	 		<span class="ri-text" v-show="notEdite==true">于飞马</span>
-		      	 		<input type="text" name="ctname">
+		      	 		<span class="ri-text" v-show="editFlag==false">{{editList.person}}</span>
+		      	 		<input type="text" v-model="ed_person" v-show="editFlag==true" name="ctname">
 		      	 	</dd>
 		      	 	
 		      	 	<dd>
 		      	 		<span class="le-text">联系人号码：</span>
-		      	 		<span class="ri-text" v-show="notEdite==true">0775-8789443</span>
-		      	 		<input type="text" name="ctnumber">
+		      	 		<span class="ri-text"  v-show="editFlag==false">{{editList.mobile}}</span>
+		      	 		<input type="text"  v-model="ed_mobil" v-show="editFlag==true" name="ctnumber">
 		      	 	</dd>
 		      	 </dl>
 
-		      	 <div class="comfir-btn">
-		      	 	<button type="button" class="comf-btn">确定</button>
-		      	 	<button type="button" class="cal-btn">取消</button>
+		      	 <div class="comfir-btn" v-show="editFlag==true">
+		      	 	<button type="button" class="comf-btn" @click="editComf">确定</button>
+		      	 	<button type="button" class="cal-btn" @click="calEd">取消</button>
 		      	 </div>
 		      	 <i class="sld-close" @click="slideFlag=false"></i>
 		      </div>
@@ -268,8 +270,19 @@ export default{
          addErrtext:"",
          errWorn:false,
          companyList:[], //列表
+         editFlag:false,//编辑状态
+         eidtDate:[],//编辑数据
          multipleSelection: [],
-         editList:[]
+         editList:[],
+         ed_cpnerr:false,//公司名称错误标志
+         ed_pawerr:false,//密码错误标志
+         ed_cpnert:"",
+         ed_pswert:"",
+         ed_cpn_name:'',
+         ed_tel:'',
+         ed_person:'',
+         ed_mobil:'',
+         ed_psw:""
       }
       
 
@@ -284,8 +297,16 @@ export default{
       },
       //点击列表编辑
       rowFn(row){
+        this.editFlag = false;
       	this.slideFlag = !this.slideFlag;
         this.editList = row ;
+        this.eidtDate = row;
+        this.userName = this.editList.user_name;
+        this.ed_cpn_name = this.editList.user_name;
+        this.ed_tel = this.editList.tel;
+        this.ed_psw = this.editList.user_pwd,
+        this.ed_person = this.editList.person ;
+        this.ed_mobil = this.editList.mobile;
       	console.log(row);
       },
         handleSizeChange(val) {
@@ -321,6 +342,11 @@ export default{
             this.$message.error(su.msg);
         })
       },
+      addNew(){
+        this.dialogVisible=true;
+        this.errWorn=false;
+        this.addErrtext="";
+      },
       //开户
       comfirmAdd(){
          if(!this.userName){
@@ -354,6 +380,55 @@ export default{
          },)
 
       },
+      //编辑修改
+      editComf(){
+         if(!this.ed_cpn_name){
+           this.ed_cpnerr = true;
+           this.ed_cpnert = "公司名称不能为空";
+           return
+         }
+         if(!this.ed_psw){
+        
+             this.ed_pawerr = true;//密码错误标志
+             this.ed_pswert = "管理密码不能为空";
+             return
+         }
+         this.$api.post('admin_update_api',{
+
+               company_id:this.eidtDate.company_id,
+               user_name:this.ed_cpn_name,
+               tel:this.ed_tel,
+               person:this.ed_person,
+               mobile:this.ed_mobil
+
+         },su=>{
+           console.log(su);
+           if(su.code==200){
+              this.$message({
+              message: '修改成功',
+              type: 'success'
+            });
+            this.editFlag = false;
+            this.slideFlag = false;
+            this.initList();
+           }else{
+              console.log(su);
+           }
+
+         },err=>{
+
+         })
+
+      },
+
+      //取消编辑
+      calEd(){
+           this.editFlag = false;
+           this.ed_cpnerr = false;
+           this.ed_pawerr = false;//密码错误标志
+          /* this.ed_cpnert = "公司名称不能为空";*/
+      },
+
       //添加错误
       showErr(){
             this.errWorn=false;
