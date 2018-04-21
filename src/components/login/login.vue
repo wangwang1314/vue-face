@@ -74,13 +74,14 @@ export default {
             let code = su.author_app[0].type;
             sessionStorage.setItem("users",this.phone);
             sessionStorage.setItem("type",code);
+            this.$store.state.data = {};
             if(code==1){
 
             }else if(code==2){
-              this.$router.push({path:"/openListindex/openlist"})
+              this.$router.push({path:"/home"})
             }else if(code==10000){
 
-              this.$router.push({path:"/home"})
+              this.$router.push({path:"/openListindex/openlist"})
             }
           }else{
             this.err = true;

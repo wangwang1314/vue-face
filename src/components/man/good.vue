@@ -84,7 +84,7 @@
             <p class="tit-tou"><i class="red">*</i>上传头像</p>
             <p class="name-ipt">
               <span><i class="red">*</i>姓名</span>
-              <input type="text" name="" placeholder="请输入姓名，20子以内，必须填">
+              <input type="text" name="" placeholder="请输入姓名，20字以内，必须填">
             </p>
           </div>
           <span slot="footer" class="dialog-footer">

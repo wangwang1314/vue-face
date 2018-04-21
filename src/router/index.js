@@ -2,7 +2,6 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import Login from '@/components/login/login'
 import Survey from '@/components/home/survey'
-import Record from '@/components/home/record'
 import Home from '@/components/home/index'
 import Structor from '@/components/structure/index'
 
@@ -67,11 +66,6 @@ export default new Router({
           path:"survey",
           name:"survey",
           component:Survey
-        },
-        {
-          path:"record",
-          name:"record",
-          component:Record
         },
         {
           path:"",

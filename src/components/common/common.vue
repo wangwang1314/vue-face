@@ -21,7 +21,7 @@
             <div class="adm-le">
               <p>欢迎进入管理平台（出入系统）！</p> 
               <p >
-                <span @click.stop="changeFn">{{name}}
+                <span @click.stop="changeFn">{{data.tel}}
                     <i class="rotate" >›
                     </i>
                     <div class="change" v-show="change">
@@ -72,6 +72,7 @@
 
 </template>
 <script>
+import { mapState } from 'vuex'
 export default {
   data () {
     return {
@@ -114,17 +115,7 @@ export default {
     reset(){
       this.dialogVisible = true;
       this.change = false;
-    },
-    getInfo(){
-      this.$api.post("/admin_register_api",
-        {
-        }
-      ,su=>{
-
-      },
-      err=>{
-
-      })
+      initcheck();
     },
     changeFn(){
       this.change = true;
@@ -137,6 +128,20 @@ export default {
       this.check.pass = false;
       this.check.new = false;
       this.check.res = false;
+    },
+    getInfo(){
+      this.$api.post("/common_query_company_api",
+        {
+          "company_id":this.id
+         }
+      ,su=>{
+        if(su.code==200){
+          this.$store.state.data = su;
+        }
+      },
+      err=>{
+
+      })
     },
     changecon(){
       this.initcheck();
@@ -169,15 +174,45 @@ export default {
           this.errtit = "两次密码输入不一致";
           return
       }
+      this.$api.post("/client_mng_passwd_api",
+        {
+          company_id:sessionStorage.getItem("users"),
+          old_passwd:this.reseted.pass,
+          new_passwd:this.reseted.new
+        }
+      ,su=>{
+          if(su.code==200){
+            this.$message({
+              message: su.msg,
+              type: 'success'
+            });
+            sessionStorage.removeItem("users");
+            setTimeout(()=>{
+               this.$router.push({path:"/login"})
+            },1500)    
+          }else{
+            this.err = true;
+            this.errtit = su.msg;
+          }
+      },
+      err=>{
 
+      })
     }
   },
   mounted(){
       this.name = sessionStorage.getItem("users");
-      this.getInfo();
+      if(JSON.stringify(this.$store.state.data)=="{}"){
+        this.getInfo();
+      }
   },
   watch:{
     
+  },
+  computed:{
+    ...mapState({   
+      data:"data"
+    })
   }
 }
 </script>

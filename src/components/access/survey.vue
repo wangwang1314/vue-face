@@ -323,6 +323,8 @@ export default {
       img{
         height: 150px;
         width: 150px;
+        border: 2px solid transparent;
+        box-sizing: border-box;
       }
       p{
         text-align: center;

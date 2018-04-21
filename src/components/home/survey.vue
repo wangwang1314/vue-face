@@ -3,23 +3,23 @@
     <div class="left">
       <p class="sur-tit">常用入口</p>
       <ul class="sur-ul">
-        <li>
+        <li @click="go('/acc/accsurvey')">
           <p>出入管理</p>
           <p>出入概况</p>
         </li>
-        <li>
+        <li @click="go('/acc/accrecord')">
           <p>出入管理</p>
           <p>出入记录</p>
         </li>
-        <li>
+        <li @click="go('/man/person')">
           <p>人员管理</p>
           <p>普通人员列表</p>
         </li>
-         <li>
+         <li @click="go('/man/good')">
           <p>人员管理</p>
           <p>白名单列表</p>
         </li>
-        <li>
+        <li @click="go('/man/bad')">
           <p>权限管理</p>
           <p>黑名单列表</p>
         </li>
@@ -36,17 +36,17 @@
       </div>
     </div>
     <div class="right">
-      <p class="com">深圳市飞马科技有限公司</p>
+      <p class="com">{{data.user_name}}</p>
       <p class="info">企业信息</p>
       <div class="con-info">
         <p>
-          <span>企 业 ID：</span>123456
+          <span>企&ensp;业&ensp;ID：</span>{{id}}
         </p>
         <p>
-          <span>公司名称：</span>深圳飞马科技有限公司
+          <span>公司名称：</span>{{data.user_name}}
         </p>
         <p>
-          <span>公司电话：</span>0755667788
+          <span>公司电话：</span>{{data.tel}}
         </p>
       </div>
     </div>
@@ -54,14 +54,25 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
 export default {
   data () {
     return {
-      
+      id:sessionStorage.getItem("users")
     }
   },
   mounted(){
-    
+     // this.getInfo();
+  },
+  methods:{
+    go(val){
+      this.$router.push({path:val})
+    }
+  },
+  computed:{
+    ...mapState({   
+      data:"data"
+    })
   }
 }
 </script>
@@ -71,6 +82,7 @@ export default {
       padding-left: 32px;
       background-color: #fff;
       display: flex;
+      min-width: 800px;
       flex: 1;
       align-self:stretch;
     
@@ -124,6 +136,7 @@ export default {
       height: 146px;
       float: left;
       margin:0 18px 32px 0;
+      cursor: pointer;
       p:first-child{
         font-size:16px;
         font-weight: bold;
