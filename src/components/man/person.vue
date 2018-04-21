@@ -2,16 +2,25 @@
     <div class="person" >
       <div class="header">
         <span>头像</span>
-         <el-select v-model="value4" clearable placeholder="请选择" class="sur-selct">
+        <!--  <el-select v-model="value4" clearable placeholder="请选择" class="sur-selct">
           <el-option
             v-for="item in options"
             :key="item.value"
             :label="item.label"
             :value="item.value">
           </el-option>
-        </el-select>
-         <span>姓名</span>
-         <input type="text" name="" placeholder="请输入姓名搜索">
+        </el-select> -->
+        <el-upload
+                class="upload-style"
+                action="https://jsonplaceholder.typicode.com/posts/"
+                :on-change="handleChange"
+                :auto-upload="false"
+                :show-file-list="false"
+                >
+                <button  class="sur-selct btn-upload">请上传图片搜头像<i></i></button>
+        </el-upload>
+        <span>姓名</span>
+        <input type="text" name="" placeholder="请输入姓名搜索">
       </div>
        <p class="su-tit">共 <span>992</span> 条数据</p>
        <p class="sur-num">
@@ -335,6 +344,9 @@ export default {
           that.img = reader.result;
           that.btntext = "重新上传";
       };
+    },
+    handleCheckAllChange(){
+
     }
   }
 }
@@ -733,5 +745,27 @@ export default {
   margin-right: 3px;
   display: inline-block;
   width: 12px;
+}
+.upload-style{
+  display: inline-block;
+}
+.btn-upload{
+  border: 1px solid #ccc;
+  background: #fff;
+  color: #4D4D4D;
+  text-indent: 16px;
+  text-align: left;
+  cursor: pointer;
+  i{
+    display:inline-block;
+    content: "";
+    width: 14px;
+    height: 11px;
+    background: url(../../assets/images/camera-icon.png);
+    float: right;
+    margin-right: 15px;
+    position: relative;
+    top:3px;
+  }
 }
 </style>
