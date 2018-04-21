@@ -75,7 +75,7 @@
           <el-dialog
           title="添加白名单"
           :visible.sync="dialogVisible"
-          width="550px">
+          width="720px">
           <div class="content-up">
             <div class="img-box">
               <img src="../../assets/images/icon-tou.png">

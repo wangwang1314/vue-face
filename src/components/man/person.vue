@@ -15,7 +15,7 @@
       </div>
        <p class="su-tit">共 <span>992</span> 条数据</p>
        <p class="sur-num">
-         <span>导出数据</span>
+         <span @click="addFn">新增人员</span>
          <span>批量导入照片</span>
          <span>删除人员</span>
          <span>设置权限</span>
@@ -224,6 +224,46 @@
               </div>
             </div>
          </transition>
+
+       <!--  添加白名单 -->
+       <div class="box">
+          <el-dialog
+          :title="title"
+          :visible.sync="dialogVisible"
+          width="720px">
+          <div class="content-up">
+            <div class="img-box">
+              <img :src="img" v-if="img">
+              <img src="../../assets/images/icon-tou.png" v-else>
+              <div><img src="../../assets/images/camera.png"></div>
+            </div>
+            <el-upload
+              class="upload-demo"
+              action="https://jsonplaceholder.typicode.com/posts/"
+              :on-change="handleChange"
+              :auto-upload="false"
+              :show-file-list="false"
+              >
+              <el-button size="small" type="primary" class="tit-tou">{{btntext}}</el-button>
+            </el-upload>
+          <!--   <p class="tit-tou">上传头像</p> -->
+            <p class="name-ipt">
+              <span><i class="red">*</i>姓名</span>
+              <input type="text" name="" placeholder="请输入姓名，20字以内，必须填">
+            </p>
+            <p class="name-ipt">
+              <span><i class="red"></i>类型</span>
+              <el-radio v-model="type" label="1">VIP</el-radio>
+              <el-radio v-model="type" label="2">访客</el-radio>
+            </p>
+          </div>
+          <span slot="footer" class="dialog-footer">
+            <span class="warn-box"><i></i>旧密码不正确</span>
+            <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
+            <el-button @click="dialogVisible = false">取 消</el-button> 
+          </span>
+        </el-dialog>
+      </div>
     </div>
 </template>
 
@@ -253,8 +293,12 @@ export default {
       activeName:"first",
       value3:"",
       isIndeterminate:true,
-      checkAll:false
-
+      checkAll:false,
+      dialogVisible:false,
+      type:'1',
+      title:"新增人员",
+      img:"",
+      btntext:"上传头像"
     }
   },
   mounted(){
@@ -275,6 +319,22 @@ export default {
     },
     handleClick(){
 
+    },
+    addFn(){
+      this.title = "新增人员";
+      this.dialogVisible = true;
+    },
+    handleChange(file,fileList){
+      //创建blob对象
+      let blob = new Blob([file.raw],{type:file.raw.type});
+      let that = this;
+      let reader = new FileReader();
+      reader.readAsDataURL(blob);
+      reader.onload = function (e) {
+          // 图片的 base64 格式, 可以直接当成 img 的 src 属性值      
+          that.img = reader.result;
+          that.btntext = "重新上传";
+      };
     }
   }
 }
@@ -283,6 +343,7 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang='scss' scoped>
 .person{
+    min-width: 1027px;
     background-color: #fff;
     margin:19px;
     min-height: 700px;
@@ -601,4 +662,76 @@ export default {
       margin-right: 0;
     }
   }
+  .box .el-dialog__footer{
+  box-shadow: 0 0 4px #ccc;
+}
+
+.content-up{
+  text-align: center;
+   .img-box:hover{
+      >div{
+        display: block;
+      }
+    }
+  .img-box{
+    display: inline-block;
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    font-size:16px;
+    color:rgba(77,77,77,1);
+    position: relative;
+
+    >div{
+      width: 120px;
+      height: 120px;
+      position: absolute;
+      background:rgba(0,0,0,1);
+      opacity:0.55;
+      display: none;
+      top:0;
+      border-radius: 50%;
+      line-height: 140px;
+      img{
+        width: 46px;
+        height: 40px;
+      }
+    }
+    >img{
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+    }
+  }
+  .tit-tou{
+    color: RGBA(77, 77, 77, 1);
+    font-size: 16px;
+    background: #fff;
+    border: none;
+  }
+  .name-ipt{
+    font-size:14px;
+    color:rgba(153,153,153,1);
+    margin-top: 26px;
+    text-align: left;
+    span{
+      margin-right: 10px;
+      margin: 0 10px 0 140px;
+    }
+    input{
+      width:372px;
+      height:34px; 
+      background:rgba(255,255,255,1);
+      border-radius: 4px;
+      border:1px solid RGBA(204, 204, 204, 1); 
+      text-indent: 10px;
+    }
+  }
+}
+.red{
+  color: RGBA(229, 56, 56, 1);
+  margin-right: 3px;
+  display: inline-block;
+  width: 12px;
+}
 </style>
