@@ -42,7 +42,7 @@ export default new Router({
            component:OpenList
         },
         {
-          path:"places",
+          path:"/places/:id",
           name:"Places",
           component:Places
         },

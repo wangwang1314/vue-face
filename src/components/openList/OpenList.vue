@@ -5,15 +5,16 @@
            公司名称
            <input type="text" placeholder="请输入公司名称" v-model="companyName"/>
        </div>
-       <p class="data-all">共 <span>992</span>条数据</p>
+       <p class="data-all">共 <span>{{allDate}}</span>条数据</p>
        <div class="add-del">
        	   <button type="button" @click="addNew">新增用户</button>
-       	   <button type="button"  @click="open">删除公司</button>
+           <button type="button"  v-if="multipleSelection.length==0" @click="open">删除公司</button>
+       	   <button type="button"  v-else  @click="delectCpn">删除公司</button>
        </div>
        <div class="has-slect">
        	  	<i class="icon-worning"></i>
        	  	已选择
-       	  	<span>15</span>
+       	  	<span>{{multipleSelection.length}}</span>
        	  	项
        </div>
 
@@ -82,7 +83,7 @@
 		      show-overflow-tooltip
 		      >
 		      <template slot-scope="scope">
-		          <router-link to="Places" class="eq-link">场地设置</router-link>
+		          <router-link :to="{name :'Places',params:{id:scope.row.company_id}}" class="eq-link">场地设置</router-link>
 		      </template>
 		    </el-table-column>
  
@@ -189,11 +190,11 @@
    <h3>公司信息</h3>
    <div>
    	  <span class="mst-w">公司名称</span>
-   	  <input type="" v-model="userName" maxlength="35" @keydown="showErr(1)" :class="{'bd-red':userName.length==0 && addErrtext.length>0}" placeholder="35字以内，例如：深圳一二三有限公司" name="" class="cpn-ip">
+   	  <input type="" v-model="userName" maxlength="35" @keydown="showErr(1)" :class="{'bd-red':ed_cpnerr==true}" placeholder="35字以内，例如：深圳一二三有限公司" name="" class="cpn-ip">
    </div>
    <div>
    	  <span class="mst-w">管理密码</span>
-   	  <input type="" v-model="userPwd" maxlength="50" @keydown="showErr(2)" placeholder="请输入管理密码" name="" class="cpn-ip">
+   	  <input type="" v-model="userPwd" maxlength="50" @keydown="showErr(2)"  :class="{'bd-red':ed_pawerr==true}" placeholder="请输入管理密码" name="" class="cpn-ip">
    </div>
     <div>
    	  <span>公司电话</span>
@@ -233,9 +234,9 @@
   <p>确定删除选择的公司吗？</p>
   <span slot="footer" class="dialog-footer">
     <span class="will-del">
-    	已选择<em>22</em>家公司
+    	已选择<em>{{delcout}}</em>家公司
     </span>
-     <el-button type="primary" @click="delet = false">确 定</el-button>
+     <el-button type="primary" @click="delFn">确 定</el-button>
     <el-button @click="delet = false">取 消</el-button>
   
   </span>
@@ -272,7 +273,7 @@ export default{
          companyList:[], //列表
          editFlag:false,//编辑状态
          eidtDate:[],//编辑数据
-         multipleSelection: [],
+         multipleSelection: [],//选中的列
          editList:[],
          ed_cpnerr:false,//公司名称错误标志
          ed_pawerr:false,//密码错误标志
@@ -282,7 +283,9 @@ export default{
          ed_tel:'',
          ed_person:'',
          ed_mobil:'',
-         ed_psw:""
+         ed_psw:"",
+         delcout:0,
+         allDate:0
       }
       
 
@@ -292,8 +295,40 @@ export default{
 	},
 	methods:{
 		
-       handleSelectionChange(val) {
+      handleSelectionChange(val) {
+        console.log(val);
         this.multipleSelection = val;
+      },
+      //删除公司
+      delectCpn(){
+        this.delet = true;
+        this.delcout = this.multipleSelection.length;
+      },
+      delFn(){
+          /* let ids = this.multipleSelection[0].company_id;*/
+           let ids = [];
+           this.multipleSelection.forEach((el,ind)=>{
+               ids.push(el.company_id);
+           })
+           console.log(ids);
+
+           this.$api.post('/admin_erase_api',{
+             company_id:ids
+           },su=>{
+              if(su.code==200){
+                this.delet = false;
+                this.initList();
+                this.$message({
+                message: '删除成功！',
+                type: 'success'
+              });
+              }else{
+                  this.$message.error('删除失败，请稍后再试！');
+              }
+           },err=>{
+
+           })
+        
       },
       //点击列表编辑
       rowFn(row){
@@ -320,13 +355,8 @@ export default{
       },
        open() {
         this.$alert('请至少选择1家公司进行操作！', '删除公司', {
-          confirmButtonText: '知道了',
-          callback: action => {
-            this.$message({
-              type: 'info',
-              message: `action: ${ action }`
-            });
-          }
+          confirmButtonText: '知道了'
+          
         });
       },
       //初始化开户列表
@@ -335,6 +365,7 @@ export default{
             console.log(su);
             if(su.code==200){
               this.companyList = su.data;
+              this.allDate = su.num;
             }else{
                this.$message.error(su.msg);
             }
@@ -343,19 +374,29 @@ export default{
         })
       },
       addNew(){
+        this.userName = "";
+        this.userPwd='',//密码
+        this.tel='',//公司电话
+        this.person="",//联系人姓名
+        this.mobile="",//联系电话
         this.dialogVisible=true;
         this.errWorn=false;
         this.addErrtext="";
+        this.ed_cpnerr = false;
+        this.ed_pawerr = false;
       },
       //开户
       comfirmAdd(){
          if(!this.userName){
             this.errWorn=true;
+            this.ed_cpnerr = true;
             this.addErrtext="公司名称不能为空";
             return
          }
+
          if(!this.userPwd){
             this.errWorn=true;
+            this.ed_pawerr = true;
             this.addErrtext="管理密码不能为空";
             return
          }
@@ -367,17 +408,24 @@ export default{
              person:this.person,
              mobile:this.mobile
          },su=>{
-          console.log(su)
-          if(su.code==200){
-              this.dialogVisible = false;
-              this.$message({
-              message: '开户成功！',
-              type: 'success'
-            });
-          }
+            console.log(su)
+            if(su.code==200){
+                this.dialogVisible = false;
+                this.$message({
+                message: '开户成功！',
+                type: 'success'
+              });
+            }else if(su.code==600){
+               this.errWorn=true;
+               this.ed_cpnerr = true;
+               this.addErrtext="存在相同的公司名称";
+            }else{
+              this.$message.error('开户失败，请稍后再试！');
+           }
+          
          },err=>{
              this.$message.error('开户失败，请稍后再试！');
-         },)
+         })
 
       },
       //编辑修改
@@ -388,7 +436,7 @@ export default{
            return
          }
          if(!this.ed_psw){
-        
+             
              this.ed_pawerr = true;//密码错误标志
              this.ed_pswert = "管理密码不能为空";
              return

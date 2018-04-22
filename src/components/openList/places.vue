@@ -12,7 +12,7 @@
        </div>
        <p class="data-all">共 <span>992</span>条数据</p>
        <div class="add-del">
-       	   <button type="button">添加场地</button>
+       	   <button type="button" @click="showAddPlace">添加场地</button>
      
        </div>
        <div class="has-slect">
@@ -122,10 +122,10 @@
             </td>
            <td>
             <div class="err-cont">
-                <input placeholder="" class='place-set ip-err'/>
-                <span>
+                <input placeholder=""  v-model="place_id" class='place-set' :class="{'ip-err':pliderr==true}"/>
+                <span v-show="pliderr==true">
                   <i class="el-icon-warning"></i>
-                  存在相同的场地编号
+                  {{plerrtxt}}
                 </span>
             </div>
            </td>
@@ -136,8 +136,8 @@
             </td>
            <td>
            <div class="err-cont">
-             <input  class='place-set' placeholder=""/>
-               <span>
+             <input  class='place-set' v-model="place_address" placeholder="" :class="{'ip-err':plname==true}"/>
+               <span v-show="plname==true">
                   <i class="el-icon-warning"></i>
                   场地名称不能为空
                 </span>  
@@ -151,10 +151,10 @@
             </td>
            <td>
            <div class="err-cont after-ip">
-              <input type="" name="" class="ip-lt">
-              <input type="" name="" class="ip-lt">
-              <input type="" name="" class="ip-lt">
-               <span>
+              <input type="" name="" v-model="place_latitude.lat1" class="ip-lt" :class="{'ip-err':longerr==true}">
+              <input type="" name="" v-model="place_latitude.lat2" class="ip-lt" :class="{'ip-err':longerr==true}">
+              <input type="" name="" v-model="place_latitude.lat3" class="ip-lt" :class="{'ip-err':longerr==true}">
+               <span v-show="longerr==true">
                   <i class="el-icon-warning"></i>
                   经度不能为空
 
@@ -172,10 +172,10 @@
             </td>
            <td>
             <div class="err-cont after-ip">
-                <input type="" name="" class="ip-lt">
-              <input type="" name="" class="ip-lt">
-              <input type="" name="" class="ip-lt">
-               <span>
+                <input type="" name=""  v-model="place_longitude.long1" class="ip-lt" :class="{'ip-err':laterr==true}">
+              <input type="" name="" v-model="place_longitude.long2" class="ip-lt" :class="{'ip-err':laterr==true}">
+              <input type="" name=""  v-model="place_longitude.long3" class="ip-lt" :class="{'ip-err':laterr==true}">
+               <span v-show="laterr==true">
                   <i class="el-icon-warning"></i>
                   纬度不能为空
                 </span>
@@ -191,7 +191,7 @@
   </div>
   <span slot="footer" class="dialog-footer">
     
-     <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
+     <el-button type="primary" @click="addPlace">确 定</el-button>
     <el-button @click="dialogVisible = false">取 消</el-button>
   
   </span>
@@ -212,7 +212,26 @@ export default{
          cpnerr:true,
          currentPage2: 5,
          pawerr:true,
-         dialogVisible:true,
+         dialogVisible:false,
+         id:0,
+         pliderr:false,//地点ID错误
+         plerrtxt:"",//id错误提示语
+         plname:false,//地点错误
+         longerr:false,//经度错误
+         laterr:false,//纬度错误，
+         place_id:"",//地点ID
+         place_address:"",//地点
+         place_latitude:{
+            lat1:"",
+            lat2:"",
+            lat3:""
+         },//经度
+         place_longitude:{
+            long1:"",
+            long2:"",
+            long3:""
+         },
+
          tableData3: [
            {
            	cpnName:"飞马科技sdfsdfsdfsdfsdf",
@@ -261,11 +280,13 @@ export default{
 
 	},
 	mounted(){
- 
+    this.id = this.$route.params.id;
+    this.initList();
+    console.log(this.id);
 	},
 	methods:{
 		
-       handleSelectionChange(val) {
+      handleSelectionChange(val) {
         this.multipleSelection = val;
       },
       handleSizeChange(val) {
@@ -273,8 +294,90 @@ export default{
       },
       handleCurrentChange(val) {
         console.log(`当前页: ${val}`);
+      },
+      initList(){
+         this.$api.post("/common_query_company_api",{
+           "company_id":parseInt(this.id),
+         },su=>{
+          console.log(su);
+         },err=>{
+
+         })
+      },
+      //添加场地
+      showAddPlace(){
+         this.pliderr=false;
+         this.plerrtxt="";
+         this.plname=false;
+         this.longerr=false;
+         this.laterr=false;
+         this.place_id = "";
+         this.place_address = "";
+          this.place_latitude = {
+            lat1:"",
+            lat2:"",
+            lat3:""
+         },//经度
+         this.place_longitude = {
+            long1:"",
+            long2:"",
+            long3:""
+         },
+
+         this.dialogVisible = true;
+
+      },
+      addPlace(){
+
+        if(!this.place_id){
+           this.pliderr=true,
+           this.plerrtxt="场地编号不能为空";
+           return
+        }
+
+        if(!this.place_address){
+           this.plname=true;
+           return
+        }
+
+
+        if(!this.place_latitude.lat1 || !this.place_latitude.lat2){
+           this.longerr=true;
+           return
+        }
+
+        if(!this.place_longitude.long1 || !this.place_longitude.long2){
+           this.laterr=true;
+           return
+        }
+
+        let lats= this.place_latitude.lat1+'.'+this.place_latitude.lat2;
+        let longs = this.place_longitude.long1+'.'+this.place_longitude.long2;
+        this.$api.post("/admin_add_place_api",{
+
+            company_id:parseInt(this.id),
+            place_address:this.place_address,
+            place_latitude:lats,
+            place_longitude:longs,
+            place_id:parseInt(this.place_id)
+
+        },su=>{
+           if(su.code==200){
+               this.dialogVisible = false;
+                this.$message({
+                message: '添加场地成功！',
+                type: 'success'
+              });
+           }else{
+              this.$message.error('添加场地失败，请稍后再试！');
+           }
+
+        },err=>{
+            this.$message.error('添加场地失败，请稍后再试！');
+        })
+
+           
       }
-      
 	}
 
 }
