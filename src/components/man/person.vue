@@ -13,7 +13,7 @@
         <el-upload
                 class="upload-style"
                 action="https://jsonplaceholder.typicode.com/posts/"
-                :on-change="handleChange"
+                :on-change="searchChange"
                 :auto-upload="false"
                 :show-file-list="false"
                 >
@@ -42,24 +42,18 @@
                </tr>
              </thead>
              <tbody>
-               <tr @click="show">
-                 <td><i></i></td>
+            
+               <tr @click="show" v-for="item in data">
+                 <td><i :class="chose"></i></td>
                  <td><img src="../../assets/images/sur-bg1.png"></td>
-                 <td>于文文1号</td>
-                 <td>2018-03-11 22:00:00</td>
-                 <td>于文文1号</td>
+                 <td>{{item.name}}</td>
                  <td>
-                   2018-03-11 22:00:00
+                   <span v-if="item.face_type==1">VIP</span>
+                   <span v-else>访客</span>
                  </td>
-               </tr>
-               <tr @click="show">
-                 <td><i class="chose"></i></td>
-                 <td><img src="../../assets/images/sur-bg1.png"></td>
-                 <td>于文文1号</td>
-                 <td>2018-03-11 22:00:00</td>
-                 <td>于文文1号</td>
+                 <td>{{item.build_time}}</td>
                  <td>
-                   2018-03-11 22:00:00
+                   
                  </td>
                </tr>
              </tbody>
@@ -243,8 +237,7 @@
           <div class="content-up">
             <div class="img-box">
               <img :src="img" v-if="img">
-              <img src="../../assets/images/icon-tou.png" v-else>
-              <div><img src="../../assets/images/camera.png"></div>
+              <img src="../../assets/images/icon-tou.png" v-else :class="{'uncheck':check.img}">
             </div>
             <el-upload
               class="upload-demo"
@@ -258,7 +251,7 @@
           <!--   <p class="tit-tou">上传头像</p> -->
             <p class="name-ipt">
               <span><i class="red">*</i>姓名</span>
-              <input type="text" name="" placeholder="请输入姓名，20字以内，必须填">
+              <input type="text" name="" placeholder="请输入姓名，20字以内，必须填" :class="{'uncheck':check.input}" v-model="name">
             </p>
             <p class="name-ipt">
               <span><i class="red"></i>类型</span>
@@ -267,8 +260,8 @@
             </p>
           </div>
           <span slot="footer" class="dialog-footer">
-            <span class="warn-box"><i></i>旧密码不正确</span>
-            <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
+            <span class="warn-box" v-show="err"><i></i>{{errtit}}</span>
+            <el-button type="primary" @click="addConfirm">确 定</el-button>
             <el-button @click="dialogVisible = false">取 消</el-button> 
           </span>
         </el-dialog>
@@ -307,11 +300,22 @@ export default {
       type:'1',
       title:"新增人员",
       img:"",
-      btntext:"上传头像"
+      btntext:"上传头像",
+      searchimg:"",
+      check:{
+        img:false,
+        input:false
+      },
+      err:false,
+      errtit:"",
+      name:"",
+      imgtype:"",
+      id:"",
+      choseArr:[]
     }
   },
   mounted(){
-    
+      this.id = sessionStorage.getItem("users");
   },
   methods:{
     handleSizeChange(){
@@ -330,12 +334,25 @@ export default {
 
     },
     addFn(){
+      this.check.img = false;
+      this.check.input = false;
+      this.name = "";
+      this.type = "1";
       this.title = "新增人员";
+      this.btntext = "上传头像";
+      this.img = "";
+      this.err = false;
+
       this.dialogVisible = true;
     },
     handleChange(file,fileList){
+      if(file.name.indexOf(".")!=-1){
+        let arr = file.name.split(".");
+        this.imgtype = arr[arr.length-1];
+      }
       //创建blob对象
       let blob = new Blob([file.raw],{type:file.raw.type});
+      //this.imgtype = 
       let that = this;
       let reader = new FileReader();
       reader.readAsDataURL(blob);
@@ -347,6 +364,68 @@ export default {
     },
     handleCheckAllChange(){
 
+    },
+    searchChange(file){
+      let blob = new Blob([file.raw],{type:file.raw.type});
+      let that = this;
+      let reader = new FileReader();
+      reader.readAsDataURL(blob);
+      reader.onload = function (e) {
+          // 图片的 base64 格式, 可以直接当成 img 的 src 属性值      
+          that.searchimg = reader.result;
+      };
+    },
+    getList(){
+      this.$api.post("/client_mng_query_face_api",{
+          company_id:this.id
+        },
+        su=>{
+          if(su.code==200){
+            this.data = su.data;
+          }
+        },
+        err=>{
+
+      })
+    },
+    addConfirm(){
+      if(!this.img){
+        this.err = true;
+        this.errtit = "请上传头像";
+        this.check.img = true;
+        return
+      }
+      if(!this.name){
+        this.err = true;
+        this.errtit = "请填写姓名";
+        this.check.input = true;
+        return
+      }
+      this.$api.post("/client_mng_add_face_api",
+        {
+          company_id:this.id,
+          face_type:this.type,
+          face_user_name:this.name,
+          face_image_type:this.face_image_type,
+          face_image_data:this.imgtype
+        },
+        su=>{
+          if(su.code==200){
+            this.dialogVisible = false;
+            this.$message({
+              message: su.msg,
+              type: 'success'
+            });
+          }else{
+            this.$message({
+              message: su.msg,
+              type: 'warning'
+            });
+          }
+        },
+        err=>{
+
+      })
     }
   }
 }
@@ -693,26 +772,14 @@ export default {
     font-size:16px;
     color:rgba(77,77,77,1);
     position: relative;
-
-    >div{
-      width: 120px;
-      height: 120px;
-      position: absolute;
-      background:rgba(0,0,0,1);
-      opacity:0.55;
-      display: none;
-      top:0;
-      border-radius: 50%;
-      line-height: 140px;
-      img{
-        width: 46px;
-        height: 40px;
-      }
-    }
     >img{
       width: 120px;
       height: 120px;
       border-radius: 50%;
+      border: 2px solid transparent;
+    }
+    >img.uncheck{
+      border: 2px solid #F84C4C;
     }
   }
   .tit-tou{
@@ -737,6 +804,9 @@ export default {
       border-radius: 4px;
       border:1px solid RGBA(204, 204, 204, 1); 
       text-indent: 10px;
+    }
+    input.uncheck{
+      border:1px solid #F84C4C; 
     }
   }
 }
