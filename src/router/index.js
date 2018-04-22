@@ -47,7 +47,7 @@ export default new Router({
           component:Places
         },
         {
-          path:"equipment",
+          path:"/equipment/:id",
           name:"Equipment",
           component:Equipment
         },

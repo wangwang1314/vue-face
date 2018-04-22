@@ -7,12 +7,12 @@
           </div>
          
           <h2>
-          	深圳飞马科技有限公司（企业ID：1234）
+          	{{user_name}}(企业ID：{{id}}）
           </h2>
        </div>
        <p class="data-all">共 <span>992</span>条数据</p>
        <div class="add-del">
-       	   <button type="button" @click="showAddPlace">添加场地</button>
+       	   <button type="button" @click="showAddPlace(1)">添加场地</button>
      
        </div>
        <div class="has-slect">
@@ -41,33 +41,37 @@
 		    <el-table-column
 		      label="场地编号"
 		      show-overflow-tooltip
-		      prop="cpnName">
+		      prop="place_id">
 		     
 		    </el-table-column>
 
 		    <el-table-column
-		      prop="cpnId"
+		      prop="place_address"
 		      label="场地名称"
 		      show-overflow-tooltip
 		       >
 		    </el-table-column>
 
 		    <el-table-column
-		      prop="cpnTel"
+		      prop="place_latitude"
 		      label="经度"
 		      show-overflow-tooltip
 		     >
 		    </el-table-column>
 
 		    <el-table-column
-		      prop="conetTel"
+		      prop=""
 		      label="联系电话"
 		      show-overflow-tooltip
 		     >
+         
+          <template slot-scope="scope">
+               {{contNum}}
+          </template>
 		    </el-table-column>
 		
 		  <el-table-column
-		      prop="conetName"
+		      prop="place_longitude"
 		      label="纬度"
 		      show-overflow-tooltip
 		     >
@@ -81,8 +85,8 @@
 		      >
 		      <template slot-scope="scope">
 		          <div class="opartion">
-		            <span>编辑</span>|
-	                <span>删除</span>|
+		            <span @click="showAddPlace(2,scope.row)">编辑</span>|
+	                <span @click="delPlace(scope.row.place_id)">删除</span>|
 	                <span>设备管理</span>
 		          	
 		          </div>
@@ -109,7 +113,7 @@
 
   <el-dialog
   class="add-user"
-  title="添加场地"
+  :title="dtital"
   :visible.sync="dialogVisible"
   width="584px"
   height="486px"
@@ -122,7 +126,8 @@
             </td>
            <td>
             <div class="err-cont">
-                <input placeholder=""  v-model="place_id" class='place-set' :class="{'ip-err':pliderr==true}"/>
+                <em v-show="isEdite==true">{{fixid}}</em>
+                <input placeholder="" v-show="isEdite==false"  v-model="place_id" class='place-set' :class="{'ip-err':pliderr==true}"/>
                 <span v-show="pliderr==true">
                   <i class="el-icon-warning"></i>
                   {{plerrtxt}}
@@ -191,13 +196,26 @@
   </div>
   <span slot="footer" class="dialog-footer">
     
-     <el-button type="primary" @click="addPlace">确 定</el-button>
+     <el-button type="primary" v-if="isEdite==false" @click="addPlace(1)">确 定</el-button>
+     <el-button type="primary" v-if="isEdite==true" @click="addPlace(2)">确 定</el-button>
     <el-button @click="dialogVisible = false">取 消</el-button>
   
   </span>
 </el-dialog>
 
 
+
+<el-dialog
+  title="删除场地"
+  :visible.sync="isDel"
+  width="460px"
+  :before-close="handleClose">
+  <span>确定删除选择的场地吗？</span>
+  <span slot="footer" class="dialog-footer">
+    <el-button type="primary" @click="delFn">确 定</el-button>
+     <el-button @click="isDel = false">取 消</el-button>
+  </span>
+</el-dialog>
 
   </div>
 </template>
@@ -220,7 +238,14 @@ export default{
          longerr:false,//经度错误
          laterr:false,//纬度错误，
          place_id:"",//地点ID
-         place_address:"",//地点
+         place_address:"",//地点,
+         user_name:"",
+         contNum:'',
+         dtital:"",
+         delId:'',//删除的Id
+         isDel:false,//是否删除场地,
+         isEdite:false,//是否编辑
+         fixid:"",
          place_latitude:{
             lat1:"",
             lat2:"",
@@ -233,46 +258,7 @@ export default{
          },
 
          tableData3: [
-           {
-           	cpnName:"飞马科技sdfsdfsdfsdfsdf",
-           	cpnId:110,
-           	cpnTel:"0775-8789443",
-           	conetTel:13686800944,
-           	conetName:"jack",
-           	openTime:"2018-01-21 08:00:00",
-           	places:"宝体",
-           	equipment:"摄像头"
-           },
-           {
-           	cpnName:"飞马科技",
-           	cpnId:110,
-           	cpnTel:"0775-8789443",
-           	conetTel:13686800944,
-           	conetName:"jack",
-           	openTime:"2018-01-21 08:00:00",
-           	places:"宝体",
-           	equipment:"摄像头"
-           },
-           {
-           	cpnName:"飞马科技",
-           	cpnId:110,
-           	cpnTel:"0775-8789443",
-           	conetTel:13686800944,
-           	conetName:"jack",
-           	openTime:"2018-01-21 08:00:00",
-           	places:"宝体",
-           	equipment:"摄像头"
-           },
-           {
-           	cpnName:"飞马科技",
-           	cpnId:110,
-           	cpnTel:"0775-8789443",
-           	conetTel:13686800944,
-           	conetName:"jack",
-           	openTime:"2018-01-21 08:00:00",
-           	places:"宝体",
-           	equipment:"摄像头"
-           }
+           
          ],
         multipleSelection: []
       }
@@ -295,52 +281,127 @@ export default{
       handleCurrentChange(val) {
         console.log(`当前页: ${val}`);
       },
+      handleClose(){
+         this.dialogVisible = false;
+      },
       initList(){
          this.$api.post("/common_query_company_api",{
            "company_id":parseInt(this.id),
          },su=>{
           console.log(su);
+          if(su.code==200){
+             this.tableData3 = su.data;
+               this.contNum = su.mobile;
+               this.user_name = su.user_name;
+          }
          },err=>{
 
          })
       },
       //添加场地
-      showAddPlace(){
-         this.pliderr=false;
+      showAddPlace(v,d){
+         if(v==1){
+            this.dtital="添加场地";
+          this.pliderr=false;
          this.plerrtxt="";
+         this.isEdite = false;
          this.plname=false;
          this.longerr=false;
          this.laterr=false;
          this.place_id = "";
          this.place_address = "";
-          this.place_latitude = {
+         this.place_latitude = {
             lat1:"",
             lat2:"",
             lat3:""
-         },//经度
+         };//经度
          this.place_longitude = {
             long1:"",
             long2:"",
             long3:""
-         },
+         };
+       }
+         else{
+         this.dtital="编辑场地";
+         this.pliderr=false;
+         this.plerrtxt="";
+         this.plname=false;
+         this.longerr=false;
+         this.laterr=false;
+         this.isEdite = true;
+         this.fixid = d.place_id;
+         this.place_address = d.place_address;
+          this.place_latitude = {
+            lat1:d.place_latitude,
+            lat2:d.place_latitude,
+            lat3:""
+         };//经度
+         this.place_longitude = {
+            long1:d.place_longitude,
+            long2:d.place_longitude,
+            long3:""
+         };
+
+         }
+         
 
          this.dialogVisible = true;
 
       },
-      addPlace(){
+      //删除询问
+      delPlace(v){
+        console.log(v);
+        this.delId = v;
+        this.isDel = true;
 
-        if(!this.place_id){
+      },
+      //删除场地方法
+      delFn(){
+          this.$api.post("/admin_del_place_api",{
+             company_id:parseInt(this.id),
+             place_id:this.delId
+
+          },su=>{
+            console.log(su);
+            if(su.code==200){
+              this.isDel = false;
+              this.initList();
+              this.$message({
+                message: '删除场地成功！',
+                type: 'success'
+              });
+            
+            }else{
+               this.$message.error('删除场地失败，请稍后再试！');
+            }
+
+          },err=>{
+               this.$message.error('删除场地失败，请稍后再试！');
+          })
+
+      },
+      addPlace(v){
+
+        let url = "";
+
+        if(v==1){
+           url = "/admin_add_place_api";
+          if(!this.place_id){
            this.pliderr=true,
            this.plerrtxt="场地编号不能为空";
            return
         }
 
+        }else{
+          this.place_id= this.fixid;
+          url = "/admin_update_place_api";
+        }
+
+        
         if(!this.place_address){
            this.plname=true;
            return
         }
-
-
         if(!this.place_latitude.lat1 || !this.place_latitude.lat2){
            this.longerr=true;
            return
@@ -353,7 +414,7 @@ export default{
 
         let lats= this.place_latitude.lat1+'.'+this.place_latitude.lat2;
         let longs = this.place_longitude.long1+'.'+this.place_longitude.long2;
-        this.$api.post("/admin_add_place_api",{
+        this.$api.post(url,{
 
             company_id:parseInt(this.id),
             place_address:this.place_address,
@@ -364,6 +425,9 @@ export default{
         },su=>{
            if(su.code==200){
                this.dialogVisible = false;
+
+                this.initList();
+
                 this.$message({
                 message: '添加场地成功！',
                 type: 'success'

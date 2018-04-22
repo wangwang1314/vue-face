@@ -93,7 +93,7 @@
 		      show-overflow-tooltip
 		    >
 		     <template slot-scope="scope">
-		          <router-link to="Equipment" class="eq-link">设备管理</router-link>
+		          <router-link :to="{name :'Equipment',params:{id:scope.row.company_id}}" class="eq-link">设备管理</router-link>
 		      </template>
 		    </el-table-column>
 
