@@ -311,11 +311,13 @@ export default {
       name:"",
       imgtype:"",
       id:"",
-      choseArr:[]
+      choseArr:[],
+      data:[]
     }
   },
   mounted(){
-      this.id = sessionStorage.getItem("users");
+      this.id = Number(sessionStorage.getItem("users"));
+      this.getList();
   },
   methods:{
     handleSizeChange(){
@@ -401,13 +403,14 @@ export default {
         this.check.input = true;
         return
       }
+      let str = this.img.split(",");
       this.$api.post("/client_mng_add_face_api",
         {
-          company_id:this.id,
-          face_type:this.type,
+          company_id:Number(this.id),
+          face_type:Number(this.type),
           face_user_name:this.name,
-          face_image_type:this.face_image_type,
-          face_image_data:this.imgtype
+          face_image_type:this.imgtype,
+          face_image_data:str[1]
         },
         su=>{
           if(su.code==200){
@@ -431,7 +434,6 @@ export default {
 }
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang='scss' scoped>
 .person{
     min-width: 1027px;

@@ -79,7 +79,6 @@ export default {
       arr:['1','2','3'],
       dialogVisible:false,
       id:"",
-      name:"",
       change:false,
       err:false,
       errtit:"",
@@ -115,7 +114,7 @@ export default {
     reset(){
       this.dialogVisible = true;
       this.change = false;
-      initcheck();
+      this.initcheck();
     },
     changeFn(){
       this.change = true;
@@ -176,7 +175,7 @@ export default {
       }
       this.$api.post("/client_mng_passwd_api",
         {
-          company_id:sessionStorage.getItem("users"),
+          company_id:this.id,
           old_passwd:this.reseted.pass,
           new_passwd:this.reseted.new
         }
@@ -201,7 +200,7 @@ export default {
     }
   },
   mounted(){
-      this.name = sessionStorage.getItem("users");
+      this.id = Number(sessionStorage.getItem("users"));
       if(JSON.stringify(this.$store.state.data)=="{}"){
         this.getInfo();
       }

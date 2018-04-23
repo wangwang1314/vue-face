@@ -2,14 +2,15 @@
     <div class="person" >
       <div class="header">
         <span>头像</span>
-         <el-select v-model="value4" clearable placeholder="请选择" class="sur-selct">
-          <el-option
-            v-for="item in options"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value">
-          </el-option>
-        </el-select>
+          <el-upload
+                class="upload-style"
+                action="https://jsonplaceholder.typicode.com/posts/"
+                :on-change="searchChange"
+                :auto-upload="false"
+                :show-file-list="false"
+                >
+                <button  class="sur-selct btn-upload">请上传图片搜头像<i></i></button>
+          </el-upload>
          <span>姓名</span>
          <input type="text" name="" placeholder="请输入姓名搜索">
       </div>
@@ -389,5 +390,28 @@ export default {
 .red{
   color: RGBA(229, 56, 56, 1);
   margin-right: 3px;
+}
+
+.upload-style{
+  display: inline-block;
+}
+.btn-upload{
+  border: 1px solid #ccc;
+  background: #fff;
+  color: #4D4D4D;
+  text-indent: 16px;
+  text-align: left;
+  cursor: pointer;
+  i{
+    display:inline-block;
+    content: "";
+    width: 14px;
+    height: 11px;
+    background: url(../../assets/images/camera-icon.png);
+    float: right;
+    margin-right: 15px;
+    position: relative;
+    top:3px;
+  }
 }
 </style>
