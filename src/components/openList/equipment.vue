@@ -14,7 +14,7 @@
        </div>
        <p class="data-all">共 <span>992</span>条数据</p>
        <div class="add-del">
-       	   <button type="button" @click="addequiment">添加设备</button>
+       	   <button type="button" @click="addequimentFn(1)">添加设备</button>
      
        </div>
        <div class="has-slect">
@@ -43,7 +43,7 @@
 		    <el-table-column
 		      label="摄像头ID"
 		      show-overflow-tooltip
-		      prop="cpnName">
+		      prop="device_id">
 		     
 		    </el-table-column>
 
@@ -60,54 +60,54 @@
 		    </el-table-column>
 
 		    <el-table-column
-		      prop="cpnTel"
+		      prop="device_address"
 		      label="安装地址"
 		      show-overflow-tooltip
 		     >
 		    </el-table-column>
 
 		    <el-table-column
-		      prop="conetTel"
+		      prop="device_latitude"
 		      label="经度"
 		      show-overflow-tooltip
 		     >
 		    </el-table-column>
 		
 		  <el-table-column
-		      prop="conetName"
+		      prop="device_longitude"
 		      label="纬度"
 		      show-overflow-tooltip
 		     >
 		    </el-table-column>
 
          <el-table-column
-          prop="conetName"
+          prop="device_ip"
           label="摄像头IP"
           show-overflow-tooltip
          >
         </el-table-column>
 
          <el-table-column
-          prop="conetName"
+          prop="device_heigh"
           label="摄像头像素高度"
           show-overflow-tooltip
          >
         </el-table-column>
          <el-table-column
-          prop="conetName"
+          prop="device_width"
           label="摄像头像素宽度"
           show-overflow-tooltip
          >
         </el-table-column>
 
          <el-table-column
-          prop="conetName"
+          prop="device_login"
           label="摄像头账号"
           show-overflow-tooltip
          >
         </el-table-column>
          <el-table-column
-          prop="conetName"
+          prop="device_pwd"
           label="摄像头密码"
           show-overflow-tooltip
          >
@@ -121,8 +121,8 @@
 		      >
 		      <template slot-scope="scope">
 		          <div class="opartion">
-		            <span>编辑</span>|
-	                <span>删除</span>
+		            <span @click="addequimentFn(2,scope.row)">编辑</span>|
+	                <span @click="delPlace(scope.row.device_id)">删除</span>
 		          </div>
 		      </template>
 		    </el-table-column>
@@ -157,7 +157,8 @@
                <span class="ms-write">摄像头ID</span>
              </td>
              <td>
-               <input type="" class="ip-err place-set" placeholder="50个字符以内" name="">
+          
+               <input type="" class="place-set"  v-model="device_id" @keyup="errhide" placeholder="50个字符以内" maxlength="50" :class="{'ip-err':deverr1==true}" name="">
              </td>
            </tr>
             <tr>
@@ -175,9 +176,9 @@
             <tr>
              <td>
                <span class="ms-write">安装地址</span>
-             </td>
+             </td> 
              <td>
-               <input type="" class="place-set" placeholder="20个字符以内" name="">
+               <input type="" class="place-set"  v-model="device_address"  @keyup="errhide" :class="{'ip-err':deverr2==true}" maxlength="20" placeholder="20个字符以内" name="">
              </td>
            </tr>
             <tr>
@@ -187,9 +188,9 @@
              <td>
               
             <div class="err-cont after-ip">
-              <input type="" name="" class="ip-lt">
-              <input type="" name="" class="ip-lt">
-              <input type="" name="" class="ip-lt">
+              <input type="" name="" class="ip-lt" v-model = "place_latitude.lat1"  @keyup="errhide" :class="{'ip-err':deverr3==true}">
+              <input type="" name="" class="ip-lt" v-model = "place_latitude.lat2"  @keyup="errhide" :class="{'ip-err':deverr3==true}">
+              <input type="" name="" class="ip-lt"  v-model ="place_latitude.lat3"  @keyup="errhide" :class="{'ip-err':deverr3==true}">
                
                 <em class="h">。</em>
                 <em class="s">'</em>
@@ -204,9 +205,9 @@
              </td>
              <td>
                <div class="err-cont after-ip">
-              <input type="" name="" class="ip-lt">
-              <input type="" name="" class="ip-lt">
-              <input type="" name="" class="ip-lt">
+              <input type="" name="" class="ip-lt"  v-model = "place_longitude.long1" @keyup="errhide"  :class="{'ip-err':deverr4==true}">
+              <input type="" name="" class="ip-lt"  v-model = "place_longitude.long2" @keyup="errhide" :class="{'ip-err':deverr4==true}">
+              <input type="" name="" class="ip-lt"  v-model = "place_longitude.long3" @keyup="errhide" :class="{'ip-err':deverr4==true}">
                
                 <em class="h">。</em>
                 <em class="s">'</em>
@@ -220,7 +221,7 @@
                  <span class="ms-write">摄像头IP</span>
              </td>
              <td>
-               <input type="" class="place-set"  name="">
+               <input type="" class="place-set"  v-model="device_ip" name=""  @keyup="errhide" :class="{'ip-err':deverr5==true}">
              </td>
            </tr>
             <tr>
@@ -228,7 +229,7 @@
                 <span class="ms-write">摄像头像素高度</span>
              </td>
              <td>
-               <input type="" class="place-set" name="">
+               <input type="" class="place-set" v-model="device_heigh" @keyup="errhide"  name="" :class="{'ip-err':deverr6==true}">
              </td>
            </tr>
             <tr>
@@ -236,7 +237,7 @@
                   <span class="ms-write">摄像头像素宽度</span>
              </td>
              <td>
-                 <input type="" class="place-set" name="">
+                 <input type="" class="place-set" v-model="device_width"  @keyup="errhide" name="" :class="{'ip-err':deverr7==true}">
              </td>
            </tr>
             <tr>
@@ -244,7 +245,7 @@
                 <span class="ms-write">摄像头账号</span>
              </td>
              <td>
-               <input type="" class="place-set" name="">
+               <input type="" class="place-set" name="" v-model="device_login" @keyup="errhide"  :class="{'ip-err':deverr8==true}">
              </td>
            </tr>
             <tr>
@@ -252,19 +253,31 @@
                 <span class="ms-write">摄像头密码</span> 
              </td>
              <td>
-               <input type="" class="place-set"  name="">
+               <input type="" class="place-set"  v-model="device_pwd" name=""  @keyup="errhide" :class="{'ip-err':deverr9==true}">
              </td>
            </tr>
          </tbody>
        </table>
    </div>
   <span slot="footer" class="dialog-footer">
-     <span class="add-err">
+     <span class="add-err" v-show="isErr==true">
       <i class="el-icon-warning"></i>
-       存在相同的公司名称
+       {{errtx}}
     </span>
-    <el-button @click="dialogVisible = false">取 消</el-button>
-    <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
+    <el-button @click="addequiment = false">取 消</el-button>
+    <el-button type="primary" @click="comfirmFn">确 定</el-button>
+  </span>
+</el-dialog>
+
+<el-dialog
+  title="删除设备"
+  :visible.sync="isDel"
+  width="460px"
+  :before-close="handleClose">
+  <span>确定删除选择的设备吗？</span>
+  <span slot="footer" class="dialog-footer">
+    <el-button type="primary" @click="delFn">确 定</el-button>
+     <el-button @click="isDel = false">取 消</el-button>
   </span>
 </el-dialog>
 
@@ -282,57 +295,56 @@ export default{
          pawerr:true,
          inout:1,
          radio:'1',
-         addequiment:true,
+         addequiment:false,
          currentPage2: 5,
+         isErr:false,
+         errtx:"",
+          place_latitude:{//经度
+            lat1:"",
+            lat2:"",
+            lat3:""
+         },//经度
+         place_longitude:{
+            long1:"",
+            long2:"",
+            long3:""
+         },//纬度
          tableData3: [
-           {
-           	cpnName:"飞马科技sdfsdfsdfsdfsdf",
-           	cpnId:110,
-           	cpnTel:"0775-8789443",
-           	conetTel:13686800944,
-           	conetName:"jack",
-           	openTime:"2018-01-21 08:00:00",
-           	places:"宝体",
-           	equipment:"摄像头"
-           },
-           {
-           	cpnName:"飞马科技",
-           	cpnId:110,
-           	cpnTel:"0775-8789443",
-           	conetTel:13686800944,
-           	conetName:"jack",
-           	openTime:"2018-01-21 08:00:00",
-           	places:"宝体",
-           	equipment:"摄像头"
-           },
-           {
-           	cpnName:"飞马科技",
-           	cpnId:110,
-           	cpnTel:"0775-8789443",
-           	conetTel:13686800944,
-           	conetName:"jack",
-           	openTime:"2018-01-21 08:00:00",
-           	places:"宝体",
-           	equipment:"摄像头"
-           },
-           {
-           	cpnName:"飞马科技",
-           	cpnId:110,
-           	cpnTel:"0775-8789443",
-           	conetTel:13686800944,
-           	conetName:"jack",
-           	openTime:"2018-01-21 08:00:00",
-           	places:"宝体",
-           	equipment:"摄像头"
-           }
+           
          ],
+         device_id:"",
+         device_address:"",
+         device_latitude:"",
+         device_longitude:"",
+         device_ip:"",
+         device_heigh:"",
+         device_width:"",
+         device_login:"",
+         device_pwd:"",
+          //表单错误
+         deverr1:false,
+         deverr2:false,
+         deverr3:false,
+         deverr4:false,
+         deverr5:false,
+         deverr6:false,
+         deverr7:false,
+         deverr8:false,
+         deverr9:false,
+         contNum:0,
+         user_name:"",
+         dtitle:"",
+         isDel:false,
+         delId:'',
+
+
         multipleSelection: []
       }
       
 
 	},
 	mounted(){
-  
+    this.initList();
 	},
 	methods:{
 		
@@ -344,6 +356,232 @@ export default{
       },
       handleCurrentChange(val) {
        
+      },
+      handleClose(){
+         this.addequiment = false;
+      },
+      addequimentFn(v,d){
+         if(v==1){
+          this.dtitle="添加设备";
+          this.place_latitude={//经度
+            lat1:"",
+            lat2:"",
+            lat3:""
+         },//经度
+         this.place_longitude={
+            long1:"",
+            long2:"",
+            long3:""
+         },//纬度
+         this.device_id="";
+         this.device_address="";
+         this.device_latitude="";
+         this.device_longitude="";
+         this.device_ip="";
+         this.device_heigh="";
+         this.device_width="";
+         this.device_login="";
+         this.device_pwd="";
+
+         }else{
+           this.dtitle="修改设备";
+            this.place_latitude = {
+            lat1:d.device_latitude,
+            lat2:d.device_latitude,
+            lat3:""
+         };//经度
+         this.place_longitude = {
+            long1:d.device_longitude,
+            long2:d.device_longitude,
+            long3:""
+         };
+
+          this.device_id=d.device_id;
+         this.device_address=d.device_address;
+         this.device_latitude=d.device_latitude;
+         this.device_longitude=d.device_longitude;
+         this.device_ip=d.device_ip;
+         this.device_heigh=d.device_heigh;
+         this.device_width=d.device_width;
+         this.device_login=d.device_login;
+         this.device_pwd=d.device_pwd;
+
+
+         }
+
+         this.isErr = false;
+         this.deverr1 = false;
+         this.deverr2 = false;
+         this.deverr3 = false;
+         this.deverr4 = false;
+         this.deverr5 = false;
+         this.deverr6 = false;
+         this.deverr7 = false;
+         this.deverr8 = false;
+         this.deverr9 = false;
+         this.addequiment = true;
+
+      },
+      initList(){
+         this.$api.post("/common_query_place_api",{
+           "company_id":101,
+           place_id:11
+
+         },su=>{
+          console.log(su);
+          if(su.code==200){
+               this.tableData3 = su.data;
+               this.contNum = su.mobile;
+               this.user_name = su.user_name;
+          }
+         },err=>{
+
+         })
+      },
+      errhide(){
+         this.deverr1 = false,
+         this.deverr2 = false,
+         this.deverr3 = false,
+         this.deverr4 = false,
+         this.deverr5 = false,
+         this.deverr6 = false,
+         this.deverr7 = false,
+         this.deverr8 = false,
+         this.deverr9 = false,
+         this.isErr =false;
+      },
+      //添加设备
+      comfirmFn(){
+          if(!this.device_id){
+             this.deverr1 = true;
+             this.isErr =true;
+             this.errtx = "摄像头ID不能为空"
+             return
+          }
+
+          if(!this.device_address){
+             this.deverr2 = true;
+             this.isErr =true;
+             this.errtx = "安装地址不能为空"
+             return
+          }
+
+           if(!this.place_latitude.lat1 || !this.place_latitude.lat2){
+             this.deverr3 = true;
+             this.isErr =true;
+             this.errtx = "经度不能为空"
+             return
+          }
+           if(!this.place_longitude.long1 || !this.place_longitude.long2){
+             this.deverr4 = true;
+             this.isErr =true;
+             this.errtx = "纬度不能为空"
+             return
+          }
+           if(!this.device_ip){
+             this.deverr5 = true;
+             this.isErr =true;
+             this.errtx = "摄像头IP不能为空"
+             return
+          }
+           if(!this.device_heigh){
+             this.deverr6 = true;
+             this.isErr =true;
+             this.errtx = "摄像头像素高度不能为空"
+             return
+          }
+           if(!this.device_width){
+             this.deverr7 = true;
+             this.isErr =true;
+             this.errtx = "摄像头像素宽度不能为空"
+             return
+          }
+           if(!this.device_login){
+             this.deverr8 = true;
+             this.isErr =true;
+             this.errtx = "摄像头账号不能为空"
+             return
+          }
+           if(!this.device_pwd){
+             this.deverr9= true;
+             this.isErr =true;
+             this.errtx = "摄像头密码不能为空"
+             return
+          }
+          let lats= this.place_latitude.lat1+'.'+this.place_latitude.lat2;
+          let longs = this.place_longitude.long1+'.'+this.place_longitude.long2;
+          let url = "";
+          if(this.dtitle == "添加设备"){
+             url = "/admin_add_device_api";
+          }else{
+            url = "/admin_update_device_api";
+          }
+
+          this.$api.post(url,{
+             company_id:101,
+             place_id:11,
+             device_id:this.device_id,
+             device_address:this.device_address,
+             device_latitude:lats,
+             device_longitude:longs,
+             device_ip:this.device_ip,
+             device_heigh:parseInt(this.device_heigh),
+             device_width:parseInt(this.device_width),
+             device_login:this.device_login,
+             device_pwd:this.device_pwd
+
+          },su=>{
+              console.log(su)
+              if(su.code==200){
+                  this.addequiment = false;
+                  this.initList ();
+                  this.$message({
+                  message: '添加场地成功！',
+                  type: 'success'
+              });
+            }else if(su.code==408){
+                this.deverr1 = true;
+                this.isErr =true;
+                this.errtx = "存在相同的摄像头ID"
+            }else{
+               this.$message.error('添加场地失败，请稍后再试！');
+            }
+          },err=>{
+             this.$message.error('添加场地失败，请稍后再试！');
+          })
+
+      },
+       //删除询问
+      delPlace(v){
+        console.log(v);
+        this.delId = v;
+        this.isDel = true;
+
+      },
+       //删除场地方法
+      delFn(){
+          this.$api.post("/admin_del_device_api",{
+             company_id:101,
+             place_id:11,
+             device_id:this.delId
+          },su=>{
+            console.log(su);
+            if(su.code==200){
+              this.isDel = false;
+              this.initList();
+              this.$message({
+                message: '删除设备成功！',
+                type: 'success'
+              });
+            
+            }else{
+               this.$message.error('删除场地失败，请稍后再试！');
+            }
+
+          },err=>{
+               this.$message.error('删除场地失败，请稍后再试！');
+          })
+
       }
       
 	}
