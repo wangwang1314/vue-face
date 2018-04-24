@@ -44,7 +44,7 @@
              <tbody>
             
                <tr @click="show" v-for="item in data">
-                 <td><i :class="chose"></i></td>
+                 <td><i class="chose"></i></td>
                  <td><img src="../../assets/images/sur-bg1.png"></td>
                  <td>{{item.name}}</td>
                  <td>
