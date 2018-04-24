@@ -74,23 +74,32 @@
        <!--  添加白名单 -->
        <div class="box">
           <el-dialog
-          title="添加白名单"
+          :title="title"
           :visible.sync="dialogVisible"
           width="720px">
           <div class="content-up">
             <div class="img-box">
-              <img src="../../assets/images/icon-tou.png">
-              <div><img src="../../assets/images/camera.png"></div>
+              <img :src="img" v-if="img">
+              <img src="../../assets/images/icon-tou.png" v-else :class="{'uncheck':check.img}">
             </div>
-            <p class="tit-tou"><i class="red">*</i>上传头像</p>
+            <el-upload
+              class="upload-demo"
+              action="https://jsonplaceholder.typicode.com/posts/"
+              :on-change="handleChange"
+              :auto-upload="false"
+              :show-file-list="false"
+              >
+              <el-button size="small" type="primary" class="tit-tou">{{btntext}}</el-button>
+            </el-upload>
+          <!--   <p class="tit-tou">上传头像</p> -->
             <p class="name-ipt">
               <span><i class="red">*</i>姓名</span>
-              <input type="text" name="" placeholder="请输入姓名，20字以内，必须填">
+              <input type="text" name="" placeholder="请输入姓名，20字以内，必须填" :class="{'uncheck':check.input}" v-model="name">
             </p>
           </div>
           <span slot="footer" class="dialog-footer">
-            <span class="warn-box"><i></i>旧密码不正确</span>
-            <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
+            <span class="warn-box" v-show="err"><i></i>{{errtit}}</span>
+            <el-button type="primary" @click="addConfirm">确 定</el-button>
             <el-button @click="dialogVisible = false">取 消</el-button> 
           </span>
         </el-dialog>
@@ -122,10 +131,24 @@ export default {
       slider:false,
       page:0,
       dialogVisible:false,
+      searchimg:"",
+      title:"添加白名单",
+      img:"",
+      btntext:"上传头像",
+      searchimg:"",
+      check:{
+        img:false,
+        input:false
+      },
+      err:false,
+      errtit:"",
+      name:"",
+      imgtype:"",
+      id:""
     }
   },
   mounted(){
-    
+     this.id = Number(sessionStorage.getItem("users"));
   },
   methods:{
     handleSizeChange(){
@@ -139,6 +162,71 @@ export default {
     },
     addman(){
       this.dialogVisible = true;
+    },
+    searchChange(file){
+      let blob = new Blob([file.raw],{type:file.raw.type});
+      let that = this;
+      let reader = new FileReader();
+      reader.readAsDataURL(blob);
+      reader.onload = function (e) {
+          // 图片的 base64 格式, 可以直接当成 img 的 src 属性值      
+          that.searchimg = reader.result;
+      };
+    },
+    handleChange(file,fileList){
+      if(file.name.indexOf(".")!=-1){
+        let arr = file.name.split(".");
+        this.imgtype = arr[arr.length-1];
+      }
+      //创建blob对象
+      let blob = new Blob([file.raw],{type:file.raw.type});
+      //this.imgtype = 
+      let that = this;
+      let reader = new FileReader();
+      reader.readAsDataURL(blob);
+      reader.onload = function (e) {
+          // 图片的 base64 格式, 可以直接当成 img 的 src 属性值      
+          that.img = reader.result;
+          that.btntext = "重新上传";
+      };
+    },
+    addConfirm(){
+      if(!this.img){
+        this.err = true;
+        this.errtit = "请上传头像";
+        this.check.img = true;
+        return
+      }
+      if(!this.name){
+        this.err = true;
+        this.errtit = "请填写姓名";
+        this.check.input = true;
+        return
+      }
+      this.$api.post("/client_mng_add_white_list_api",
+        {
+          company_id:Number(this.id),
+          face_user_name:this.name,
+          face_image_type:this.imgtype,
+          face_image_data:this.img
+        },
+        su=>{
+          if(su.code==200){
+            this.dialogVisible = false;
+            this.$message({
+              message: su.msg,
+              type: 'success'
+            });
+          }else{
+            this.$message({
+              message: su.msg,
+              type: 'warning'
+            });
+          }
+        },
+        err=>{
+
+      })
     }
   }
 }
@@ -147,6 +235,7 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang='scss' scoped>
 .person{
+    min-width: 1027px;
     background-color: #fff;
     margin:19px;
     min-height: 700px;
@@ -414,4 +503,10 @@ export default {
     top:3px;
   }
 }
+  .tit-tou{
+    color: RGBA(77, 77, 77, 1);
+    font-size: 16px;
+    background: #fff;
+    border: none;
+  }
 </style>

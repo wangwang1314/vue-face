@@ -2,20 +2,21 @@
     <div class="person" >
       <div class="header">
         <span>头像</span>
-         <el-select v-model="value4" clearable placeholder="请选择" class="sur-selct">
-          <el-option
-            v-for="item in options"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value">
-          </el-option>
-        </el-select>
+          <el-upload
+                class="upload-style"
+                action="https://jsonplaceholder.typicode.com/posts/"
+                :on-change="searchChange"
+                :auto-upload="false"
+                :show-file-list="false"
+                >
+                <button  class="sur-selct btn-upload">请上传图片搜头像<i></i></button>
+          </el-upload>
          <span>姓名</span>
          <input type="text" name="" placeholder="请输入姓名搜索">
       </div>
        <p class="su-tit">共 <span>992</span> 条数据</p>
        <p class="sur-num">
-         <span>添加黑名单</span>
+         <span @click="addman">添加黑名单</span>
          <span>删除黑名单</span>
        </p>
        <p class="chose-num"><i></i>已选择<span>13</span>项</p>
@@ -31,7 +32,7 @@
                </tr>
              </thead>
              <tbody>
-               <tr>
+               <tr @click="show">
                  <td><i></i></td>
                  <td><img src="../../assets/images/sur-bg1.png"></td>
                  <td>于文文1号</td>
@@ -41,7 +42,7 @@
                    2018-03-11 22:00:00
                  </td>
                </tr>
-               <tr>
+               <tr @click="show">
                  <td><i class="chose"></i></td>
                  <td><img src="../../assets/images/sur-bg1.png"></td>
                  <td>于文文1号</td>
@@ -64,6 +65,45 @@
               :total="1000">
             </el-pagination>
           </div>
+          <transition name="fade">
+            <div class="slider-box" v-if="slider">
+              <p class="close-p"><i @click="closeFn">×</i></p>
+            </div>
+        </transition>
+
+       <!--  添加黑名单 -->
+       <div class="box">
+          <el-dialog
+          :title="title"
+          :visible.sync="dialogVisible"
+          width="720px">
+          <div class="content-up">
+            <div class="img-box">
+              <img :src="img" v-if="img">
+              <img src="../../assets/images/icon-tou.png" v-else :class="{'uncheck':check.img}">
+            </div>
+            <el-upload
+              class="upload-demo"
+              action="https://jsonplaceholder.typicode.com/posts/"
+              :on-change="handleChange"
+              :auto-upload="false"
+              :show-file-list="false"
+              >
+              <el-button size="small" type="primary" class="tit-tou">{{btntext}}</el-button>
+            </el-upload>
+          <!--   <p class="tit-tou">上传头像</p> -->
+            <p class="name-ipt">
+              <span><i class="red">*</i>姓名</span>
+              <input type="text" name="" placeholder="请输入姓名，20字以内，必须填" :class="{'uncheck':check.input}" v-model="name">
+            </p>
+          </div>
+          <span slot="footer" class="dialog-footer">
+            <span class="warn-box" v-show="err"><i></i>{{errtit}}</span>
+            <el-button type="primary" @click="addConfirm">确 定</el-button>
+            <el-button @click="dialogVisible = false">取 消</el-button> 
+          </span>
+        </el-dialog>
+      </div>
     </div>
 </template>
 
@@ -87,11 +127,107 @@ export default {
           value: '选项5',
           label: '北京烤鸭'
         }],
-      value4:""
+      value4:"",
+      slider:false,
+      page:0,
+      dialogVisible:false,
+      searchimg:"",
+      title:"添加黑名单",
+      img:"",
+      btntext:"上传头像",
+      searchimg:"",
+      check:{
+        img:false,
+        input:false
+      },
+      err:false,
+      errtit:"",
+      name:"",
+      imgtype:"",
+      id:""
     }
   },
   mounted(){
-    
+     this.id = Number(sessionStorage.getItem("users"));
+  },
+  methods:{
+    handleSizeChange(){
+
+    },
+    handleCurrentChange(){
+
+    },
+    show(){
+      console.log(22)
+    },
+    addman(){
+      this.dialogVisible = true;
+    },
+    searchChange(file){
+      let blob = new Blob([file.raw],{type:file.raw.type});
+      let that = this;
+      let reader = new FileReader();
+      reader.readAsDataURL(blob);
+      reader.onload = function (e) {
+          // 图片的 base64 格式, 可以直接当成 img 的 src 属性值      
+          that.searchimg = reader.result;
+      };
+    },
+    handleChange(file,fileList){
+      if(file.name.indexOf(".")!=-1){
+        let arr = file.name.split(".");
+        this.imgtype = arr[arr.length-1];
+      }
+      //创建blob对象
+      let blob = new Blob([file.raw],{type:file.raw.type});
+      //this.imgtype = 
+      let that = this;
+      let reader = new FileReader();
+      reader.readAsDataURL(blob);
+      reader.onload = function (e) {
+          // 图片的 base64 格式, 可以直接当成 img 的 src 属性值      
+          that.img = reader.result;
+          that.btntext = "重新上传";
+      };
+    },
+    addConfirm(){
+      if(!this.img){
+        this.err = true;
+        this.errtit = "请上传头像";
+        this.check.img = true;
+        return
+      }
+      if(!this.name){
+        this.err = true;
+        this.errtit = "请填写姓名";
+        this.check.input = true;
+        return
+      }
+      this.$api.post("/client_mng_add_back_list_api",
+        {
+          company_id:Number(this.id),
+          face_user_name:this.name,
+          face_image_type:this.imgtype,
+          face_image_data:this.img
+        },
+        su=>{
+          if(su.code==200){
+            this.dialogVisible = false;
+            this.$message({
+              message: su.msg,
+              type: 'success'
+            });
+          }else{
+            this.$message({
+              message: su.msg,
+              type: 'warning'
+            });
+          }
+        },
+        err=>{
+
+      })
+    }
   }
 }
 </script>
@@ -99,6 +235,7 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang='scss' scoped>
 .person{
+    min-width: 1027px;
     background-color: #fff;
     margin:19px;
     min-height: 700px;
@@ -226,5 +363,150 @@ export default {
     span{
       color: #FEAD56;
     } 
+  }
+
+  .slider-box{
+    width: 944px;
+    height: 1056px;
+    position: absolute;
+    top:0;
+    right: 0;
+    background: #fff;
+    z-index: 10;
+    border: 1px solid #ccc;
+    padding:40px 40px 40px 71px;
+    box-sizing: border-box;
+  }
+  .close-p{
+    text-align: right;
+  }
+  .close-p i{
+    display: inline-block;
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+    text-align: center;
+    line-height: 18px;
+    font-size: 24px;
+  }
+  .fade-enter-active {
+      transition: all .5s ease;
+  }
+  .fade-leave-active {
+      transition: all .6s ease;
+  }
+  .fade-enter, .fade-leave-to {
+    transform: translateX(944px);
+  }
+
+  .warn-box{
+  font-size: 12px;
+  color: #F84C4C;
+  float: left;
+  position: relative;
+  top:13px;
+  i{
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    background:url(../../assets/images/err-icon.png);
+    margin-right: 12px;
+    position: relative;
+    top:4px;
+  }
+}
+.box .el-dialog__footer{
+  box-shadow: 0 0 4px #ccc;
+}
+.content-up{
+  text-align: center;
+   .img-box:hover{
+      >div{
+        display: block;
+      }
+    }
+  .img-box{
+    display: inline-block;
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    font-size:16px;
+    color:rgba(77,77,77,1);
+    position: relative;
+
+    >div{
+      width: 120px;
+      height: 120px;
+      position: absolute;
+      background:rgba(0,0,0,1);
+      opacity:0.55;
+      display: none;
+      top:0;
+      border-radius: 50%;
+      line-height: 140px;
+      img{
+        width: 46px;
+        height: 40px;
+      }
+    }
+    >img{
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+    }
+  }
+  .tit-tou{
+    color: RGBA(77, 77, 77, 1);
+    font-size: 16px;
+  }
+  .name-ipt{
+    font-size:14px;
+    color:rgba(153,153,153,1);
+    margin-top: 26px;
+    span{
+      margin-right: 10px;
+    }
+    input{
+      width:372px;
+      height:34px; 
+      background:rgba(255,255,255,1);
+      border-radius: 4px;
+      border:1px solid RGBA(204, 204, 204, 1); 
+      text-indent: 10px;
+    }
+  }
+}
+.red{
+  color: RGBA(229, 56, 56, 1);
+  margin-right: 3px;
+}
+
+.upload-style{
+  display: inline-block;
+}
+.btn-upload{
+  border: 1px solid #ccc;
+  background: #fff;
+  color: #4D4D4D;
+  text-indent: 16px;
+  text-align: left;
+  cursor: pointer;
+  i{
+    display:inline-block;
+    content: "";
+    width: 14px;
+    height: 11px;
+    background: url(../../assets/images/camera-icon.png);
+    float: right;
+    margin-right: 15px;
+    position: relative;
+    top:3px;
+  }
+}
+  .tit-tou{
+    color: RGBA(77, 77, 77, 1);
+    font-size: 16px;
+    background: #fff;
+    border: none;
   }
 </style>

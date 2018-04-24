@@ -3,7 +3,7 @@
     <el-container class="container-warp">
    <el-aside width="239px">
     <div class="slider-lt">
-     <!--  <img src="../../assets/images/slider-logo.png"> -->
+      <img src="../../assets/images/slider-logo.png">
     </div>
     <ul class="slider-ul">
       <router-link to="/home" tag="li">首页</router-link>
@@ -21,7 +21,7 @@
             <div class="adm-le">
               <p>欢迎进入管理平台（出入系统）！</p> 
               <p >
-                <span @click.stop="changeFn">{{data.tel}}
+                <span @click.stop="changeFn">{{data.user_name}}
                     <i class="rotate" >›
                     </i>
                     <div class="change" v-show="change">
@@ -389,7 +389,7 @@ export default {
     width: 12px;
     height: 23px;
 }
-.change{
+.adm-le .change{
     width: 128px;
     height: 60px;
     position: absolute;

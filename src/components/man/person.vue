@@ -403,14 +403,13 @@ export default {
         this.check.input = true;
         return
       }
-      let str = this.img.split(",");
       this.$api.post("/client_mng_add_face_api",
         {
           company_id:Number(this.id),
           face_type:Number(this.type),
           face_user_name:this.name,
           face_image_type:this.imgtype,
-          face_image_data:str[1]
+          face_image_data:this.img
         },
         su=>{
           if(su.code==200){
