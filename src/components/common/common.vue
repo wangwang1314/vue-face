@@ -396,11 +396,13 @@ export default {
     border: 1px solid #ccc;
     background: #fff;
     right: 0;
+
     >p{
       height: 44px;
       line-height: 44px;
       text-align: center;
       cursor: pointer;
+      width: 100%;
     }
     >p:hover{
       color: #fff;

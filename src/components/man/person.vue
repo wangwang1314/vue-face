@@ -22,42 +22,57 @@
         <span>姓名</span>
         <input type="text" name="" placeholder="请输入姓名搜索">
       </div>
-       <p class="su-tit">共 <span>992</span> 条数据</p>
+       <p class="su-tit">共 <span>{{total}}</span> 条数据</p>
        <p class="sur-num">
          <span @click="addFn">新增人员</span>
          <span>批量导入照片</span>
-         <span>删除人员</span>
-         <span>设置权限</span>
+         <span @click="delMan">删除人员</span>
+         <span @click="setMan">设置权限</span>
        </p>
-       <p class="chose-num"><i></i>已选择<span>13</span>项</p>
-       <table class="sort-tab">
-             <thead>
-               <tr>
-                 <td><i class="not-all"></i></td>
-                 <td>头像</td>
-                 <td>出入人姓名</td>
-                 <td>类型</td>
-                 <td>入库时间</td>
-                 <td>更新时间</td>
-               </tr>
-             </thead>
-             <tbody>
-            
-               <tr @click="show" v-for="item in data">
-                 <td><i class="chose"></i></td>
-                 <td><img src="../../assets/images/sur-bg1.png"></td>
-                 <td>{{item.name}}</td>
-                 <td>
-                   <span v-if="item.face_type==1">VIP</span>
-                   <span v-else>访客</span>
-                 </td>
-                 <td>{{item.build_time}}</td>
-                 <td>
-                   
-                 </td>
-               </tr>
-             </tbody>
-           </table>
+       <p class="chose-num"><i></i>已选择<span> {{selectval.length}} </span>项</p>
+           <el-table
+            ref="multipleTable"
+            :data="data"
+            tooltip-effect="dark"
+            style="width: 100%"
+            @selection-change="handleSelectionChange"
+            @row-click="sliderShow"
+            id="pdf"
+            >
+            <el-table-column
+              type="selection"
+              width="55">
+            </el-table-column>
+            <el-table-column
+              label="头像"
+             >
+             <template slot-scope="scope">
+               <img class="img-size" src="../../assets/images/sur-bg1.png">
+             </template>
+            </el-table-column>
+            <el-table-column
+              prop="name"
+              label="姓名"
+             >
+            </el-table-column>
+            <el-table-column
+              label="类型"
+              >
+              <template slot-scope="scope">
+                <span v-if="scope.row.face_type">VIP</span>
+                <span v-else>访客</span>
+              </template>
+            </el-table-column>
+             <el-table-column
+              label="入库时间"
+              prop="build_time"
+              show-overflow-tooltip>
+            </el-table-column>
+             <el-table-column
+              label="更新时间"
+              show-overflow-tooltip>
+            </el-table-column>
+          </el-table>
           <div class="page">
             <el-pagination
               @size-change="handleSizeChange"
@@ -266,6 +281,135 @@
           </span>
         </el-dialog>
       </div>
+
+      <!--删除人员-->
+      <el-dialog
+        :visible.sync="deldialog"
+        width="460px">
+        <span slot="title" class="del-tit">删除人员</span>
+        <div>确定删除选择的人员吗？</div>
+        <span slot="footer" class="dialog-footer">
+          <span class="del-box" >已选择<i>{{selectval.length}}</i>位人员</span>
+          <el-button type="primary" @click="delFn">确 定</el-button>
+          <el-button @click="deldialog = false">取 消</el-button> 
+        </span>
+      </el-dialog>
+
+
+        <!--  添加权限 -->
+       <div class="box">
+          <el-dialog
+          title="添加权限"
+          :visible.sync="setdialog"
+          width="736px">
+          <div class="content-set">
+                <p class="select-p">共选择添加 <span>2</span> 位人员：</p>
+                <div class="select-div">
+                  <el-tag
+                    :key="tag.face_type"
+                    v-for="tag in selectval"
+                    closable
+                    :disable-transitions="false"
+                    @close="handleClose(tag)">
+                    {{tag.face_type}}
+                  </el-tag>
+                </div>
+                <p class="select-p">添加出入权限：</p>
+                <div class="rep-class">
+                    <p class="per-p">
+                      <i></i>
+                      <span>出入时间段</span> 
+                      <el-date-picker
+                        v-model="value3"
+                        type="datetimerange"
+                        range-separator="至"
+                        start-placeholder="开始日期"
+                        end-placeholder="结束日期">
+                      </el-date-picker>
+                    </p>
+                    <p class="per-p">
+                      <i></i>
+                      <span>入口权限</span> 
+                    </p>
+                    <div class="con-box">
+                      <p><el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" @change="handleCheckAllChange">全选</el-checkbox></p>
+                      <div style="margin-left:15px;">
+                        <p><el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" @change="handleCheckAllChange">场地名称1</el-checkbox></p>
+                        <div class="check-box">
+                          <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
+                          <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
+                          <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
+                          <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
+                          <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
+                          <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
+                          <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
+                          <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
+                          <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
+                          <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
+                          <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
+                        </div>
+                        <p><el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" @change="handleCheckAllChange">场地名称2</el-checkbox></p>
+                        <div class="check-box">
+                          <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
+                          <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
+                          <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
+                          <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
+                          <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
+                          <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
+                          <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
+                          <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
+                          <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
+                          <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
+                          <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
+                        </div>
+                      </div>
+                    </div>
+                    <p class="per-p">
+                      <i></i>
+                      <span>出口权限</span> 
+                    </p> 
+                     <div class="con-box">
+                      <p><el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" @change="handleCheckAllChange">全选</el-checkbox></p>
+                      <div style="margin-left:15px;">
+                        <p><el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" @change="handleCheckAllChange">场地名称1</el-checkbox></p>
+                        <div class="check-box">
+                          <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
+                          <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
+                          <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
+                          <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
+                          <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
+                          <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
+                          <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
+                          <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
+                          <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
+                          <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
+                          <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
+                        </div>
+                        <p><el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" @change="handleCheckAllChange">场地名称2</el-checkbox></p>
+                        <div class="check-box">
+                          <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
+                          <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
+                          <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
+                          <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
+                          <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
+                          <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
+                          <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
+                          <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
+                          <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
+                          <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
+                          <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
+                        </div>
+                      </div>
+                    </div> 
+                </div>
+          </div>
+          <span slot="footer" class="dialog-footer">
+            <span class="warn-box" v-show="err"><i></i>{{errtit}}</span>
+            <el-button type="primary" @click="addConfirm">确 定</el-button>
+            <el-button @click="dialogVisible = false">取 消</el-button> 
+          </span>
+        </el-dialog>
+      </div>
     </div>
 </template>
 
@@ -273,22 +417,6 @@
 export default {
   data () {
     return {
-      options: [{
-          value: '选项1',
-          label: '黄金糕'
-        }, {
-          value: '选项2',
-          label: '双皮奶'
-        }, {
-          value: '选项3',
-          label: '蚵仔煎'
-        }, {
-          value: '选项4',
-          label: '龙须面'
-        }, {
-          value: '选项5',
-          label: '北京烤鸭'
-        }],
       value4:"",
       slider:false,
       page:0,
@@ -312,7 +440,12 @@ export default {
       imgtype:"",
       id:"",
       choseArr:[],
-      data:[]
+      data:[],
+      selectval:[],
+      total:0,
+      deldialog:false,
+      setdialog:false,
+      htmlTitle:"人员管理"
     }
   },
   mounted(){
@@ -384,6 +517,7 @@ export default {
         su=>{
           if(su.code==200){
             this.data = su.data;
+            this.total = su.num;
           }
         },
         err=>{
@@ -403,17 +537,19 @@ export default {
         this.check.input = true;
         return
       }
+      let img = this.img.split(",")[1];
       this.$api.post("/client_mng_add_face_api",
         {
           company_id:Number(this.id),
           face_type:Number(this.type),
           face_user_name:this.name,
           face_image_type:this.imgtype,
-          face_image_data:this.img
+          face_image_data:img
         },
         su=>{
           if(su.code==200){
             this.dialogVisible = false;
+            this.getList();
             this.$message({
               message: su.msg,
               type: 'success'
@@ -428,6 +564,64 @@ export default {
         err=>{
 
       })
+    },
+    handleSelectionChange(val){
+      this.selectval = val;
+    },
+    sliderShow(row){
+      this.slider = true;
+    },
+    delMan(){
+      if(this.selectval.length<=0){
+        this.$alert('请至少选择1位人员进行操作！', '删除人员', {
+          confirmButtonText: '知道了',
+          callback: action => {
+            
+          }
+        });
+      }else{
+        this.deldialog = true;
+      }
+    },
+    delFn(){
+      let arr = [];
+      for(let value of this.selectval){
+        arr.push(value.face_id)
+      }
+      this.$api.post("/client_mng_del_face_api",{
+        company_id:this.id,
+        face_id:arr
+      },su=>{
+        if(su.code==200){
+          this.$message({
+              message: su.msg,
+              type: 'success'
+          });
+          this.getList();
+        }else{
+          this.$message({
+              message: su.msg,
+              type: 'warning'
+          });
+        }
+      },err=>{
+          this.$message({
+              message: su.msg,
+              type: 'warning'
+          });
+      })
+    },
+    setMan(){
+       if(this.selectval.length<=0){
+        this.$alert('请至少选择1位人员进行操作！', '设置权限', {
+          confirmButtonText: '知道了',
+          callback: action => {
+            
+          }
+        });
+      }else{
+        this.setdialog = true;
+      }
     }
   }
 }
@@ -488,7 +682,7 @@ export default {
       font-size:14px;
       color:rgba(77,77,77,1);
       margin-left: 14px;
-
+      cursor: pointer;
     }
   }
 
@@ -542,6 +736,7 @@ export default {
   }
   .page{
     text-align: center;
+    margin-top: 50px;
   }
   .chose-num{
     height:34px; 
@@ -552,6 +747,7 @@ export default {
     line-height: 34px;
     text-indent: 8px;
     margin-top: 20px;
+    margin-bottom: 12px;
     i{
       display:inline-block;
       height: 18px;
@@ -839,4 +1035,100 @@ export default {
     top:3px;
   }
 }
+.img-size{
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+}
+.del-tit{
+  font-size:18px; 
+  color:rgba(77,77,77,1);                          
+}
+.del-box{
+  float: left;
+  font-size: 14px;
+  color: #999999;
+  position: relative;
+  top:6px;
+  i{
+    color: #378EEF;
+    margin: 0 3px;
+  }
+}
+.select-p{
+  color: #4D4D4D;
+  font-size: 14px;
+}
+.select-div{
+  width:678px;
+  height:104px;
+  overflow: auto;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 12px 16px;
+  box-sizing:border-box;
+  .el-tag{
+    margin:0 12px 12px 0;
+  } 
+}
+</style>
+
+
+
+
+
+
+
+
+<style>
+.el-table{
+  border-right: 1px solid #E6E6E6;
+  border-left: 1px solid #E6E6E6;
+}
+.text-center{
+  text-align: center;
+ }
+.el-table th{
+  height:60px;
+  background-color:#EAEAEA;
+  color:#1A1A1A;
+  text-align: center;
+  font-size:14px;
+ }
+ .el-table td{
+  font-size:12px;
+  color:#1A1A1A;
+ }
+
+ .err{
+  color:#F84C4C;
+  font-size: 12px;
+ }
+  .err i{margin:0 11px 0 16px;}
+
+  .ip-err{
+    border:1px solid #F84C4C !important;
+  }
+  .add-user .el-dialog__body{
+    padding:0 20px 0 36px;
+  }
+  .add-user .el-dialog__footer{
+    padding:20px 26px;
+    border-top:1px solid #CCCCCC;
+    margin-top:25px;
+  }
+    .add-user .el-button{
+      width: 78px;
+      height:32px;
+    }
+
+    .add-err{
+      margin-top:10px;
+    }
+    .bd-red{
+      border:1px solid #F84C4C !important;
+    }
+    .el-table__body{
+      text-align: center;
+    }
 </style>

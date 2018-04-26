@@ -13,6 +13,9 @@ import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
 import './assets/css/reset.css'
 
+//导入pdf组件
+import pdf from './assets/js/pdf.js'
+
 Vue.use(Vuex);
 const store = new Vuex.Store({
 	state
@@ -23,6 +26,7 @@ Vue.component("common",common)
 Vue.component("open",open)
 // 将API方法绑定到全局
 Vue.prototype.$api = api
+Vue.prototype.$getpdf = pdf
 
 Vue.config.productionTip = false
 

@@ -38,7 +38,7 @@ export default {
         isphone:false,
         ispass:false,  
       },
-      errtit:"sdsdsdsd",
+      errtit:"",
       password:"",
       err:false,
       ischose:false
