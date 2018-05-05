@@ -588,28 +588,39 @@ export default {
       for(let value of this.selectval){
         arr.push(value.face_id)
       }
-      this.$api.post("/client_mng_del_face_api",{
-        company_id:this.id,
-        face_id:arr
-      },su=>{
-        if(su.code==200){
-          this.$message({
-              message: su.msg,
-              type: 'success'
-          });
-          this.getList();
-        }else{
-          this.$message({
-              message: su.msg,
-              type: 'warning'
-          });
-        }
-      },err=>{
-          this.$message({
-              message: su.msg,
-              type: 'warning'
-          });
-      })
+      let num = arr.length;
+      for(let i=0;i++;i<arr.length){
+        this.$api.post("/clieng_mng_del_face_api",{
+          company_id:this.id,
+          face_id:arr[i].face_id
+        },su=>{
+          if(su.code==200){
+            if((i+1)==num){
+              this.$message({
+                  message: su.msg,
+                  type: 'success'
+              });
+              this.getList();
+            }
+          }else{
+             if((i+1)==num){
+                this.$message({
+                    message: su.msg,
+                    type: 'warning'
+                });
+              }
+
+          }
+        },err=>{
+          if((i+1)==num){
+            this.$message({
+                message: su.msg,
+                type: 'warning'
+            });
+          }
+        })
+      }
+      
     },
     setMan(){
        if(this.selectval.length<=0){
