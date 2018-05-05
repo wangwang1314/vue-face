@@ -112,10 +112,10 @@ export default {
        }
       
     },
-    
+
     getInout(id,fromTimeStamp,toTimeStamp,place_id){
         this.$api.post("/client_query_time_record_api",{
-          id:id,
+          id:parseInt(id),
           fromTimeStamp:fromTimeStamp,
           toTimeStamp:toTimeStamp,
           place_id:place_id

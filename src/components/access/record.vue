@@ -166,7 +166,7 @@ export default {
     //查询所有记录
      getInout(id,fromTimeStamp,toTimeStamp,place_id){
         this.$api.post("/client_query_time_record_api",{
-          id:id,
+          id:parseInt(id),
           fromTimeStamp:fromTimeStamp,
           toTimeStamp:toTimeStamp,
           place_id:place_id
@@ -219,7 +219,7 @@ export default {
       //根据faceID查询进出记录
      byfaceId(id,faceid,placeId,fromTimeStamp,toTimeStamp){
           this.$api.post("/client_query_face_id_record_api",{
-              "company_id":id,
+              "company_id":parseInt(id),
               "face_id":faceid,
               "place_id":placeId,
               "fromTimeStamp":fromTimeStamp,
