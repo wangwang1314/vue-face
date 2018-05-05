@@ -6,6 +6,7 @@
        <div class="pick-block">
         <el-date-picker
           v-model="value3"
+          @change="logTimeChange"
           type="datetimerange"
           range-separator="至"
           start-placeholder="开始日期"
@@ -13,12 +14,12 @@
         </el-date-picker>
       </div>
     </div>
-    <div class="tit">共<span>0</span>人</div>
+    <div class="tit">共<span>{{total_num}}</span>人</div>
     <ul class="list">
-      <li>
+      <li v-for="(item,ind) in dataList">
         <img src="../../assets/images/bg-color.png">
-        <p class="name">鹿晗</p>
-        <p>2018-03-11 11:55:55</p>
+        <p class="name">{{item.face_user_name}}</p>
+        <p></p>
         <div class="hover-class">
           <p class="first-p">
             <span>拍摄时间：</span>2018-03-11 11:55:55
@@ -34,196 +35,7 @@
           </p>
         </div>
       </li>
-      <li>
-        <img src="../../assets/images/bg-color.png">
-        <p class="name">鹿晗</p>
-        <p>2018-03-11 11:55:55</p>
-        <div class="hover-class">
-          <p class="first-p">
-            <span>拍摄时间：</span>2018-03-11 11:55:55
-          </p>
-          <p>
-            <span>摄像头ID：</span>QY12345678
-          </p>
-           <p>
-            <span>拍摄地点：</span>A口
-          </p>
-           <p>
-            <span>场地名称：</span>1号足球场
-          </p>
-        </div>
-      </li>
-       <li>
-        <img src="../../assets/images/bg-color.png">
-        <p class="name">鹿晗</p>
-        <p>2018-03-11 11:55:55</p>
-        <div class="hover-class">
-          <p class="first-p">
-            <span>拍摄时间：</span>2018-03-11 11:55:55
-          </p>
-          <p>
-            <span>摄像头ID：</span>QY12345678
-          </p>
-           <p>
-            <span>拍摄地点：</span>A口
-          </p>
-           <p>
-            <span>场地名称：</span>1号足球场
-          </p>
-        </div>
-      </li>
-       <li>
-        <img src="../../assets/images/bg-color.png">
-        <p class="name">鹿晗</p>
-        <p>2018-03-11 11:55:55</p>
-        <div class="hover-class">
-          <p class="first-p">
-            <span>拍摄时间：</span>2018-03-11 11:55:55
-          </p>
-          <p>
-            <span>摄像头ID：</span>QY12345678
-          </p>
-           <p>
-            <span>拍摄地点：</span>A口
-          </p>
-           <p>
-            <span>场地名称：</span>1号足球场
-          </p>
-        </div>
-      </li>
-       <li>
-        <img src="../../assets/images/bg-color.png">
-        <p class="name">鹿晗</p>
-        <p>2018-03-11 11:55:55</p>
-        <div class="hover-class">
-          <p class="first-p">
-            <span>拍摄时间：</span>2018-03-11 11:55:55
-          </p>
-          <p>
-            <span>摄像头ID：</span>QY12345678
-          </p>
-           <p>
-            <span>拍摄地点：</span>A口
-          </p>
-           <p>
-            <span>场地名称：</span>1号足球场
-          </p>
-        </div>
-      </li>
-       <li>
-        <img src="../../assets/images/bg-color.png">
-        <p class="name">鹿晗</p>
-        <p>2018-03-11 11:55:55</p>
-        <div class="hover-class">
-          <p class="first-p">
-            <span>拍摄时间：</span>2018-03-11 11:55:55
-          </p>
-          <p>
-            <span>摄像头ID：</span>QY12345678
-          </p>
-           <p>
-            <span>拍摄地点：</span>A口
-          </p>
-           <p>
-            <span>场地名称：</span>1号足球场
-          </p>
-        </div>
-      </li>
-       <li>
-        <img src="../../assets/images/bg-color.png">
-        <p class="name">鹿晗</p>
-        <p>2018-03-11 11:55:55</p>
-        <div class="hover-class">
-          <p class="first-p">
-            <span>拍摄时间：</span>2018-03-11 11:55:55
-          </p>
-          <p>
-            <span>摄像头ID：</span>QY12345678
-          </p>
-           <p>
-            <span>拍摄地点：</span>A口
-          </p>
-           <p>
-            <span>场地名称：</span>1号足球场
-          </p>
-        </div>
-      </li>
-       <li>
-        <img src="../../assets/images/bg-color.png">
-        <p class="name">鹿晗</p>
-        <p>2018-03-11 11:55:55</p>
-        <div class="hover-class">
-          <p class="first-p">
-            <span>拍摄时间：</span>2018-03-11 11:55:55
-          </p>
-          <p>
-            <span>摄像头ID：</span>QY12345678
-          </p>
-           <p>
-            <span>拍摄地点：</span>A口
-          </p>
-           <p>
-            <span>场地名称：</span>1号足球场
-          </p>
-        </div>
-      </li>
-       <li>
-        <img src="../../assets/images/bg-color.png">
-        <p class="name">鹿晗</p>
-        <p>2018-03-11 11:55:55</p>
-        <div class="hover-class">
-          <p class="first-p">
-            <span>拍摄时间：</span>2018-03-11 11:55:55
-          </p>
-          <p>
-            <span>摄像头ID：</span>QY12345678
-          </p>
-           <p>
-            <span>拍摄地点：</span>A口
-          </p>
-           <p>
-            <span>场地名称：</span>1号足球场
-          </p>
-        </div>
-      </li>
-       <li>
-        <img src="../../assets/images/bg-color.png">
-        <p class="name">鹿晗</p>
-        <p>2018-03-11 11:55:55</p>
-        <div class="hover-class">
-          <p class="first-p">
-            <span>拍摄时间：</span>2018-03-11 11:55:55
-          </p>
-          <p>
-            <span>摄像头ID：</span>QY12345678
-          </p>
-           <p>
-            <span>拍摄地点：</span>A口
-          </p>
-           <p>
-            <span>场地名称：</span>1号足球场
-          </p>
-        </div>
-      </li>
-       <li>
-        <img src="../../assets/images/bg-color.png">
-        <p class="name">鹿晗</p>
-        <p>2018-03-11 11:55:55</p>
-        <div class="hover-class">
-          <p class="first-p">
-            <span>拍摄时间：</span>2018-03-11 11:55:55
-          </p>
-          <p>
-            <span>摄像头ID：</span>QY12345678
-          </p>
-           <p>
-            <span>拍摄地点：</span>A口
-          </p>
-           <p>
-            <span>场地名称：</span>1号足球场
-          </p>
-        </div>
-      </li>
+      
     </ul>
     <div class="no-num" v-show="nomun">
       <img src="../../assets/images/no-num.png">
@@ -247,13 +59,19 @@
 export default {
   data () {
     return {
+      id:sessionStorage.getItem("users"),
       value3:"",
       nomun:false,
-      page:0
+      page:0,
+      fromTimeStamp:'',
+      toTimeStamp:"",
+      place_id:0,
+      dataList:[],
+      total_num:0
     }
   },
   mounted(){
-    
+    this.getInout(this.id,this.fromTimeStamp,this.toTimeStamp,this.place_id);
   },
   methods:{
     handleSizeChange(){
@@ -261,8 +79,82 @@ export default {
     },
     handleCurrentChange(){
 
+    },
+    GMTToStr(time){
+    let date = new Date(time);
+    let hour = date.getHours();
+    let mit = date.getMinutes();
+    let sec = date.getSeconds();
+
+    if(hour<10){
+        hour = "0"+hour+":"
     }
-  }
+
+    if(mit<10){
+        mit = "0"+mit+":"
+    }
+
+    if(sec<10){
+        sec = "0"+sec
+    }
+    let Str=date.getFullYear() + '-' +
+    (date.getMonth() + 1) + '-' + 
+    date.getDate() + ' ' + hour + mit +sec;
+    return Str
+    },
+    logTimeChange(v){
+       console.log(v);
+       if(v){
+           this.fromTimeStamp = this.GMTToStr(v[0]);
+           this.toTimeStamp = this.GMTToStr(v[1]);
+           console.log(this.fromTimeStamp);
+           this.getInout(this.id,this.fromTimeStamp,this.toTimeStamp,this.place_id);
+       }
+      
+    },
+    
+    getInout(id,fromTimeStamp,toTimeStamp,place_id){
+        this.$api.post("/client_query_time_record_api",{
+          id:id,
+          fromTimeStamp:fromTimeStamp,
+          toTimeStamp:toTimeStamp,
+          place_id:place_id
+        },su=>{
+           console.log(su)
+           if(su.code==200){
+              this.dataList = su.total_data;
+              //设置imgsrc属性
+              this.dataList.forEach((el,ind)=>{
+                     this.$set(el,"imgsrc",'');
+              })
+              this.total_num = su.num;
+           }
+
+        },err=>{
+
+        })
+
+      },
+     /* 获取图片*/
+     getface(){
+        this.dataList.foreach((el,ind)=>{
+             this.$api.post('/client_get_face_image_api',{
+                "company_id":this.id,
+                "face_id":el.face_id,
+             },su=>{
+              if(su.code==200){
+                 el.imgsrc = su.face_image_data;
+              }
+
+             },err=>{
+
+             })
+        })
+     }
+
+
+  },
+
 }
 </script>
 

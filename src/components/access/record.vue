@@ -1,15 +1,17 @@
 <template>
   <div class="rec">
        <div class="header">
+
            <span>头像</span>
-           <el-select v-model="value4" clearable placeholder="请选择" class="sur-selct">
-            <el-option
-              v-for="item in options"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value">
-            </el-option>
-          </el-select>
+              <el-upload
+                class="upload-style"
+                action="https://jsonplaceholder.typicode.com/posts/"
+                :on-change="searchChange"
+                :auto-upload="false"
+                :show-file-list="false"
+                >
+                <button  class="sur-selct btn-upload">请上传图片搜头像<i></i></button>
+            </el-upload>
           <span>场地名称</span>
            <el-select v-model="value4" clearable placeholder="请选择" class="sur-selct">
             <el-option
@@ -30,17 +32,11 @@
           </el-select>
           <br>
            <span>姓名</span>
-           <el-select v-model="value4" clearable placeholder="请选择" class="sur-selct">
-            <el-option
-              v-for="item in options"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value">
-            </el-option>
-          </el-select>
+           <el-input class="ipt-inline" v-model="name" placeholder="请输入内容"></el-input>
            <span>拍摄时间</span>
            <el-date-picker
             v-model="value3"
+            @change="logTimeChange"
             type="datetimerange"
             range-separator="至"
             start-placeholder="开始日期"
@@ -130,6 +126,10 @@
 export default {
   data () {
     return {
+      id:sessionStorage.getItem("users"),
+      fromTimeStamp:'',
+      toTimeStamp:"",
+      name:"",
       options: [{
           value: '选项1',
           label: '黄金糕'
@@ -152,7 +152,8 @@ export default {
     }
   },
   mounted(){
-  
+      //获取信息
+    this.getInout();
   },
   methods:{
      handleSizeChange(){
@@ -160,13 +161,144 @@ export default {
     },
     handleCurrentChange(){
 
+    },
+
+    //查询所有记录
+     getInout(id,fromTimeStamp,toTimeStamp,place_id){
+        this.$api.post("/client_query_time_record_api",{
+          id:id,
+          fromTimeStamp:fromTimeStamp,
+          toTimeStamp:toTimeStamp,
+          place_id:place_id
+        },su=>{
+           console.log(su)
+           if(su.code==200){
+              this.dataList = su.total_data;
+              //设置imgsrc属性
+              this.dataList.forEach((el,ind)=>{
+                     this.$set(el,"imgsrc",'');
+              })
+              this.total_num = su.num;
+           }
+
+        },err=>{
+
+        })
+
+      },
+      //
+       searchChange(file){
+      let blob = new Blob([file.raw],{type:file.raw.type});
+      let that = this;
+      let reader = new FileReader();
+      reader.readAsDataURL(blob);
+      reader.onload = function (e) {
+          // 图片的 base64 格式, 可以直接当成 img 的 src 属性值      
+          that.searchimg = reader.result;
+      };
+    },
+      //根据人脸图片查询进出记录
+      byfaceImg(id,imgtype,img,placeId,fromTimeStamp,toTimeStamp){
+          this.$api.post("/client_query_face_image_record_api",{
+              "company_id":id,
+              "face_image_type":imgtype,
+              "face_image_data":img,
+              "place_id":placeId,
+              "fromTimeStamp":fromTimeStamp,
+              "toTimeStamp":toTimeStamp
+          },su=>{
+            if(su.code==200){
+
+            }
+
+          },err=>{
+
+          })
+      },
+
+      //根据faceID查询进出记录
+     byfaceId(id,faceid,placeId,fromTimeStamp,toTimeStamp){
+          this.$api.post("/client_query_face_id_record_api",{
+              "company_id":id,
+              "face_id":faceid,
+              "place_id":placeId,
+              "fromTimeStamp":fromTimeStamp,
+              "toTimeStamp":toTimeStamp
+          },su=>{
+            if(su.code==200){
+
+            }
+
+          },err=>{
+
+          })
+      },
+
+  //拍摄时间
+    GMTToStr(time){
+    let date = new Date(time);
+    let hour = date.getHours();
+    let mit = date.getMinutes();
+    let sec = date.getSeconds();
+
+    if(hour<10){
+        hour = "0"+hour+":"
     }
+
+    if(mit<10){
+        mit = "0"+mit+":"
+    }
+
+    if(sec<10){
+        sec = "0"+sec
+    }
+    let Str=date.getFullYear() + '-' +
+    (date.getMonth() + 1) + '-' + 
+    date.getDate() + ' ' + hour + mit +sec;
+    return Str
+    },
+
+    logTimeChange(v){
+       console.log(v);
+       if(v){
+           this.fromTimeStamp = this.GMTToStr(v[0]);
+           this.toTimeStamp = this.GMTToStr(v[1]);
+           console.log(this.fromTimeStamp);
+           //this.getInout(this.id,this.fromTimeStamp,this.toTimeStamp,this.place_id);
+        }
+       }
+       ,
+
+
+     /* 获取图片*/
+     getface(){
+        this.dataList.foreach((el,ind)=>{
+             this.$api.post('/client_get_face_image_api',{
+                "company_id":this.id,
+                "face_id":el.face_id,
+             },su=>{
+              if(su.code==200){
+                 el.imgsrc = su.face_image_data;
+              }
+
+             },err=>{
+
+             })
+        })
+     }
+
+
   }
 }
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang='scss' scoped>
+.ipt-inline{
+  display:inline-block;
+  width:390px;
+  margin-right:59px;
+}
  .rec{
     background-color: #fff;
     margin:19px;
@@ -271,4 +403,40 @@ export default {
     text-align: center;
     margin-bottom: 80px;
   }
+  .sur-selct{
+    height: 36px;
+    width: 390px;
+    margin-right: 59px;
+  }
+  .su-tit{
+    font-size: 12px;
+    color: #808080;
+    margin:43px 0 15px 0;
+    span{
+      color: #378EEF;
+    }
+  }
+
+  .upload-style{
+  display: inline-block;
+}
+.btn-upload{
+  border: 1px solid #ccc;
+  background: #fff;
+  color: #4D4D4D;
+  text-indent: 16px;
+  text-align: left;
+  cursor: pointer;
+  i{
+    display:inline-block;
+    content: "";
+    width: 14px;
+    height: 11px;
+    background: url(../../assets/images/camera-icon.png);
+    float: right;
+    margin-right: 15px;
+    position: relative;
+    top:3px;
+  }
+}
 </style>
