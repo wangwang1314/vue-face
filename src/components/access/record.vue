@@ -127,8 +127,8 @@ export default {
   data () {
     return {
       id:sessionStorage.getItem("users"),
-      fromTimeStamp:'',
-      toTimeStamp:"",
+      fromTimeStamp:'2018-1-1 00:22:22',
+      toTimeStamp:"2018-1-1 00:22:22",
       name:"",
       options: [{
           value: '选项1',
@@ -166,7 +166,7 @@ export default {
     //查询所有记录
      getInout(id,fromTimeStamp,toTimeStamp,place_id){
         this.$api.post("/client_query_time_record_api",{
-          id:parseInt(id),
+          company_id:parseInt(id),
           fromTimeStamp:fromTimeStamp,
           toTimeStamp:toTimeStamp,
           place_id:place_id

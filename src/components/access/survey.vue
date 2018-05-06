@@ -16,22 +16,22 @@
     </div>
     <div class="tit">共<span>{{total_num}}</span>人</div>
     <ul class="list">
-      <li v-for="(item,ind) in dataList">
-        <img src="../../assets/images/bg-color.png">
+      <li v-for="(item,ind) in showDate" v-cloak>
+        <img :src="'data:image/'+item.face_image_type+';base64,'+item.face_image_data">
         <p class="name">{{item.face_user_name}}</p>
         <p></p>
         <div class="hover-class">
           <p class="first-p">
-            <span>拍摄时间：</span>2018-03-11 11:55:55
+            <span>拍摄时间：</span>{{item.timeStamp}}
           </p>
           <p>
-            <span>摄像头ID：</span>QY12345678
+            <span>摄像头ID：</span>{{item.device_id}}
           </p>
            <p>
-            <span>拍摄地点：</span>A口
+            <span>拍摄地点：</span>{{item.device_address}}
           </p>
            <p>
-            <span>场地名称：</span>1号足球场
+            <span>场地名称：</span>{{item.place_address}}
           </p>
         </div>
       </li>
@@ -46,10 +46,10 @@
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
         :current-page.sync="page"
-        :page-sizes="[100, 200, 300, 400]"
+        :page-sizes="[20, 50, 100]"
         :page-size="100"
         layout="prev, pager, next,sizes "
-        :total="1000">
+        :total="showDate.length">
       </el-pagination>
     </div>
   </div>
@@ -63,15 +63,19 @@ export default {
       value3:"",
       nomun:false,
       page:0,
-      fromTimeStamp:'',
-      toTimeStamp:"",
+      fromTimeStamp:'2018-1-1 00:22:22',
+      toTimeStamp:"2019-1-2 00:22:22",
       place_id:0,
       dataList:[],
-      total_num:0
+      total_num:0,
+      mydata:[],
+      showDate:[]
+
     }
   },
   mounted(){
     this.getInout(this.id,this.fromTimeStamp,this.toTimeStamp,this.place_id);
+   
   },
   methods:{
     handleSizeChange(){
@@ -114,20 +118,39 @@ export default {
     },
 
     getInout(id,fromTimeStamp,toTimeStamp,place_id){
+       this.mydata = [];
+       this.showDate = [];
         this.$api.post("/client_query_time_record_api",{
-          id:parseInt(id),
+          company_id:parseInt(id),
           fromTimeStamp:fromTimeStamp,
           toTimeStamp:toTimeStamp,
           place_id:place_id
         },su=>{
            console.log(su)
            if(su.code==200){
+
               this.dataList = su.total_data;
               //设置imgsrc属性
               this.dataList.forEach((el,ind)=>{
-                     this.$set(el,"imgsrc",'');
+                   let face_id = el.face_id;
+                   let user_name = el.face_user_name;
+                   el.face_data.forEach((ele,index)=>{
+                       let place_address = ele.place_address;
+                       ele.data.forEach((e,i)=>{
+                           this.$set(e,"face_id",face_id);
+                           this.$set(e,"face_user_name",user_name);
+                           this.$set(e,"place_address",place_address);
+                           this.mydata.push(e);
+                           console.log(this.mydata);
+                        
+                       })
+                   })
+
               })
-              this.total_num = su.num;
+            this.$nextTick(function(){
+                 this.getface(this.mydata);
+             })
+              this.total_num = su.total_num;
            }
 
         },err=>{
@@ -135,21 +158,31 @@ export default {
         })
 
       },
+
      /* 获取图片*/
-     getface(){
-        this.dataList.foreach((el,ind)=>{
+     getface(d){  
+       d.forEach((el,ind)=>{
              this.$api.post('/client_get_face_image_api',{
-                "company_id":this.id,
+                "company_id":parseInt(this.id),
                 "face_id":el.face_id,
              },su=>{
+         
               if(su.code==200){
-                 el.imgsrc = su.face_image_data;
+                 this.$set(el,"face_image_type",su.face_image_type);
+                 this.$set(el,"face_image_data",su.face_image_data);
+                 console.log("我的数据",el)
+               
               }
 
              },err=>{
 
              })
         })
+       
+       this.$nextTick(function(){
+        this.showDate = this.mydata
+       
+       })
      }
 
 
@@ -207,7 +240,7 @@ export default {
   }
   .list{
     overflow: hidden;
-    padding-bottom: 40px;
+    padding-bottom: 70px;
     li{
       float: left;
       margin:24px;
@@ -235,8 +268,8 @@ export default {
         position: absolute;
         top:150px;
         width: 214px;
-        height: 118px;
-        background: url(../../assets/images/bg-cur.png) center no-repeat;
+        height: 126px;
+       background: url(../../assets/images/bg-cur.png) center no-repeat; 
         background-size: cover;
         z-index: 100;
         display: none;
@@ -260,4 +293,8 @@ export default {
       box-sizing: border-box;
     }
   }
+
+  [v-cloak] {
+  display: none;
+}
 </style>
