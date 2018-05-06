@@ -516,8 +516,32 @@ export default {
         },
         su=>{
           if(su.code==200){
+            
+            if(su.num>0){
+              let that = this;
+              this.data.forEach(function(val,index){
+                  val.img = "";
+                  val.name = "";
+                  that.getImg(val,index)
+              })
+            }
             this.data = su.data;
             this.total = su.num;
+          }
+        },
+        err=>{
+
+      })
+    },
+    getImg(val,index){
+        this.$api.post("/client_get_face_image_api",{
+          company_id:this.id,
+          face_id:val.face_id
+        },
+        su=>{
+          if(su.code==200){
+            this.data[index].img = su.face_image_data;
+            this.data[index].name = su.face_user_name;
           }
         },
         err=>{

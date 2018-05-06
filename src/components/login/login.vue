@@ -11,8 +11,8 @@
            class="el-input__icon telico"></i>
           </span>
           </div>
-          <div class="el-input el-input--prefix mar-10">
-              <input  placeholder="请输入密码" type="password" rows="2" validateevent="true" class="el-input__inner" v-model="password" :class="{'red-boed':check.ispass||check.pass}" @keyup.enter="submitFn" autocomplete="new-password">
+          <div class="el-input el-input--prefix mar-10" :class="{'red-bo':check.ispass}">
+              <input  placeholder="请输入密码" type="password" rows="2" validateevent="true" class="el-input__inner" v-model="password"  @keyup.enter="submitFn" autocomplete="new-password">
               <span class="el-input__prefix"><i  class="el-input__icon pswico"></i><!----></span>
           </div>
           <p class="tip-p">
@@ -49,15 +49,19 @@ export default {
   },
   methods:{
     submitFn(){
+      this.check.isphone = false;
+      this.check.ispass = false;
       this.err = false;
       if(!this.phone){
           this.err = true;
+          this.check.isphone = true;
           this.errtit = "请输入账号"
           return
       }
       if(!this.password){
           this.err = true;
-          this.errtit = "请输入请输入密码"
+          this.check.ispass = true;
+          this.errtit = "请输入密码"
           return
       }
       //1是客流，2出入出台的日常业务管理系统，10000表示平台运营系统
@@ -219,5 +223,8 @@ export default {
   a:hover{
     color: #378EEF;
   }
+}
+.red-bo input{
+      border-color: #F84C4C;
 }
 </style>
