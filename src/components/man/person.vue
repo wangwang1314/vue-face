@@ -316,15 +316,15 @@
           :visible.sync="setdialog"
           width="736px">
           <div class="content-set">
-                <p class="select-p">共选择添加 <span>2</span> 位人员：</p>
+                <p class="select-p">共选择添加 <span>{{selectval.length}}</span> 位人员：</p>
                 <div class="select-div">
                   <el-tag
-                    :key="tag.face_type"
+                    :key="tag.face_id"
                     v-for="tag in selectval"
                     closable
                     :disable-transitions="false"
                     @close="handleClose(tag)">
-                    {{tag.face_type}}
+                    {{tag.name}}
                   </el-tag>
                 </div>
                 <p class="select-p">添加出入权限：</p>
@@ -630,10 +630,11 @@ export default {
         arr.push(value.face_id)
       }
       let num = arr.length;
-      for(let i=0;i++;i<arr.length){
+      console.log(22222)
+      for(let i=0;i<arr.length;i++){
         this.$api.post("/clieng_mng_del_face_api",{
           company_id:this.id,
-          face_id:arr[i].face_id
+          face_id:arr[i]
         },su=>{
           if(su.code==200){
             if((i+1)==num){
@@ -694,6 +695,9 @@ export default {
          //      that.img = reader.result;
          //      that.btntext = "重新上传";
          //  };
+    },
+    handleClose(){
+      console.log("sss")
     }
   }
 }
