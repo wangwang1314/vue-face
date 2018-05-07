@@ -25,7 +25,20 @@
        <p class="su-tit">共 <span>{{total}}</span> 条数据</p>
        <p class="sur-num">
          <span @click="addFn">新增人员</span>
-         <span>批量导入照片</span>
+         
+        <el-upload
+            class="upload-style"
+            action="https://jsonplaceholder.typicode.com/posts/"
+            ref="uploadimg"
+            :on-change="changeList"
+            :auto-upload="false"
+            :show-file-list="false"
+            :limit="100"
+            multiple
+            :on-exceed="handleExceed"
+            >
+            <span>批量导入照片</span>
+        </el-upload>
          <span @click="delMan">删除人员</span>
          <span @click="setMan">设置权限</span>
        </p>
@@ -47,7 +60,7 @@
               label="头像"
              >
              <template slot-scope="scope">
-               <img class="img-size" src="../../assets/images/sur-bg1.png">
+               <img class="img-size" :src="scope.row.img">
              </template>
             </el-table-column>
             <el-table-column
@@ -59,7 +72,7 @@
               label="类型"
               >
               <template slot-scope="scope">
-                <span v-if="scope.row.face_type">VIP</span>
+                <span v-if="scope.row.face_type==1">VIP</span>
                 <span v-else>访客</span>
               </template>
             </el-table-column>
@@ -519,7 +532,7 @@ export default {
             
             if(su.num>0){
               let that = this;
-              this.data.forEach(function(val,index){
+              su.data.forEach(function(val,index){
                   val.img = "";
                   val.name = "";
                   that.getImg(val,index)
@@ -540,7 +553,8 @@ export default {
         },
         su=>{
           if(su.code==200){
-            this.data[index].img = su.face_image_data;
+            //data:image/jpeg;base64,
+            this.data[index].img = "data:image/"+su.face_image_type+";base64,"+su.face_image_data;
             this.data[index].name = su.face_user_name;
           }
         },
@@ -607,6 +621,9 @@ export default {
         this.deldialog = true;
       }
     },
+    handleExceed(){
+        this.$message.warning(`当前限制选择 100 个文件，本次选择了 ${files.length} 个文件，共选择了 ${files.length + fileList.length} 个文件`);
+    },
     delFn(){
       let arr = [];
       for(let value of this.selectval){
@@ -657,6 +674,26 @@ export default {
       }else{
         this.setdialog = true;
       }
+    },
+    changeList(file,fileList){
+      console.log(fileList)
+      console.log(this.$refs.uploadimg.clearFiles())
+      console.log(fileList)
+         // if(file.name.indexOf(".")!=-1){
+         //    let arr = file.name.split(".");
+         //    this.imgtype = arr[arr.length-1];
+         //  }
+         //  //创建blob对象
+         //  let blob = new Blob([file.raw],{type:file.raw.type});
+         //  //this.imgtype = 
+         //  let that = this;
+         //  let reader = new FileReader();
+         //  reader.readAsDataURL(blob);
+         //  reader.onload = function (e) {
+         //      // 图片的 base64 格式, 可以直接当成 img 的 src 属性值      
+         //      that.img = reader.result;
+         //      that.btntext = "重新上传";
+         //  };
     }
   }
 }
