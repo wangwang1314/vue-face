@@ -14,46 +14,56 @@
          <span>姓名</span>
          <input type="text" name="" placeholder="请输入姓名搜索">
       </div>
-       <p class="su-tit">共 <span>992</span> 条数据</p>
+       <p class="su-tit">共 <span>{{total}}</span> 条数据</p>
        <p class="sur-num">
          <span @click="addman">添加白名单</span>
-         <span>删除白名单</span>
+         <span @click="delMan">删除白名单</span>
        </p>
-       <p class="chose-num"><i></i>已选择<span>13</span>项</p>
-       <table class="sort-tab">
-             <thead>
-               <tr>
-                 <td><i class="not-all"></i></td>
-                 <td>头像</td>
-                 <td>出入人姓名</td>
-                 <td>类型</td>
-                 <td>入库时间</td>
-                 <td>更新时间</td>
-               </tr>
-             </thead>
-             <tbody>
-               <tr @click="show">
-                 <td><i></i></td>
-                 <td><img src="../../assets/images/sur-bg1.png"></td>
-                 <td>于文文1号</td>
-                 <td>2018-03-11 22:00:00</td>
-                 <td>于文文1号</td>
-                 <td>
-                   2018-03-11 22:00:00
-                 </td>
-               </tr>
-               <tr @click="show">
-                 <td><i class="chose"></i></td>
-                 <td><img src="../../assets/images/sur-bg1.png"></td>
-                 <td>于文文1号</td>
-                 <td>2018-03-11 22:00:00</td>
-                 <td>于文文1号</td>
-                 <td>
-                   2018-03-11 22:00:00
-                 </td>
-               </tr>
-             </tbody>
-           </table>
+       <p class="chose-num"><i></i>已选择<span> {{selectval.length}} </span>项</p>
+          <el-table
+            ref="multipleTable"
+            :data="data"
+            tooltip-effect="dark"
+            style="width: 100%"
+            @selection-change="handleSelectionChange"
+            id="pdf"
+            >
+            <el-table-column
+              type="selection"
+              width="55">
+            </el-table-column>
+            <el-table-column
+              label="头像"
+             >
+             <template slot-scope="scope">
+               <img class="img-size" v-if="scope.row.img" :src="scope.row.img">
+             </template>
+            </el-table-column>
+            <el-table-column
+              prop="name"
+              label="姓名"
+             >
+            </el-table-column>
+            <el-table-column
+              label="类型"
+              >
+              <template slot-scope="scope">
+                <span v-if="scope.row.face_type==1">VIP</span>
+                <span v-else>访客</span>
+              </template>
+            </el-table-column>
+             <el-table-column
+              label="入库时间"
+              prop="build_time"
+              show-overflow-tooltip>
+            </el-table-column>
+             <el-table-column
+              label="更新时间"
+              prop="build_time"
+              show-overflow-tooltip>
+            </el-table-column>
+          </el-table>
+
           <div class="page">
             <el-pagination
               @size-change="handleSizeChange"
@@ -78,10 +88,10 @@
           :visible.sync="dialogVisible"
           width="720px">
           <div class="content-up">
-            <div class="img-box">
+           <!--  <div class="img-box">
               <img :src="img" v-if="img">
               <img src="../../assets/images/icon-tou.png" v-else :class="{'uncheck':check.img}">
-            </div>
+            </div> -->
             <el-upload
               class="upload-demo"
               action="https://jsonplaceholder.typicode.com/posts/"
@@ -89,12 +99,16 @@
               :auto-upload="false"
               :show-file-list="false"
               >
-              <el-button size="small" type="primary" class="tit-tou">{{btntext}}</el-button>
+             <!--  <el-button size="small" type="primary" class="tit-tou">{{btntext}}</el-button> -->
+              <div class="img-box">
+                <img :src="img" v-if="img">
+                <img src="../../assets/images/icon-tou.png" v-else :class="{'uncheck':check.img}">
+              </div>
             </el-upload>
           <!--   <p class="tit-tou">上传头像</p> -->
             <p class="name-ipt">
               <span><i class="red">*</i>姓名</span>
-              <input type="text" name="" placeholder="请输入姓名，20字以内，必须填" :class="{'uncheck':check.input}" v-model="name">
+              <input type="text" name="" placeholder="请输入姓名，20字以内，必须填" :class="{'uncheck':check.input}" v-model="name" style="margin-bottom:60px;">
             </p>
           </div>
           <span slot="footer" class="dialog-footer">
@@ -104,6 +118,21 @@
           </span>
         </el-dialog>
       </div>
+
+
+
+         <!--删除人员-->
+      <el-dialog
+        :visible.sync="deldialog"
+        width="460px">
+        <span slot="title" class="del-tit">删除白名单</span>
+        <div>确定删除选择的白名单数据吗？</div>
+        <span slot="footer" class="dialog-footer">
+          <span class="del-box" >已选择<i>{{selectval.length}}</i>条白名单数据</span>
+          <el-button type="primary" @click="delFn">确 定</el-button>
+          <el-button @click="deldialog = false">取 消</el-button> 
+        </span>
+      </el-dialog>
     </div>
 </template>
 
@@ -144,11 +173,16 @@ export default {
       errtit:"",
       name:"",
       imgtype:"",
-      id:""
+      id:"",
+      selectval:[],
+      data:[],
+      total:0,
+      deldialog:false
     }
   },
   mounted(){
      this.id = Number(sessionStorage.getItem("users"));
+     this.getList();
   },
   methods:{
     handleSizeChange(){
@@ -161,6 +195,13 @@ export default {
       console.log(22)
     },
     addman(){
+      this.check.img = false;
+      this.check.input = false;
+      this.name = "";
+     // this.title = "新增人员";
+      // this.btntext = "上传头像";
+      this.img = "";
+      this.err = false;
       this.dialogVisible = true;
     },
     searchChange(file){
@@ -191,6 +232,9 @@ export default {
       };
     },
     addConfirm(){
+      this.err = false;
+      this.check.img = false;
+      this.check.input = false;
       if(!this.img){
         this.err = true;
         this.errtit = "请上传头像";
@@ -203,12 +247,13 @@ export default {
         this.check.input = true;
         return
       }
+       let img = this.img.split(",")[1];
       this.$api.post("/client_mng_add_white_list_api",
         {
-          company_id:Number(this.id),
+          company_id:this.id,
           face_user_name:this.name,
           face_image_type:this.imgtype,
-          face_image_data:this.img
+          face_image_data:img
         },
         su=>{
           if(su.code==200){
@@ -217,6 +262,7 @@ export default {
               message: su.msg,
               type: 'success'
             });
+            this.getList();
           }else{
             this.$message({
               message: su.msg,
@@ -225,9 +271,104 @@ export default {
           }
         },
         err=>{
+          this.$message.error(err.msg);
+      })
+    },
+    getList(){
+      this.$api.post("/client_mng_query_white_list_api",{
+          company_id:this.id
+        },
+        su=>{
+          if(su.code==200){
+            
+            if(su.num>0){
+              let that = this;
+              su.data.forEach(function(val,index){
+                  val.img = "";
+                  val.name = "";
+                  that.getImg(val,index)
+              })
+            }
+            this.data = su.data;
+            this.total = su.num;
+          }
+        },
+        err=>{
 
       })
-    }
+    },
+    getImg(val,index){
+        this.$api.post("/client_get_face_image_api",{
+          company_id:this.id,
+          face_id:val.face_id
+        },
+        su=>{
+          if(su.code==200){
+            //data:image/jpeg;base64,
+            this.data[index].img = "data:image/"+su.face_image_type+";base64,"+su.face_image_data;
+            this.data[index].name = su.face_user_name;
+          }
+        },
+        err=>{
+
+      })
+    },
+    handleSelectionChange(val){
+      this.selectval = val;
+    },
+    delMan(){
+      if(this.selectval.length<=0){
+        this.$alert('请至少选择1条白名单数据进行操作！', '删除白名单', {
+          confirmButtonText: '知道了',
+          callback: action => {
+            
+          }
+        });
+      }else{
+        this.deldialog = true;
+      }
+    },
+    delFn(){
+      let arr = [];
+      for(let value of this.selectval){
+        arr.push(value.face_id)
+      }
+      let num = arr.length;
+      //console.log(22222)
+      for(let i=0;i<arr.length;i++){
+        this.$api.post("/client_mng_del_white_list_api",{
+          company_id:this.id,
+          face_id:arr[i]
+        },su=>{
+          if(su.code==200){
+            if((i+1)==num){
+              this.$message({
+                  message: su.msg,
+                  type: 'success'
+              });
+              this.getList();
+              this.deldialog = false;
+            }
+          }else{
+             if((i+1)==num){
+                this.$message({
+                    message: su.msg,
+                    type: 'warning'
+                });
+              }
+
+          }
+        },err=>{
+          if((i+1)==num){
+            this.$message({
+                message: su.msg,
+                type: 'warning'
+            });
+          }
+        })
+      }
+      
+    },
   }
 }
 </script>
@@ -287,7 +428,7 @@ export default {
       font-size:14px;
       color:rgba(77,77,77,1);
       margin-left: 14px;
-
+      cursor: pointer;
     }
   }
 
@@ -341,6 +482,7 @@ export default {
   }
   .page{
     text-align: center;
+    margin-top: 50px;
   }
   .chose-num{
     height:34px; 
@@ -350,7 +492,8 @@ export default {
     font-size: 12px;
     line-height: 34px;
     text-indent: 8px;
-     margin-top: 20px;
+    margin-top: 20px;
+    margin-bottom: 12px;
     i{
       display:inline-block;
       height: 18px;
@@ -364,17 +507,16 @@ export default {
       color: #FEAD56;
     } 
   }
-
   .slider-box{
-    width: 944px;
-    height: 1056px;
+    width: 922px;
+    min-height: 1037px;
     position: absolute;
     top:0;
     right: 0;
     background: #fff;
     z-index: 10;
     border: 1px solid #ccc;
-    padding:40px 40px 40px 71px;
+    padding:33px 33px 33px 71px;
     box-sizing: border-box;
   }
   .close-p{
@@ -398,26 +540,166 @@ export default {
   .fade-enter, .fade-leave-to {
     transform: translateX(944px);
   }
-
-  .warn-box{
-  font-size: 12px;
-  color: #F84C4C;
-  float: left;
-  position: relative;
-  top:13px;
-  i{
-    display: inline-block;
-    width: 20px;
-    height: 20px;
-    background:url(../../assets/images/err-icon.png);
-    margin-right: 12px;
-    position: relative;
-    top:4px;
+  .info{
+    >img{
+      width: 170px;
+      height: 170px;
+      border-radius: 50%;
+    }
+    >div{
+      display: inline-block;
+      vertical-align: top;
+      margin-left: 31px;
+      .name{
+        margin-top: 27px;
+        font-size:24px;
+        color:rgba(26,26,26,1);
+      }
+      >img{
+        width: 59px;
+        height: 26px;
+        margin-top: 16px;
+      }
+      >div{
+        margin-top: 29px;
+        width: 388px;
+        p{
+          color: #4D4D4D;
+          font-size: 14px;
+          line-height: 22px;
+          span{
+            color: #999999;
+          }
+        }
+        button{
+          width: 106px;
+          height: 36px;
+          background:#378EEF;
+          border: none;
+          outline: none;
+          cursor: pointer;
+          border-radius: 2px;
+          color: #fff;
+          float: right;
+         position: relative;
+         top:-36px;
+        }
+      }
+    }
   }
-}
-.box .el-dialog__footer{
+  .time-div{
+    margin-top: 25px;
+    border: 1px solid #ccc;
+    >p{
+      height:39px; 
+      background:rgba(237,237,237,1);
+      color: #4D4D4D;
+      text-indent: 29px;
+      line-height: 39px;
+    }
+    >div{
+      line-height: 116px;
+      >span{
+        padding-left: 29px;
+      }
+    }
+  }
+  .record{
+    >div{
+      padding: 5px;
+      >img{
+        float: right;
+        position: relative;
+        top:-82px;
+        right: 34px;
+      }
+      >p{
+        line-height: 34px;
+        text-indent: 29px;
+        .red{
+          color: #F84C4C;
+        }
+        .green{
+          color: #98C56B;
+        }
+      }
+    }
+  }
+  .edit-class{
+    height:60px; 
+    background:rgba(241,243,244,1);
+    border-radius: 2px;
+    line-height: 60px;
+    text-indent: 22px;
+    margin-top: 12px;
+    color: #000;
+    button{
+      width:106px;
+      height:36px; 
+      background:rgba(255,255,255,1);
+      border-radius: 2px;
+      color: #4D4D4D;
+      float: right;
+      position: relative;
+      top:12px;
+      border: 1px solid #ccc;
+      margin-right: 12px;
+      cursor: pointer;
+    }
+    button.color{
+      border: 1px solid #378EEF;
+      color: #fff;
+      background: #378EEF;
+    } 
+  }
+  .rep-class{
+    padding-left: 23px;
+  }
+  .per-p{
+    font-size:16px;
+    font-weight: bold;
+    color:rgba(26,26,26,1);
+    line-height: 40px;
+    margin-top: 18px;
+    >i{
+      display: inline-block;
+      width:4px;
+      height:16px; 
+      background:rgba(55,142,239,1);
+      margin-right: 12px;
+    }
+    >span{
+      margin-right: 18px;
+    }
+  }
+  .con-box{
+    margin-left: 15px;
+    p{
+      margin-top: 20px;
+    }
+  }
+  .check-box{
+    width:600px;
+    height:160px; 
+    border-radius: 4px;
+    border: 1px solid #CCCCCC;
+    overflow: auto;
+    margin:17px 0 5px 15px;
+    line-height: 43px;
+    padding: 0 29px;
+    box-sizing: border-box;
+    >p{
+      display: inline-block;
+      margin-right: 54px;
+    }
+    >p:nth-child(4n){
+      margin-right: 0;
+    }
+  }
+  .box .el-dialog__footer{
   box-shadow: 0 0 4px #ccc;
 }
+
 .content-up{
   text-align: center;
    .img-box:hover{
@@ -433,38 +715,31 @@ export default {
     font-size:16px;
     color:rgba(77,77,77,1);
     position: relative;
-
-    >div{
-      width: 120px;
-      height: 120px;
-      position: absolute;
-      background:rgba(0,0,0,1);
-      opacity:0.55;
-      display: none;
-      top:0;
-      border-radius: 50%;
-      line-height: 140px;
-      img{
-        width: 46px;
-        height: 40px;
-      }
-    }
+    cursor: pointer;
     >img{
       width: 120px;
       height: 120px;
       border-radius: 50%;
+      border: 2px solid transparent;
+    }
+    >img.uncheck{
+      border: 2px solid #F84C4C;
     }
   }
   .tit-tou{
     color: RGBA(77, 77, 77, 1);
     font-size: 16px;
+    background: #fff;
+    border: none;
   }
   .name-ipt{
     font-size:14px;
     color:rgba(153,153,153,1);
     margin-top: 26px;
+    text-align: left;
     span{
       margin-right: 10px;
+      margin: 0 10px 0 140px;
     }
     input{
       width:372px;
@@ -474,13 +749,17 @@ export default {
       border:1px solid RGBA(204, 204, 204, 1); 
       text-indent: 10px;
     }
+    input.uncheck{
+      border:1px solid #F84C4C; 
+    }
   }
 }
 .red{
   color: RGBA(229, 56, 56, 1);
   margin-right: 3px;
+  display: inline-block;
+  width: 12px;
 }
-
 .upload-style{
   display: inline-block;
 }
@@ -503,10 +782,101 @@ export default {
     top:3px;
   }
 }
-  .tit-tou{
-    color: RGBA(77, 77, 77, 1);
-    font-size: 16px;
-    background: #fff;
-    border: none;
+.img-size{
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+}
+.del-tit{
+  font-size:18px; 
+  color:rgba(77,77,77,1);                          
+}
+.del-box{
+  float: left;
+  font-size: 14px;
+  color: #999999;
+  position: relative;
+  top:6px;
+  i{
+    color: #378EEF;
+    margin: 0 3px;
   }
+}
+.select-p{
+  color: #4D4D4D;
+  font-size: 14px;
+}
+.select-div{
+  width:678px;
+  height:104px;
+  overflow: auto;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 12px 16px;
+  box-sizing:border-box;
+  .el-tag{
+    margin:0 12px 12px 0;
+  } 
+}
+</style>
+
+
+
+
+
+
+
+
+<style>
+.el-table{
+  border-right: 1px solid #E6E6E6;
+  border-left: 1px solid #E6E6E6;
+}
+.text-center{
+  text-align: center;
+ }
+.el-table th{
+  height:60px;
+  background-color:#EAEAEA;
+  color:#1A1A1A;
+  text-align: center;
+  font-size:14px;
+ }
+ .person .el-table td{
+  font-size:12px;
+  color:#1A1A1A;
+  height: 102px;
+ }
+
+ .err{
+  color:#F84C4C;
+  font-size: 12px;
+ }
+  .err i{margin:0 11px 0 16px;}
+
+  .ip-err{
+    border:1px solid #F84C4C !important;
+  }
+  .add-user .el-dialog__body{
+    padding:0 20px 0 36px;
+  }
+  .add-user .el-dialog__footer{
+    padding:20px 26px;
+    border-top:1px solid #CCCCCC;
+    margin-top:25px;
+  }
+    .add-user .el-button{
+      width: 78px;
+      height:32px;
+    }
+
+    .add-err{
+      margin-top:10px;
+    }
+    .bd-red{
+      border:1px solid #F84C4C !important;
+    }
+    .el-table__body{
+      text-align: center;
+    }
 </style>

@@ -31,8 +31,9 @@
             action="https://jsonplaceholder.typicode.com/posts/"
             ref="uploadimg"
             :on-change="changeList"
-            :auto-upload="false"
+            :file-list="imglist"
             :show-file-list="false"
+            :auto-upload="false"
             :limit="100"
             multiple
             :on-exceed="handleExceed"
@@ -60,7 +61,7 @@
               label="头像"
              >
              <template slot-scope="scope">
-               <img class="img-size" :src="scope.row.img">
+               <img class="img-size" v-if="scope.row.img" :src="scope.row.img">
              </template>
             </el-table-column>
             <el-table-column
@@ -83,6 +84,7 @@
             </el-table-column>
              <el-table-column
               label="更新时间"
+              prop="build_time"
               show-overflow-tooltip>
             </el-table-column>
           </el-table>
@@ -263,10 +265,10 @@
           :visible.sync="dialogVisible"
           width="720px">
           <div class="content-up">
-            <div class="img-box">
+           <!--  <div class="img-box">
               <img :src="img" v-if="img">
               <img src="../../assets/images/icon-tou.png" v-else :class="{'uncheck':check.img}">
-            </div>
+            </div> -->
             <el-upload
               class="upload-demo"
               action="https://jsonplaceholder.typicode.com/posts/"
@@ -274,7 +276,11 @@
               :auto-upload="false"
               :show-file-list="false"
               >
-              <el-button size="small" type="primary" class="tit-tou">{{btntext}}</el-button>
+             <!--  <el-button size="small" type="primary" class="tit-tou">{{btntext}}</el-button> -->
+             <div class="img-box">
+                <img :src="img" v-if="img">
+                <img src="../../assets/images/icon-tou.png" v-else :class="{'uncheck':check.img}">
+              </div>
             </el-upload>
           <!--   <p class="tit-tou">上传头像</p> -->
             <p class="name-ipt">
@@ -458,7 +464,8 @@ export default {
       total:0,
       deldialog:false,
       setdialog:false,
-      htmlTitle:"人员管理"
+      htmlTitle:"人员管理",
+      imglist:[]
     }
   },
   mounted(){
@@ -487,7 +494,7 @@ export default {
       this.name = "";
       this.type = "1";
       this.title = "新增人员";
-      this.btntext = "上传头像";
+      // this.btntext = "上传头像";
       this.img = "";
       this.err = false;
 
@@ -507,7 +514,7 @@ export default {
       reader.onload = function (e) {
           // 图片的 base64 格式, 可以直接当成 img 的 src 属性值      
           that.img = reader.result;
-          that.btntext = "重新上传";
+          // that.btntext = "重新上传";
       };
     },
     handleCheckAllChange(){
@@ -563,6 +570,9 @@ export default {
       })
     },
     addConfirm(){
+      this.err = false;
+      this.check.img = false;
+      this.check.input = false;
       if(!this.img){
         this.err = true;
         this.errtit = "请上传头像";
@@ -578,7 +588,7 @@ export default {
       let img = this.img.split(",")[1];
       this.$api.post("/client_mng_add_face_api",
         {
-          company_id:Number(this.id),
+          company_id:this.id,
           face_type:Number(this.type),
           face_user_name:this.name,
           face_image_type:this.imgtype,
@@ -600,7 +610,7 @@ export default {
           }
         },
         err=>{
-
+          this.$message.error(err.msg);
       })
     },
     handleSelectionChange(val){
@@ -630,9 +640,9 @@ export default {
         arr.push(value.face_id)
       }
       let num = arr.length;
-      console.log(22222)
+      //console.log(22222)
       for(let i=0;i<arr.length;i++){
-        this.$api.post("/clieng_mng_del_face_api",{
+        this.$api.post("/client_mng_del_face_api",{
           company_id:this.id,
           face_id:arr[i]
         },su=>{
@@ -643,6 +653,7 @@ export default {
                   type: 'success'
               });
               this.getList();
+              this.deldialog = false;
             }
           }else{
              if((i+1)==num){
@@ -676,10 +687,21 @@ export default {
         this.setdialog = true;
       }
     },
-    changeList(file,fileList){
-      console.log(fileList)
-      console.log(this.$refs.uploadimg.clearFiles())
-      console.log(fileList)
+    changeList(file,filelist){
+     // console.log(filelist.length)
+     // console.log(file,"ssss")
+      //this.$refs.uploadimg.clearFiles(file.uid)
+      this.$nextTick(()=>{
+        console.log(filelist.length,"mowei",JSON.stringify(filelist))
+        
+      })
+       
+     // console.log(this.$refs.uploadimg.clearFiles())
+      //return false;
+      // console.log(this.imglist)
+      // console.log(file)
+     // console.log(this.$refs.uploadimg.clearFiles())
+      //console.log(fileList)
          // if(file.name.indexOf(".")!=-1){
          //    let arr = file.name.split(".");
          //    this.imgtype = arr[arr.length-1];
@@ -1045,6 +1067,7 @@ export default {
     font-size:16px;
     color:rgba(77,77,77,1);
     position: relative;
+    cursor: pointer;
     >img{
       width: 120px;
       height: 120px;
@@ -1171,9 +1194,10 @@ export default {
   text-align: center;
   font-size:14px;
  }
- .el-table td{
+ .person .el-table td{
   font-size:12px;
   color:#1A1A1A;
+  height: 102px;
  }
 
  .err{
