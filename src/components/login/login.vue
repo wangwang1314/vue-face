@@ -82,9 +82,11 @@ export default {
             if(code==1){
 
             }else if(code==2){
+
               this.$router.push({path:"/home"})
             }else if(code==10000){
-
+              sessionStorage.setItem("users","admin");
+              sessionStorage.setItem("type",code);
               this.$router.push({path:"/openListindex/openlist"})
             }
           }else{

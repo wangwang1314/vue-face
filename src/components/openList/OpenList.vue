@@ -83,7 +83,7 @@
 		      show-overflow-tooltip
 		      >
 		      <template slot-scope="scope">
-		          <router-link :to="{name :'Places',params:{id:scope.row.company_id}}" class="eq-link">场地设置</router-link>
+		          <router-link :to="{name :'Places',params:{id:scope.row.company_id}}" class="eq-link">{{scope.row.device_num}}</router-link>
 		      </template>
 		    </el-table-column>
  
@@ -93,7 +93,7 @@
 		      show-overflow-tooltip
 		    >
 		     <template slot-scope="scope">
-		          <router-link :to="{name :'Equipment',params:{id:scope.row.company_id}}" class="eq-link">设备管理</router-link>
+		          <router-link :to="{name :'Equipment',params:{id:scope.row.company_id}}" class="eq-link">{{scope.row.place_num}}</router-link>
 		      </template>
 		    </el-table-column>
 
@@ -170,10 +170,10 @@
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
       :current-page.sync="currentPage2"
-      :page-sizes="[100, 200, 300, 400]"
-      :page-size="100"
+      :page-sizes="[20, 50, 100]"
+      :page-size="pageSize"
       layout="prev, pager, next,sizes"
-      :total="1000">
+      :total="allDate">
     </el-pagination>
   </div>
 
@@ -256,12 +256,13 @@ export default{
       return {
          companyName:"",
          slideFlag:false,
+         pageSize:20,
          notEdite:false,
          cpnerr:true,
          pawerr:true,
          userId:'admin',//通过用户的ID去查询列表
          dialogVisible:false,
-         currentPage2: 5,
+         currentPage2: 1,
          delet:false,
          userName:"",//开户接口，公司名称
          userPwd:'',//密码
@@ -285,7 +286,8 @@ export default{
          ed_mobil:'',
          ed_psw:"",
          delcout:0,
-         allDate:0
+         allDate:0,
+         dataTotle:0
       }
       
 
@@ -311,9 +313,9 @@ export default{
                ids.push(el.company_id);
            })
            console.log(ids);
-
-           this.$api.post('/admin_erase_api',{
-             company_id:ids
+          ids.forEach((el,ind)=>{
+            this.$api.post('/admin_erase_api',{
+             company_id:el
            },su=>{
               if(su.code==200){
                 this.delet = false;
@@ -328,6 +330,8 @@ export default{
            },err=>{
 
            })
+          })
+          
         
       },
       //点击列表编辑
@@ -365,12 +369,46 @@ export default{
             console.log(su);
             if(su.code==200){
               this.companyList = su.data;
+              if(this.companyList){
+                 this.companyList.forEach((el,ind)=>{
+                  this.getCout(el.company_id,ind);
+                })
+              }
+             
               this.allDate = su.num;
             }else{
                this.$message.error(su.msg);
             }
         },err=>{
-            this.$message.error(su.msg);
+            this.$message.error(err.msg);
+        })
+      },
+      //獲取場地和設備數目
+      getCout(id,ind){
+        this.$api.post("/common_query_acount_api",{
+          "company_id":id
+        },su=>{
+           console.log(su);
+           if(su.code==200){
+                if(su.data){
+                  this.$set(this.companyList[ind],"device_num",su.num);
+                  this.$set(this.companyList[ind],"place_num",su.data.length);
+                }else{
+                  if(su.num>0){
+                       this.$set(this.companyList[ind],"device_num",su.num);
+                  }else{
+                      this.$set(this.companyList[ind],"device_num","场地设置");
+                  }
+                
+                  this.$set(this.companyList[ind],"place_num","--");
+                }
+
+              console.log(this.companyList[ind]) ;
+           }else{
+              this.$message.error(su.msg);
+           } 
+        },err=>{
+            this.$message.error(err.msg);
         })
       },
       addNew(){

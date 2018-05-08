@@ -17,8 +17,8 @@
         <div class="super-adm">
           <div class="admin-name">
             <div class="adm-le">
-              <p>欢迎进入管理平台（出入系统）！</p> 
-              <p><span>13949096002</span></p>
+              <p>欢迎进入祺眼平台管理（出入系统）</p> 
+              <p><span>{{data.user_name}}</span></p>
             </div> 
             <a class="adm-ri" @click="exit">退出</a>
           </div>
@@ -45,10 +45,12 @@
 
 </template>
 <script>
+import { mapState } from 'vuex'
 export default {
   data () {
     return {
-      arr:['1','2','3']
+      arr:['1','2','3'],
+      id:""
     }
   },
   methods:{
@@ -61,18 +63,41 @@ export default {
                 cancelButtonText: '取消', 
                 type: ''
               }).then(() => {
-                    
+                  sessionStorage.removeItem("users");
+                  this.$router.push({path:"/login"})  
                   
               }).catch(()=>{
                
               });
-    }
+    },
+     getInfo(){
+      this.$api.post("/common_query_company_api",
+        {
+          "company_id":this.id
+         }
+      ,su=>{
+        if(su.code==200){
+          this.$store.state.data = su;
+        }
+      },
+      err=>{
+
+      })
+    },
   },
   mounted(){
-
+      this.id = Number(sessionStorage.getItem("users"));
+      if(JSON.stringify(this.$store.state.data)=="{}"){
+        this.getInfo();
+      }
   },
   watch:{
     
+  },
+  computed:{
+    ...mapState({   
+      data:"data"
+    })
   }
 }
 </script>

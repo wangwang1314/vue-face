@@ -424,7 +424,7 @@ export default{
       },
       initList(){
          this.$api.post("/common_query_place_api",{
-           "company_id":101,
+           "company_id":100,
            place_id:11
 
          },su=>{
@@ -561,7 +561,7 @@ export default{
        //删除场地方法
       delFn(){
           this.$api.post("/admin_del_device_api",{
-             company_id:101,
+             company_id:100,
              place_id:11,
              device_id:this.delId
           },su=>{
