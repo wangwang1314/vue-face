@@ -3,7 +3,7 @@
 
        <div class="cpn-name">
            公司名称
-           <input type="text" placeholder="请输入公司名称" v-model="companyName"/>
+           <input type="text" placeholder="请输入公司名称" @blur="fileName" v-model="companyName"/>
        </div>
        <p class="data-all">共 <span>{{allDate}}</span>条数据</p>
        <div class="add-del">
@@ -403,6 +403,8 @@ export default{
                   this.$set(this.companyList[ind],"place_num","--");
                 }
 
+                this.$set(this.companyList[ind],"isshow",true)
+
               console.log(this.companyList[ind]) ;
            }else{
               this.$message.error(su.msg);
@@ -422,6 +424,15 @@ export default{
         this.addErrtext="";
         this.ed_cpnerr = false;
         this.ed_pawerr = false;
+      },
+      fileName(){
+         this.companyList.forEach((el,ind)=>{
+              if(el.user_name == this.companyName){
+                  el.isshow = true;
+              }else{
+                 el.isshow = false;
+              }
+         })
       },
       //开户
       comfirmAdd(){
