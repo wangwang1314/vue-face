@@ -41,7 +41,7 @@
             <span>批量导入照片</span>
         </el-upload>
          <span @click="delMan">删除人员</span>
-         <span @click="setMan">设置权限</span>
+         <!-- <span @click="setMan">设置权限</span> -->
        </p>
        <p class="chose-num"><i></i>已选择<span> {{selectval.length}} </span>项</p>
            <el-table
@@ -86,6 +86,13 @@
               label="更新时间"
               prop="build_time"
               show-overflow-tooltip>
+            </el-table-column>
+             <el-table-column
+              label="操作"
+              show-overflow-tooltip>
+              <template slot-scope="scope">
+                <el-button type="text" @click.stop="addright(scope)">添加权限</el-button>
+              </template>
             </el-table-column>
           </el-table>
           <div class="page">
@@ -313,7 +320,19 @@
           <el-button @click="deldialog = false">取 消</el-button> 
         </span>
       </el-dialog>
-
+      
+      <!--批量导入人员-->
+      <el-dialog
+        :visible.sync="numdialog"
+        width="460px">
+        <span slot="title" class="del-tit">批量导入照片结果</span>
+        <div class="pic-cla"><i></i>新增导入 {{info.sunum}} 人，失败<span style="color:#F84C4C;"> {{info.fanum}} </span> 人</div>
+        <span slot="footer" class="dialog-footer">
+          <!-- <span class="del-box" >已选择<i>{{selectval.length}}</i>位人员</span> -->
+          <el-button type="primary" @click="numdialog = false">知道了</el-button>
+        <!--   <el-button @click="deldialog = false">取 消</el-button>  -->
+        </span>
+      </el-dialog>
 
         <!--  添加权限 -->
        <div class="box">
@@ -321,9 +340,10 @@
           title="添加权限"
           :visible.sync="setdialog"
           width="736px">
+          <span slot="title" >添加<span style="color:#378eef">&nbsp;{{setobj.name}}&nbsp;</span>权限</span>
           <div class="content-set">
-                <p class="select-p">共选择添加 <span>{{selectval.length}}</span> 位人员：</p>
-                <div class="select-div">
+                <!-- <p class="select-p">共选择添加 <span>{{selectval.length}}</span> 位人员：</p> -->
+              <!--   <div class="select-div">
                   <el-tag
                     :key="tag.face_id"
                     v-for="tag in selectval"
@@ -333,7 +353,8 @@
                     {{tag.name}}
                   </el-tag>
                 </div>
-                <p class="select-p">添加出入权限：</p>
+                <p class="select-p">添加出入权限：</p> -->
+
                 <div class="rep-class">
                     <p class="per-p">
                       <i></i>
@@ -351,81 +372,37 @@
                       <span>入口权限</span> 
                     </p>
                     <div class="con-box">
-                      <p><el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" @change="handleCheckAllChange">全选</el-checkbox></p>
+                      <p><el-checkbox  v-model="placelistin.ischeck" @change="changeall(placelistin)">全选</el-checkbox></p>
                       <div style="margin-left:15px;">
-                        <p><el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" @change="handleCheckAllChange">场地名称1</el-checkbox></p>
-                        <div class="check-box">
-                          <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
-                          <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
-                          <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
-                          <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
-                          <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
-                          <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
-                          <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
-                          <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
-                          <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
-                          <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
-                          <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
-                        </div>
-                        <p><el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" @change="handleCheckAllChange">场地名称2</el-checkbox></p>
-                        <div class="check-box">
-                          <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
-                          <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
-                          <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
-                          <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
-                          <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
-                          <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
-                          <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
-                          <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
-                          <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
-                          <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
-                          <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
-                        </div>
+                        <template v-for="item in placelistin">
+                          <p><el-checkbox  v-model="item.ischeck" @change="changepl(item,placelistin)">{{item.place_address}}</el-checkbox></p>
+                          <div class="check-box">
+                            <p v-for="child in item.data"><el-checkbox  v-model="child.ischeck" @change="changede(child,item,placelistin)">{{child.device_address}}</el-checkbox></p>
+                          </div>
+                        </template>
                       </div>
                     </div>
                     <p class="per-p">
                       <i></i>
                       <span>出口权限</span> 
-                    </p> 
-                     <div class="con-box">
-                      <p><el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" @change="handleCheckAllChange">全选</el-checkbox></p>
+                    </p>
+                    <div class="con-box">
+                      <p><el-checkbox  v-model="placelistout.ischeck" @change="changeall(placelistout)">全选</el-checkbox></p>
                       <div style="margin-left:15px;">
-                        <p><el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" @change="handleCheckAllChange">场地名称1</el-checkbox></p>
-                        <div class="check-box">
-                          <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
-                          <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
-                          <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
-                          <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
-                          <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
-                          <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
-                          <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
-                          <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
-                          <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
-                          <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
-                          <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
-                        </div>
-                        <p><el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" @change="handleCheckAllChange">场地名称2</el-checkbox></p>
-                        <div class="check-box">
-                          <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
-                          <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
-                          <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
-                          <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
-                          <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
-                          <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
-                          <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
-                          <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
-                          <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
-                          <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
-                          <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
-                        </div>
+                        <template v-for="item in placelistout">
+                          <p><el-checkbox  v-model="item.ischeck" @change="changepl(item,placelistout)">{{item.place_address}}</el-checkbox></p>
+                          <div class="check-box">
+                            <p v-for="child in item.data"><el-checkbox  v-model="child.ischeck" @change="changede(child,item,placelistout)">{{child.device_address}}</el-checkbox></p>
+                          </div>
+                        </template>
                       </div>
-                    </div> 
+                    </div>
                 </div>
           </div>
           <span slot="footer" class="dialog-footer">
             <span class="warn-box" v-show="err"><i></i>{{errtit}}</span>
             <el-button type="primary" @click="addConfirm">确 定</el-button>
-            <el-button @click="dialogVisible = false">取 消</el-button> 
+            <el-button @click="setdialog = false">取 消</el-button> 
           </span>
         </el-dialog>
       </div>
@@ -465,7 +442,16 @@ export default {
       deldialog:false,
       setdialog:false,
       htmlTitle:"人员管理",
-      imglist:[]
+      imglist:[],
+      numlist:0,
+      info:{
+        sunum:0,
+        fanum:0
+      },
+      numdialog:false,
+      setobj:{},
+      placelistin:[],
+      placelistout:[]
     }
   },
   mounted(){
@@ -687,39 +673,185 @@ export default {
         this.setdialog = true;
       }
     },
+    addright(val){
+         this.setobj = val.row;
+         this.setdialog = true;
+         this.getright();
+    },
+    getright(){
+        this.$api.post("/common_query_company_api",{
+          company_id:this.id
+        },su=>{
+          if(su.code===200){
+            let obj = su.data;
+            obj.ischeck = false;
+            obj.forEach((val,index)=>{
+                val.data = [];
+                val.ischeck = false;
+                this.delist(val.place_id,index);
+            })
+            //console.log(obj);
+            this.placelistin = obj;
+            this.placelistout = JSON.parse(JSON.stringify(obj));
+            this.placelistout.ischeck = false;
+          }else{
+            this.$message({
+                message: su.msg,
+                type: 'warning'
+            });
+          }
+        },err=>{
+            this.$message({
+                message: su.msg,
+                type: 'warning'
+            });
+        })
+    },
+    delist(val,index){     
+        this.$api.post("/common_query_place_api",{
+          company_id:this.id,
+          place_id:val
+        },su=>{
+          if(su.code==200&&su.data.length>0){
+              this.placelistin[index].data = [];
+              this.placelistout[index].data = [];
+              su.data.forEach((val)=>{
+                  val.ischeck = false;
+                  //console.log(val,"ssssssss")
+                  if(parseInt(val.device_id)%2!=0){
+                    this.placelistin[index].data.push(val);
+                  }else{
+                    this.placelistout[index].data.push(val);
+                  } 
+              })
+              // this.placelistin[index].data = su.data;
+              // this.placelistout[index].data = JSON.parse(JSON.stringify(su.data));
+          }
+        },err=>{
+              
+        })
+ 
+    },
     changeList(file,filelist){
-     // console.log(filelist.length)
-     // console.log(file,"ssss")
-      //this.$refs.uploadimg.clearFiles(file.uid)
+      this.info.sunum=0;
+      this.info.fanum=0;
       this.$nextTick(()=>{
-        console.log(filelist.length,"mowei",JSON.stringify(filelist))
-        
+        let len = filelist.length;
+        console.log(file,"mowei",JSON.stringify(filelist),this)
+       // this.$refs.uploadimg.clearFiles()
+          let name = "";
+          let imgtype = ""
+          if(file.name.indexOf(".")!=-1){
+            let arr = file.name.split(".");
+            imgtype = arr[arr.length-1];
+            name = arr[0];
+          }
+          //创建blob对象
+          let blob = new Blob([file.raw],{type:file.raw.type});
+          //this.imgtype = 
+          let that = this;
+          let reader = new FileReader();
+          reader.readAsDataURL(blob);
+          reader.onload = function (e) {
+              // 图片的 base64 格式, 可以直接当成 img 的 src 属性值      
+             let img = reader.result;
+             img = img.split(",")[1];
+              that.$api.post("/client_mng_add_face_api",
+              {
+                company_id:that.id,
+                face_type:2,
+                face_user_name:name,
+                face_image_type:imgtype,
+                face_image_data:img
+              },
+              su=>{
+                if(su.code==200){
+                 that.info.sunum++;
+                }else{
+                 that.info.fanum++;
+                }
+                if((that.info.sunum+that.info.fanum)==len){
+                   that.infoFn();
+                }
+              },
+              err=>{
+                // that.$message.error(err.msg);
+                that.info.fanum++;
+                if((that.info.sunum+that.info.fanum)==len){
+                   that.infoFn();
+                }
+              })
+          };
       })
        
-     // console.log(this.$refs.uploadimg.clearFiles())
-      //return false;
-      // console.log(this.imglist)
-      // console.log(file)
-     // console.log(this.$refs.uploadimg.clearFiles())
-      //console.log(fileList)
-         // if(file.name.indexOf(".")!=-1){
-         //    let arr = file.name.split(".");
-         //    this.imgtype = arr[arr.length-1];
-         //  }
-         //  //创建blob对象
-         //  let blob = new Blob([file.raw],{type:file.raw.type});
-         //  //this.imgtype = 
-         //  let that = this;
-         //  let reader = new FileReader();
-         //  reader.readAsDataURL(blob);
-         //  reader.onload = function (e) {
-         //      // 图片的 base64 格式, 可以直接当成 img 的 src 属性值      
-         //      that.img = reader.result;
-         //      that.btntext = "重新上传";
-         //  };
     },
     handleClose(){
       console.log("sss")
+    },
+    infoFn(){
+      this.numdialog = true;
+      this.$refs.uploadimg.clearFiles();
+    },
+    changeall(val){
+      if(val.ischeck){
+        val.forEach((item)=>{
+          item.ischeck = true;
+          this.changepl(item,val)
+        })
+      }else{
+        val.forEach((item)=>{
+          item.ischeck = false;
+          this.changepl(item,val)
+        })
+      }
+    },
+    changepl(val,list){
+      let i = 0;  
+      list.forEach((val,index)=>{
+        if(val.ischeck){
+          i++
+        }
+      })
+      if(i==list.length){
+        list.ischeck = true;
+      }else{
+        list.ischeck = false;
+      }
+     // console.log(val,"ssss");
+      if(val.ischeck){
+        val.data.forEach((val)=>{
+          val.ischeck = true;
+        })
+      }else{
+        val.data.forEach((val)=>{
+          val.ischeck = false;
+        })
+      }
+    },
+    changede(val,list,all){
+      //console.log(val,list,all);
+      let i = 0;
+      list.data.forEach((val,index)=>{
+        if(val.ischeck){
+          i++
+        }
+      })
+      if(i==list.data.length){
+        list.ischeck = true;
+      }else{
+        list.ischeck = false;
+      }
+      let j = 0;
+      all.forEach((val,index)=>{
+        if(val.ischeck){
+          j++
+        }
+      })
+      if(j==all.length){
+        all.ischeck = true;
+      }else{
+        all.ischeck = false;
+      }
     }
   }
 }
@@ -1169,6 +1301,15 @@ export default {
   .el-tag{
     margin:0 12px 12px 0;
   } 
+}
+.pic-cla i{
+  display: inline-block;
+  width: 30px;
+  height: 30px;
+  background: url(../../assets/images/tip-warn.png);
+  margin-right: 16px;
+  position: relative;
+  top:8px;
 }
 </style>
 
