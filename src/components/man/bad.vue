@@ -22,7 +22,7 @@
        <p class="chose-num"><i></i>已选择<span> {{selectval.length}} </span>项</p>
           <el-table
             ref="multipleTable"
-            :data="data"
+            :data="realdata"
             tooltip-effect="dark"
             style="width: 100%"
             @selection-change="handleSelectionChange"
@@ -69,10 +69,10 @@
               @size-change="handleSizeChange"
               @current-change="handleCurrentChange"
               :current-page.sync="page"
-              :page-sizes="[100, 200, 300, 400]"
-              :page-size="100"
-              layout="prev, pager, next,sizes "
-              :total="1000">
+              :page-sizes="[10,20,30,50]"
+              :page-size="pagesize"
+              layout="prev, pager, next,sizes"
+              :total="total">
             </el-pagination>
           </div>
           <transition name="fade">
@@ -177,7 +177,10 @@ export default {
       selectval:[],
       data:[],
       total:0,
-      deldialog:false
+      deldialog:false,
+      page:1,
+      pagesize:20,
+      realdata:[]
     }
   },
   mounted(){
@@ -291,11 +294,17 @@ export default {
             }
             this.data = su.data;
             this.total = su.num;
+            this.dataFn();
           }
         },
         err=>{
 
       })
+    },
+    dataFn(){
+      let start = (this.page-1)*this.pagesize;
+      let end = this.page*this.pagesize;
+      this.realdata = this.data.slice(start,end);
     },
     getImg(val,index){
         this.$api.post("/client_get_face_image_api",{

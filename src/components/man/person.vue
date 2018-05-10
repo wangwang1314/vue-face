@@ -46,7 +46,7 @@
        <p class="chose-num"><i></i>已选择<span> {{selectval.length}} </span>项</p>
            <el-table
             ref="multipleTable"
-            :data="data"
+            :data="realdata"
             tooltip-effect="dark"
             style="width: 100%"
             @selection-change="handleSelectionChange"
@@ -100,10 +100,10 @@
               @size-change="handleSizeChange"
               @current-change="handleCurrentChange"
               :current-page.sync="page"
-              :page-sizes="[100, 200, 300, 400]"
-              :page-size="100"
-              layout="prev, pager, next,sizes "
-              :total="1000">
+              :page-sizes="[10,20,30,50]"
+              :page-size="pagesize"
+              layout="prev, pager, next,sizes"
+              :total="total">
             </el-pagination>
           </div>
 
@@ -356,52 +356,59 @@
                 <p class="select-p">添加出入权限：</p> -->
 
                 <div class="rep-class">
-                    <p class="per-p">
-                      <i></i>
-                      <span>出入时间段</span> 
-                      <el-date-picker
-                        v-model="value3"
-                        type="datetimerange"
-                        range-separator="至"
-                        start-placeholder="开始日期"
-                        end-placeholder="结束日期">
-                      </el-date-picker>
-                    </p>
-                    <p class="per-p">
-                      <i></i>
-                      <span>入口权限</span> 
-                    </p>
-                    <div class="con-box">
-                      <p><el-checkbox  v-model="placelistin.ischeck" @change="changeall(placelistin)">全选</el-checkbox></p>
-                      <div style="margin-left:15px;">
-                        <template v-for="item in placelistin">
-                          <p><el-checkbox  v-model="item.ischeck" @change="changepl(item,placelistin)">{{item.place_address}}</el-checkbox></p>
-                          <div class="check-box">
-                            <p v-for="child in item.data"><el-checkbox  v-model="child.ischeck" @change="changede(child,item,placelistin)">{{child.device_address}}</el-checkbox></p>
-                          </div>
-                        </template>
-                      </div>
+                    <div class="pad-class" :class="{'pad-warn':rightwarn.time}">
+                      <p class="per-p">
+                        <i></i>
+                        <span>出入时间段</span> 
+                        <el-date-picker
+                          v-model="value3"
+                          type="datetimerange"
+                          range-separator="至"
+                          start-placeholder="开始日期"
+                          value-format="yyyy-M-d hh-mm-ss"
+                          end-placeholder="结束日期">
+                        </el-date-picker>
+                      </p>
                     </div>
-                    <p class="per-p">
-                      <i></i>
-                      <span>出口权限</span> 
-                    </p>
-                    <div class="con-box">
-                      <p><el-checkbox  v-model="placelistout.ischeck" @change="changeall(placelistout)">全选</el-checkbox></p>
-                      <div style="margin-left:15px;">
-                        <template v-for="item in placelistout">
-                          <p><el-checkbox  v-model="item.ischeck" @change="changepl(item,placelistout)">{{item.place_address}}</el-checkbox></p>
-                          <div class="check-box">
-                            <p v-for="child in item.data"><el-checkbox  v-model="child.ischeck" @change="changede(child,item,placelistout)">{{child.device_address}}</el-checkbox></p>
-                          </div>
-                        </template>
+                    <div class="pad-class" :class="{'pad-warn':rightwarn.in}">
+                      <p class="per-p">
+                        <i></i>
+                        <span>入口权限</span> 
+                      </p>
+                      <div class="con-box">
+                        <p><el-checkbox  v-model="placelistin.ischeck" @change="changeall(placelistin)">全选</el-checkbox></p>
+                        <div style="margin-left:15px;">
+                          <template v-for="item in placelistin">
+                            <p><el-checkbox  v-model="item.ischeck" @change="changepl(item,placelistin)">{{item.place_address}}</el-checkbox></p>
+                            <div class="check-box">
+                              <p v-for="child in item.data"><el-checkbox  v-model="child.ischeck" @change="changede(child,item,placelistin)">{{child.device_address}}</el-checkbox></p>
+                            </div>
+                          </template>
+                        </div>
                       </div>
-                    </div>
+                     </div>
+                    <div class="pad-class" :class="{'pad-warn':rightwarn.out}">  
+                      <p class="per-p">
+                        <i></i>
+                        <span>出口权限</span> 
+                      </p>
+                      <div class="con-box">
+                        <p><el-checkbox  v-model="placelistout.ischeck" @change="changeall(placelistout)">全选</el-checkbox></p>
+                        <div style="margin-left:15px;">
+                          <template v-for="item in placelistout">
+                            <p><el-checkbox  v-model="item.ischeck" @change="changepl(item,placelistout)">{{item.place_address}}</el-checkbox></p>
+                            <div class="check-box">
+                              <p v-for="child in item.data"><el-checkbox  v-model="child.ischeck" @change="changede(child,item,placelistout)">{{child.device_address}}</el-checkbox></p>
+                            </div>
+                          </template>
+                        </div>
+                      </div>
+                    </div>  
                 </div>
           </div>
           <span slot="footer" class="dialog-footer">
             <span class="warn-box" v-show="err"><i></i>{{errtit}}</span>
-            <el-button type="primary" @click="addConfirm">确 定</el-button>
+            <el-button type="primary" @click="addrightFn">确 定</el-button>
             <el-button @click="setdialog = false">取 消</el-button> 
           </span>
         </el-dialog>
@@ -415,7 +422,6 @@ export default {
     return {
       value4:"",
       slider:false,
-      page:0,
       activeName:"first",
       value3:"",
       isIndeterminate:true,
@@ -440,7 +446,7 @@ export default {
       selectval:[],
       total:0,
       deldialog:false,
-      setdialog:false,
+      setdialog:true,
       htmlTitle:"人员管理",
       imglist:[],
       numlist:0,
@@ -451,7 +457,15 @@ export default {
       numdialog:false,
       setobj:{},
       placelistin:[],
-      placelistout:[]
+      placelistout:[],
+      page:1,
+      pagesize:20,
+      realdata:[],
+      rightwarn:{
+        time:false,
+        in:false,
+        out:false
+      }
     }
   },
   mounted(){
@@ -459,11 +473,14 @@ export default {
       this.getList();
   },
   methods:{
-    handleSizeChange(){
-
+    handleSizeChange(val){
+      this.pagesize = val;
+      //console.log(this.page,this.pagesize)
+      this.dataFn();
     },
-    handleCurrentChange(){
-
+    handleCurrentChange(val){
+      //console.log(this.page,this.pagesize)
+      this.dataFn();
     },
     show(){
       this.slider = true;
@@ -533,11 +550,17 @@ export default {
             }
             this.data = su.data;
             this.total = su.num;
+            this.dataFn()
           }
         },
         err=>{
 
       })
+    },
+    dataFn(){
+      let start = (this.page-1)*this.pagesize;
+      let end = this.page*this.pagesize;
+      this.realdata = this.data.slice(start,end);
     },
     getImg(val,index){
         this.$api.post("/client_get_face_image_api",{
@@ -852,6 +875,20 @@ export default {
       }else{
         all.ischeck = false;
       }
+    },
+    addrightFn(){
+      this.rightwarn.time = false;
+      this.rightwarn.in = false;
+      this.rightwarn.out = false;
+      console.log(this.value3);
+      if(this.value3.length==0){
+        this.err = true;
+        this.errtit = "出入时间段不能为空";
+        // this.errtit = "入口权限不能为空";
+        // this.errtit = "出口权限不能为空";
+        this.rightwarn.time = true;
+        return
+      }
     }
   }
 }
@@ -1144,7 +1181,6 @@ export default {
     font-weight: bold;
     color:rgba(26,26,26,1);
     line-height: 40px;
-    margin-top: 18px;
     >i{
       display: inline-block;
       width:4px;
@@ -1310,6 +1346,15 @@ export default {
   margin-right: 16px;
   position: relative;
   top:8px;
+}
+.pad-class{
+  padding: 6px;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  margin-bottom: 18px;
+}
+.pad-warn{
+   border: 1px solid #F84C4C;
 }
 </style>
 
