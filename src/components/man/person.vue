@@ -1,15 +1,15 @@
 <template>
     <div class="person" >
-      <div class="header">
+      <!-- <div class="header">
         <span>头像</span>
-        <!--  <el-select v-model="value4" clearable placeholder="请选择" class="sur-selct">
+         <el-select v-model="value4" clearable placeholder="请选择" class="sur-selct">
           <el-option
             v-for="item in options"
             :key="item.value"
             :label="item.label"
             :value="item.value">
           </el-option>
-        </el-select> -->
+        </el-select>
         <el-upload
                 class="upload-style"
                 action="https://jsonplaceholder.typicode.com/posts/"
@@ -21,8 +21,8 @@
         </el-upload>
         <span>姓名</span>
         <input type="text" name="" placeholder="请输入姓名搜索">
-      </div>
-       <p class="su-tit">共 <span>{{total}}</span> 条数据</p>
+      </div> -->
+       <p class="su-tit" v-if="total">共 <span>{{total}}</span> 条数据</p>
        <p class="sur-num">
          <span @click="addFn">新增人员</span>
          
@@ -100,7 +100,7 @@
               @size-change="handleSizeChange"
               @current-change="handleCurrentChange"
               :current-page.sync="page"
-              :page-sizes="[10,20,30,50]"
+              :page-sizes="[20]"
               :page-size="pagesize"
               layout="prev, pager, next,sizes"
               :total="total">
@@ -111,20 +111,21 @@
             <div class="slider-box" v-if="slider">
               <p class="close-p"><i @click="closeFn">×</i></p>
               <div class="info">
-                <img src="../../assets/images/sur-bg1.png">
+                <img :src="setobj.img">
                 <div>
-                  <p class="name">鹿晗</p>
-                  <img src="../../assets/images/fk.png">
+                  <p class="name">{{setobj.name}}</p>
+                  <img v-if="setobj.face_type!=1" src="../../assets/images/fk.png">
+                  <img v-else src="../../assets/images/vip.png">
                   <div>
                     <p>
                       <span>入库时间：</span>
-                      2018-03-21 08：00：00
+                      {{setobj.build_time}}
                     </p>
                     <p>
                       <span>更新时间：</span>
-                      2018-03-21 08：00：00
+                      {{setobj.build_time}}
                     </p>
-                    <button>编辑</button>
+                    <button @click="editman">编辑</button>
                   </div>
                 </div>
               </div>
@@ -150,7 +151,7 @@
                       <div>
                         <p>设备地址 ： B口</p>
                         <p>场地名称 ： 足球场</p>
-                        <p>出入类型 ： <span class="red">出</span></p>
+                        <p>出入类型 ： <span class="reder">出</span></p>
                         <img src="../../assets/images/out.png">
                       </div>
                     </div>
@@ -162,7 +163,7 @@
                       <div>
                         <p>设备地址 ： B口</p>
                         <p>场地名称 ： 足球场</p>
-                        <p>出入类型 ： <span class="red">入</span></p>
+                        <p>出入类型 ： <span class="reder">入</span></p>
                         <img src="../../assets/images/to.png">
                       </div>
                     </div>
@@ -307,6 +308,39 @@
           </span>
         </el-dialog>
       </div>
+       <!--  添加白名单 -->
+       <div class="box">
+          <el-dialog
+          title="编辑人员资料"
+          :visible.sync="editdialog"
+          width="720px">
+          <div class="content-up">
+           <!--  <div class="img-box">
+              <img :src="img" v-if="img">
+              <img src="../../assets/images/icon-tou.png" v-else :class="{'uncheck':check.img}">
+            </div> -->
+       
+             <div class="img-box">
+                <img :src="setobj.img" >
+              </div>
+          <!--   <p class="tit-tou">上传头像</p> -->
+            <p class="name-ipt">
+              <span><i class="red">*</i>姓名</span>
+              <input type="text" name="" placeholder="请输入姓名，20字以内，必须填" :class="{'uncheck':check.input}" v-model="setobj.name">
+            </p>
+            <p class="name-ipt">
+              <span><i class="red"></i>类型</span>
+              <el-radio v-model="setobj.face_type" label="1">VIP</el-radio>
+              <el-radio v-model="setobj.face_type" label="2">访客</el-radio>
+            </p>
+          </div>
+          <span slot="footer" class="dialog-footer">
+            <!-- <span class="warn-box" v-show="err"><i></i>{{errtit}}</span> -->
+            <el-button type="primary" @click="editConfirm">确 定</el-button>
+            <el-button @click="dialogVisible = false">取 消</el-button> 
+          </span>
+        </el-dialog>
+      </div>
 
       <!--删除人员-->
       <el-dialog
@@ -446,7 +480,7 @@ export default {
       selectval:[],
       total:0,
       deldialog:false,
-      setdialog:true,
+      setdialog:false,
       htmlTitle:"人员管理",
       imglist:[],
       numlist:0,
@@ -465,7 +499,8 @@ export default {
         time:false,
         in:false,
         out:false
-      }
+      },
+      editdialog:false
     }
   },
   mounted(){
@@ -626,6 +661,8 @@ export default {
       this.selectval = val;
     },
     sliderShow(row){
+      this.setobj = row;
+      console.log(this.setobj);
       this.slider = true;
     },
     delMan(){
@@ -698,6 +735,7 @@ export default {
     },
     addright(val){
          this.setobj = val.row;
+         //console.log(this.setobj);
          this.setdialog = true;
          this.getright();
     },
@@ -760,7 +798,7 @@ export default {
       this.info.fanum=0;
       this.$nextTick(()=>{
         let len = filelist.length;
-        console.log(file,"mowei",JSON.stringify(filelist),this)
+        //console.log(file,"mowei",JSON.stringify(filelist),this)
        // this.$refs.uploadimg.clearFiles()
           let name = "";
           let imgtype = ""
@@ -809,7 +847,7 @@ export default {
        
     },
     handleClose(){
-      console.log("sss")
+     // console.log("sss")
     },
     infoFn(){
       this.numdialog = true;
@@ -877,10 +915,11 @@ export default {
       }
     },
     addrightFn(){
+      this.err = false;
       this.rightwarn.time = false;
       this.rightwarn.in = false;
       this.rightwarn.out = false;
-      console.log(this.value3);
+     // console.log(this.value3);
       if(this.value3.length==0){
         this.err = true;
         this.errtit = "出入时间段不能为空";
@@ -889,7 +928,89 @@ export default {
         this.rightwarn.time = true;
         return
       }
+      //console.log(this.placelistin,this.placelistout)
+      // this.placelistin.forEach((val,index)=>{
+
+      // })
+      let data = [];
+      let outnum = [];
+      let innum =[];
+      for(let i =0;i<this.placelistin.length;i++){
+        let devicein = this.placelistin[i].data;
+        let deviceout = this.placelistout[i].data;
+        let placeid = this.placelistin[i].place_id;
+        for(let j = 0;j< devicein.length;j++){
+          if(devicein[j].ischeck){
+            if(outnum.indexOf(placeid)==-1){
+              innum.push(placeid);
+            }
+            if(deviceout.length<=0){
+              this.err = true;
+              this.errtit = "请选择出口权限";
+              return
+            }
+            let juge = 0;
+            for(let x = 0;x< deviceout.length;x++){
+              if(deviceout[x].ischeck){
+               data.push(this.placelistin[i].place_id+"-"+devicein[j].device_id+"-"+deviceout[x].device_id)
+                juge++;
+              }
+            }
+            if(juge==0){
+              this.err = true;
+              this.errtit = "请选择出口权限";
+              return
+            }
+          }
+
+        }
+       
+        for(let y = 0;y< deviceout.length;y++){
+          console.log(deviceout[y],"444");
+
+          if(deviceout[y].ischeck&&outnum.indexOf(placeid)==-1){
+            outnum.push(placeid);
+          }
+        }
+      }
+      if(data.length<=0||outnum.length!=innum.length){
+        this.err = true;
+        this.errtit = "请选择入口权限";
+        return
+      }
+         console.log(this.setobj)
+        this.$api.post("/client_add_auth_api",{
+          company_id:this.id,
+          face_id:this.setobj.face_id,
+          fromTimeStamp:this.value3[0],
+          toTimeStamp:this.value3[1],
+          acPkCode:data
+        },
+        su=>{
+          if(su.code==200){
+            this.setdialog = false;
+            this.$message({
+              message: su.msg,
+              type: 'success'
+            });
+          }else{
+            this.$message({
+              message: su.msg,
+              type: 'warning'
+            });
+          }
+        },err=>{
+           this.$message.error(err.msg);
+        })
+    },
+    editman(){
+
+    },
+    editConfirm(){
+      
     }
+
+
   }
 }
 </script>
@@ -929,7 +1050,7 @@ export default {
   .su-tit{
     font-size: 12px;
     color: #808080;
-    margin:43px 0 15px 0;
+    margin:8px 0 15px 0;
     span{
       color: #378EEF;
     }
@@ -1111,12 +1232,14 @@ export default {
   .time-div{
     margin-top: 25px;
     border: 1px solid #ccc;
+    font-size: 12px;
     >p{
       height:39px; 
       background:rgba(237,237,237,1);
       color: #4D4D4D;
       text-indent: 29px;
       line-height: 39px;
+      font-size: 14px;
     }
     >div{
       line-height: 116px;
@@ -1137,7 +1260,7 @@ export default {
       >p{
         line-height: 34px;
         text-indent: 29px;
-        .red{
+        .reder{
           color: #F84C4C;
         }
         .green{
@@ -1153,6 +1276,8 @@ export default {
     line-height: 60px;
     text-indent: 22px;
     margin-top: 12px;
+    margin-bottom: 
+    27px;
     color: #000;
     button{
       width:106px;
@@ -1355,6 +1480,29 @@ export default {
 }
 .pad-warn{
    border: 1px solid #F84C4C;
+}
+.content-set{
+  height: 600px;
+  overflow: auto;
+}
+::-webkit-scrollbar{
+      background-color:white !important;
+      width: 5px;
+      height:8px;
+
+     
+}
+::-webkit-scrollbar-thumb{
+    background-color:rgba(186,190,193,1);
+    width: 5px !important;
+    border-radius: 2px 2px 2px 2px;
+    height:5px;
+  
+}
+
+::-webkit-scrollbar-button{
+  height:5px;
+  background-color: white;
 }
 </style>
 

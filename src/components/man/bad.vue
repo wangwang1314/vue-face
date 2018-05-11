@@ -1,6 +1,6 @@
 <template>
     <div class="person" >
-      <div class="header">
+      <!-- <div class="header">
         <span>头像</span>
           <el-upload
                 class="upload-style"
@@ -13,8 +13,8 @@
           </el-upload>
          <span>姓名</span>
          <input type="text" name="" placeholder="请输入姓名搜索">
-      </div>
-       <p class="su-tit">共 <span>{{total}}</span> 条数据</p>
+      </div> -->
+       <p class="su-tit" v-if="total">共 <span>{{total}}</span> 条数据</p>
        <p class="sur-num">
          <span @click="addman">添加黑名单</span>
          <span @click="delMan">删除黑名单</span>
@@ -69,7 +69,7 @@
               @size-change="handleSizeChange"
               @current-change="handleCurrentChange"
               :current-page.sync="page"
-              :page-sizes="[10,20,30,50]"
+              :page-sizes="[20]"
               :page-size="pagesize"
               layout="prev, pager, next,sizes"
               :total="total">
@@ -417,7 +417,7 @@ export default {
   .su-tit{
     font-size: 12px;
     color: #808080;
-    margin:43px 0 15px 0;
+    margin:8px 0 15px 0;
     span{
       color: #378EEF;
     }
