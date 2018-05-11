@@ -132,15 +132,27 @@
               <div>
                  <el-tabs v-model="activeName" @tab-click="handleClick">
                   <el-tab-pane label="线路轨迹" name="first">
-                    <div class="time-div">
-                      <p>
-                        <span>出入时间 ：</span>
-                         2018-03-10
-                      </p>
-                      <div>
-                        <span>线路轨迹 :</span>
+                    <template v-for="item in totaldata">
+                      <div class="time-div">
+                        <p>
+                          <span>出入时间 ：</span>
+                           <span v-for="(child,index) in item.data" v-show="index==0">{{child.timeStamp.split(" ")[0]}}</span>
+                        </p>
+                        <div>
+                          <span>线路轨迹 :</span>
+                          <template v-for="(child,index) in item.data">
+                            <div>
+                              <span v-if="child.device_id%2!=0">入</span>
+                              <span v-else>出</span>
+                              <span>{{child.device_addres}}</span>
+                              <img src="../../assets/images/jtou.png">
+                              <i>{{child.timeStamp.split(" ")[1]}}</i>
+                            </div>
+                          </template>
+                        </div>
                       </div>
-                    </div>
+                    </template>
+                    
                   </el-tab-pane>
                   <el-tab-pane label="出入记录" name="second">
                     <div class="time-div record">
@@ -266,7 +278,7 @@
             </div>
          </transition>
 
-       <!--  添加白名单 -->
+       <!--  添加人员 -->
        <div class="box">
           <el-dialog
           :title="title"
@@ -308,7 +320,7 @@
           </span>
         </el-dialog>
       </div>
-       <!--  添加白名单 -->
+       <!--  编辑人员 -->
        <div class="box">
           <el-dialog
           title="编辑人员资料"
@@ -326,18 +338,18 @@
           <!--   <p class="tit-tou">上传头像</p> -->
             <p class="name-ipt">
               <span><i class="red">*</i>姓名</span>
-              <input type="text" name="" placeholder="请输入姓名，20字以内，必须填" :class="{'uncheck':check.input}" v-model="setobj.name">
+              <input type="text" name="" disabled placeholder="请输入姓名，20字以内，必须填" :class="{'uncheck':check.input}" v-model="setobj.name">
             </p>
             <p class="name-ipt">
               <span><i class="red"></i>类型</span>
-              <el-radio v-model="setobj.face_type" label="1">VIP</el-radio>
-              <el-radio v-model="setobj.face_type" label="2">访客</el-radio>
+              <el-radio v-model="type" label="1">VIP</el-radio>
+              <el-radio v-model="type" label="2">访客</el-radio>
             </p>
           </div>
           <span slot="footer" class="dialog-footer">
             <!-- <span class="warn-box" v-show="err"><i></i>{{errtit}}</span> -->
             <el-button type="primary" @click="editConfirm">确 定</el-button>
-            <el-button @click="dialogVisible = false">取 消</el-button> 
+            <el-button @click="editdialog = false">取 消</el-button> 
           </span>
         </el-dialog>
       </div>
@@ -455,7 +467,7 @@ export default {
   data () {
     return {
       value4:"",
-      slider:false,
+      slider:true,
       activeName:"first",
       value3:"",
       isIndeterminate:true,
@@ -500,7 +512,8 @@ export default {
         in:false,
         out:false
       },
-      editdialog:false
+      editdialog:false,
+      totaldata:[]
     }
   },
   mounted(){
@@ -519,6 +532,24 @@ export default {
     },
     show(){
       this.slider = true;
+      this.getrecord();
+    },
+    getrecord(){
+      this.$api.post("/client_query_face_id_record_api",{
+          company_id:this.id,
+          face_id:this.setobj.face_id,
+          place_id:0,
+          fromTimeStamp:"2018-1-1 00:22:22",
+          toTimeStamp:"2100-1-1 00:22:22"
+        },
+        su=>{
+          if(su.code==200){
+            this.totaldata = su.total_data;
+          }
+        },
+        err=>{
+
+      })
     },
     closeFn(){
        this.slider = false;
@@ -1004,10 +1035,32 @@ export default {
         })
     },
     editman(){
-
+      this.editdialog = true;
+      this.type = this.setobj.face_type;
     },
     editConfirm(){
-      
+      this.$api.post("/client_mng_modify_face_api",{
+          company_id:this.id,
+          face_id:this.setobj.face_id,
+          face_type:this.type
+        },
+        su=>{
+          if(su.code==200){
+            this.setobj.face_type = this.type;
+            this.editdialog = false;
+            this.$message({
+              message: su.msg,
+              type: 'success'
+            });
+          }else{
+            this.$message({
+              message: su.msg,
+              type: 'warning'
+            });
+          }
+        },err=>{
+           this.$message.error(err.msg);
+        })
     }
 
 
