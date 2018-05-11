@@ -26,6 +26,7 @@
             tooltip-effect="dark"
             style="width: 100%"
             @selection-change="handleSelectionChange"
+            @row-click="sliderShow"
             id="pdf"
             >
             <el-table-column
@@ -53,13 +54,13 @@
               </template>
             </el-table-column>
              <el-table-column
-              label="入库时间"
+              label="录入时间"
               prop="build_time"
               show-overflow-tooltip>
             </el-table-column>
              <el-table-column
-              label="更新时间"
-              prop="build_time"
+              label="出入记录"
+              prop="num"
               show-overflow-tooltip>
             </el-table-column>
           </el-table>
@@ -75,11 +76,62 @@
               :total="total">
             </el-pagination>
           </div>
-          <transition name="fade">
+          <!--侧边栏-->
+        <transition name="fade">
             <div class="slider-box" v-if="slider">
               <p class="close-p"><i @click="closeFn">×</i></p>
+              <div class="info">
+                <img :src="setobj.img">
+                <div style="margin-top:30px;">
+                  <p class="name">{{setobj.name}}</p>
+                  <!-- <img v-if="setobj.face_type!=1" src="../../assets/images/fk.png">
+                  <img v-else src="../../assets/images/vip.png"> -->
+                  <div>
+                    <p>
+                      <span>入库时间：</span>
+                      {{setobj.build_time}}
+                    </p>       
+                  </div>
+                </div>
+              </div>
+              <div style="margin-top:58px;position:relative;">
+                  <img :src="choseimg" class="show-class" v-show="imgshow" @click="hideFn">
+                 <el-tabs v-model="activeName" @tab-click="handleClick">
+                  <el-tab-pane label="出入记录" name="second">
+                  <template v-for="item in chosere">
+                      <div class="time-div record" v-for="child in item.data">
+                        <p>
+                          <span>出入时间 ：</span>
+                           {{child.timeStamp}}
+                        </p>
+                        <div>
+                          <p>设备地址 ： {{child.device_addres}}</p>
+                          <p>场地名称 ： {{child.device_addres}}</p>
+                          <p>出入类型 ： <span class="reder" v-if="child.device_id%2==0">出</span><span v-else class="reder">入</span></p>
+                          <img v-if="child.device_id%2==0" src="../../assets/images/out.png">
+                          <img v-else src="../../assets/images/to.png">
+                          <p class="img-cla">抓拍实图 ：<img :src="setobj.img" @click="choseFn(setobj.img)"></p>
+                        </div>
+                      </div>
+                  </template>
+                    
+                   <!--  <div class="time-div record">
+                      <p>
+                        <span>出入时间 ：</span>
+                         2018-03-10
+                      </p>
+                      <div>
+                        <p>设备地址 ： B口</p>
+                        <p>场地名称 ： 足球场</p>
+                        <p>出入类型 ： <span class="reder">入</span></p>
+                        <img src="../../assets/images/to.png">
+                      </div>
+                    </div> -->
+                  </el-tab-pane>
+                </el-tabs>
+              </div>
             </div>
-        </transition>
+         </transition>
 
        <!--  添加黑名单 -->
        <div class="box">
@@ -121,7 +173,7 @@
 
 
 
-         <!--删除人员-->
+      <!--删除人员-->
       <el-dialog
         :visible.sync="deldialog"
         width="460px">
@@ -133,6 +185,8 @@
           <el-button @click="deldialog = false">取 消</el-button> 
         </span>
       </el-dialog>
+
+       
     </div>
 </template>
 
@@ -180,7 +234,12 @@ export default {
       deldialog:false,
       page:1,
       pagesize:20,
-      realdata:[]
+      realdata:[],
+      setobj:{},
+      activeName:"second",
+      chosere:[{data:[1]}],
+      choseimg:"",
+      imgshow:false
     }
   },
   mounted(){
@@ -289,7 +348,8 @@ export default {
               su.data.forEach(function(val,index){
                   val.img = "";
                   val.name = "";
-                  that.getImg(val,index)
+                  that.getImg(val,index);
+                  that.getrecord(val,index);
               })
             }
             this.data = su.data;
@@ -305,6 +365,32 @@ export default {
       let start = (this.page-1)*this.pagesize;
       let end = this.page*this.pagesize;
       this.realdata = this.data.slice(start,end);
+    },
+    getrecord(val,index){
+       this.$api.post("/client_query_face_id_record_api",{
+          company_id:this.id,
+          face_id:val.face_id,
+          place_id:0,
+          fromTimeStamp:"2018-1-1 00:00:00",
+          toTimeStamp:"2100-1-2 00:00:00"
+        },
+        su=>{
+          if(su.code==200){
+            //data:image/jpeg;base64,
+            // this.data[index].img = "data:image/"+su.face_image_type+";base64,"+su.face_image_data;
+            // this.data[index].name = su.face_user_name;
+            let num=0;
+            su.total_data.forEach((val,index)=>{
+              val.data.forEach(()=>{
+                num++;
+              })
+            })
+            this.data[index].num = (num>0)?num:"";
+          }
+        },
+        err=>{
+
+      })
     },
     getImg(val,index){
         this.$api.post("/client_get_face_image_api",{
@@ -324,6 +410,28 @@ export default {
     },
     handleSelectionChange(val){
       this.selectval = val;
+    },
+    sliderShow(val){
+      if(val.num>0){
+        this.editdialog = true;
+        this.setobj = val;
+        this.$api.post("/client_query_face_id_record_api",{
+          company_id:this.id,
+          face_id:val.face_id,
+          place_id:0,
+          fromTimeStamp:"2018-1-1 00:00:00",
+          toTimeStamp:"2100-1-1 00:00:00"
+        },
+        su=>{
+          if(su.code==200){
+            //data:image/jpeg;base64,
+            this.chosere = su.total_data;
+          }
+        },
+        err=>{
+
+        })
+      }
     },
     delMan(){
       if(this.selectval.length<=0){
@@ -378,6 +486,21 @@ export default {
       }
       
     },
+    closeFn(){
+       this.slider = false;
+    },
+    choseFn(val){
+      if(!this.imgshow){
+        this.imgshow = true; 
+      }else{
+        this.imgshow = false; 
+      }
+       
+       this.choseimg = val;
+    },
+    hideFn(){
+      this.imgshow = false;
+    }
   }
 }
 </script>
@@ -390,6 +513,7 @@ export default {
     margin:19px;
     min-height: 700px;
     padding: 30px 32px 50px 30px;
+    position: relative;
     .header{
       background:rgba(234,234,234,1);
       height: 80px;
@@ -621,6 +745,18 @@ export default {
         position: relative;
         top:-82px;
         right: 34px;
+      }
+      >p.img-cla{
+        height: 68px;
+        line-height: 68px;
+        img{
+          height: 50px;
+          width: 50px;
+          border-radius: 4px;
+          position: relative;
+          top:20px;
+          cursor: pointer;
+        }
       }
       >p{
         line-height: 34px;
@@ -887,5 +1023,14 @@ export default {
     }
     .el-table__body{
       text-align: center;
+    }
+    .show-class{
+      z-index: 10;
+      width: 260px;
+      height: 260px;
+      position: fixed;
+      top:50%;
+      left: 50%;
+      margin:-130px 0 0 -130px;
     }
 </style>

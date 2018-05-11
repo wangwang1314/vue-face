@@ -44,21 +44,16 @@
               label="姓名"
              >
             </el-table-column>
-            <el-table-column
+         <!--    <el-table-column
               label="类型"
               >
               <template slot-scope="scope">
                 <span v-if="scope.row.face_type==1">VIP</span>
                 <span v-else>访客</span>
               </template>
-            </el-table-column>
+            </el-table-column> -->
              <el-table-column
-              label="入库时间"
-              prop="build_time"
-              show-overflow-tooltip>
-            </el-table-column>
-             <el-table-column
-              label="更新时间"
+              label="录入时间"
               prop="build_time"
               show-overflow-tooltip>
             </el-table-column>
