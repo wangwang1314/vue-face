@@ -45,24 +45,24 @@
               label="姓名"
              >
             </el-table-column>
-            <el-table-column
+           <!--  <el-table-column
               label="类型"
               >
               <template slot-scope="scope">
                 <span v-if="scope.row.face_type==1">VIP</span>
                 <span v-else>访客</span>
               </template>
-            </el-table-column>
+            </el-table-column> -->
              <el-table-column
               label="录入时间"
               prop="build_time"
               show-overflow-tooltip>
             </el-table-column>
-             <el-table-column
+            <!--  <el-table-column
               label="出入记录"
               prop="num"
               show-overflow-tooltip>
-            </el-table-column>
+            </el-table-column> -->
           </el-table>
 
           <div class="page">
@@ -349,7 +349,7 @@ export default {
                   val.img = "";
                   val.name = "";
                   that.getImg(val,index);
-                  that.getrecord(val,index);
+                  //that.getrecord(val,index);
               })
             }
             this.data = su.data;
@@ -509,7 +509,7 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang='scss' scoped>
 .person{
-    min-width: 1027px;
+    min-width: 950px;
     background-color: #fff;
     margin:19px;
     min-height: 700px;

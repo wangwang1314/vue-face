@@ -380,7 +380,7 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang='scss' scoped>
 .person{
-    min-width: 1027px;
+    min-width: 950px;
     background-color: #fff;
     margin:19px;
     min-height: 700px;

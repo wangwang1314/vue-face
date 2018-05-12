@@ -163,10 +163,10 @@
                               <div class="ad-box">
                                 <p class="in-out" v-if="child.device_id%2!=0">入</p>
                                 <p class="in-out" v-else>出</p>
-                                <p class="address">{{child.device_addres}}</p>
+                                <p class="address">{{child.device_address}}</p>
                                 <p class="time">{{child.timeStamp.split(" ")[1]}}</p>
                               </div>
-                              <img src="../../assets/images/jtou.png"> 
+                              <img src="../../assets/images/jtou.png" v-if="index!=(item.length-1)"> 
                             </div>
                           </template>
                         </div>
@@ -175,19 +175,22 @@
                     
                   </el-tab-pane>
                   <el-tab-pane label="出入记录" name="second">
-                    <div class="time-div record">
-                      <p>
-                        <span>出入时间 ：</span>
-                         2018-03-10
-                      </p>
-                      <div>
-                        <p>设备地址 ： B口</p>
-                        <p>场地名称 ： 足球场</p>
-                        <p>出入类型 ： <span class="reder">出</span></p>
-                        <img src="../../assets/images/out.png">
+                    <template v-for="item in totaldata">
+                      <div class="time-div record" v-for="(child,index) in item.data">
+                        <p>
+                          <span>出入时间 ：</span>
+                           {{child.timeStamp}}
+                        </p>
+                        <div>
+                          <p>设备地址 ： {{child.device_address}}</p>
+                         <!--  <p>场地名称 ： 足球场</p> -->
+                          <p>出入类型 ： <span class="reder" v-if="child.device_id%2!=0">出</span><span class="reder" v-else>入</span></p>
+                          <img src="../../assets/images/out.png" v-if="child.device_id%2!=0">
+                          <img src="../../assets/images/to.png" v-else>
+                        </div>
                       </div>
-                    </div>
-                    <div class="time-div record">
+                    </template>  
+                   <!--  <div class="time-div record">
                       <p>
                         <span>出入时间 ：</span>
                          2018-03-10
@@ -198,7 +201,7 @@
                         <p>出入类型 ： <span class="reder">入</span></p>
                         <img src="../../assets/images/to.png">
                       </div>
-                    </div>
+                    </div> -->
                   </el-tab-pane>
                   <el-tab-pane label="出入权限" name="third">
                   <div style="overflow:auto;height:700px;">
@@ -436,7 +439,7 @@ export default {
   data () {
     return {
       value4:"",
-      slider:false,
+      slider:true,
       activeName:"first",
       value3:"",
       isIndeterminate:true,
@@ -1149,7 +1152,7 @@ export default {
 
 <style lang='scss' scoped>
 .person{
-    min-width: 1027px;
+    min-width: 950px;
     background-color: #fff;
     margin:19px;
     min-height: 700px;

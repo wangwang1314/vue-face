@@ -16,7 +16,7 @@
     </div>
     <div class="tit">共<span>{{total_num}}</span>人</div>
     <ul class="list">
-      <li v-for="(item,ind) in showDate" v-cloak>
+      <li v-for="(item,ind) in showDate" v-cloak @click="sliderShow(item)">
         <img :src="'data:image/'+item.face_image_type+';base64,'+item.face_image_data">
         <p class="name">{{item.face_user_name}}</p>
         <p>{{item.timeStamp}}</p>
@@ -52,6 +52,153 @@
         :total="showDate.length">
       </el-pagination>
     </div>
+    <!--侧边栏-->
+    <transition name="fade">
+            <div class="slider-box" v-if="slider">
+              <p class="close-p"><i @click="closeFn">×</i></p>
+              <div class="info">
+                <img :src="setobj.face_image_data">
+                <div>
+                  <p class="name">{{setobj.face_user_name}}</p>
+                  <img v-if="setobj.face_type!=1" src="../../assets/images/fk.png">
+                  <img v-else src="../../assets/images/vip.png">
+                  <div>
+                    <p>
+                      <span>入库时间：</span>
+                      {{setobj.build_time}}
+                    </p>
+                    <p>
+                      <span>更新时间：</span>
+                      {{setobj.build_time}}
+                    </p>
+                    <button @click="editman">编辑</button>
+                  </div>
+                </div>
+              </div>
+              <div>
+                 <el-tabs v-model="activeName" >
+                  <el-tab-pane label="线路轨迹" name="first">
+                    <template v-for="item in totaldata">
+                      <div class="time-div over-auto">
+                        <p>
+                          <span>出入时间 ：</span>
+                           <span v-for="(child,index) in item.data" v-show="index==0">{{child.timeStamp.split(" ")[0]}}</span>
+                        </p>
+                        <div style="overflow:auto">
+                          <span>线路轨迹 :</span>
+                          <template v-for="(child,index) in item.data">
+                            <div class="line-class">
+                              <div class="ad-box">
+                                <p class="in-out" v-if="child.device_id%2!=0">入</p>
+                                <p class="in-out" v-else>出</p>
+                                <p class="address">{{child.device_address}}</p>
+                                <p class="time">{{child.timeStamp.split(" ")[1]}}</p>
+                              </div>
+                              <img src="../../assets/images/jtou.png" v-if="index!=(item.length-1)"> 
+                            </div>
+                          </template>
+                        </div>
+                      </div>
+                    </template>
+                    
+                  </el-tab-pane>
+                  <el-tab-pane label="出入记录" name="second">
+                    <template v-for="item in totaldata">
+                      <div class="time-div record" v-for="(child,index) in item.data">
+                        <p>
+                          <span>出入时间 ：</span>
+                           {{child.timeStamp}}
+                        </p>
+                        <div>
+                          <p>设备地址 ： {{child.device_address}}</p>
+                         <!--  <p>场地名称 ： 足球场</p> -->
+                          <p>出入类型 ： <span class="reder" v-if="child.device_id%2!=0">出</span><span class="reder" v-else>入</span></p>
+                          <img src="../../assets/images/out.png" v-if="child.device_id%2!=0">
+                          <img src="../../assets/images/to.png" v-else>
+                        </div>
+                      </div>
+                    </template>  
+                  </el-tab-pane>
+                  <el-tab-pane label="出入权限" name="third">
+                  <div style="overflow:auto;height:700px;">
+                    <template v-for="(item,index) in rightcontent">
+                    <div class="edit-class">权限{{index+1}}
+                      <button @click="delright(item)">删除</button>     
+                    </div>
+                    <div class="rep-class">
+                        <p class="per-p">
+                          <i></i>
+                          <span>出入时间段</span> 
+                          {{item.data[0].fromTimeStamp}} 至 {{item.data[0].toTimeStamp}}
+                        </p>
+                        <p class="per-p">
+                          <i></i>
+                          <span>入口权限</span> 
+                        </p>
+                        <div class="con-box">
+                          <div style="margin-left:15px;" v-for="child in placelistin">
+                            <p>{{child.place_address}}</p>
+                            <div class="check-box select-box">
+
+                              <p v-for="children in child.data" :class="{'chose':item.data[0].code.indexOf(children.placestring)!=-1}"><i></i><span>{{children.device_address}}</span></p>
+                            </div>                   
+                          </div>
+                        </div>
+                        <p class="per-p">
+                          <i></i>
+                          <span>出口权限</span> 
+                        </p> 
+                         <div class="con-box">
+                          <div style="margin-left:15px;" v-for="child in placelistout">
+                            <p>{{child.place_address}}</p>
+                            <div class="check-box select-box">
+                                 <p v-for="children in child.data" :class="{'chose':item.data[0].code.indexOf(children.placestring)!=-1}"><i></i><span>{{children.device_address}}</span></p>
+                            </div>
+    
+                          </div>
+                        </div> 
+                    </div>
+                    </template>
+                  </div> 
+                  </el-tab-pane>
+                </el-tabs>
+              </div>
+            </div>
+         </transition>
+
+           <!--  编辑人员 -->
+           <div class="box">
+              <el-dialog
+              title="编辑人员资料"
+              :visible.sync="editdialog"
+              width="720px">
+              <div class="content-up">
+               <!--  <div class="img-box">
+                  <img :src="img" v-if="img">
+                  <img src="../../assets/images/icon-tou.png" v-else :class="{'uncheck':check.img}">
+                </div> -->
+           
+                 <div class="img-box">
+                    <img :src="setobj.img" >
+                  </div>
+              <!--   <p class="tit-tou">上传头像</p> -->
+                <p class="name-ipt">
+                  <span><i class="red">*</i>姓名</span>
+                  <input type="text" name="" disabled placeholder="请输入姓名，20字以内，必须填"  v-model="setobj.name">
+                </p>
+                <p class="name-ipt">
+                  <span><i class="red"></i>类型</span>
+                  <el-radio v-model="type" label="1">VIP</el-radio>
+                  <el-radio v-model="type" label="2">访客</el-radio>
+                </p>
+              </div>
+              <span slot="footer" class="dialog-footer">
+                <!-- <span class="warn-box" v-show="err"><i></i>{{errtit}}</span> -->
+                <el-button type="primary" @click="editConfirm">确 定</el-button>
+                <el-button @click="editdialog = false">取 消</el-button> 
+              </span>
+            </el-dialog>
+          </div>
   </div>
 </template>
 
@@ -69,7 +216,16 @@ export default {
       dataList:[],
       total_num:0,
       mydata:[],
-      showDate:[]
+      showDate:[],
+      setobj:{},
+      slider:false,
+      placelistin:[],
+      placelistout:[],
+      editdialog:false,
+      type:"1",
+      activeName:"first",
+      totaldata:[],
+      rightcontent:[]
 
     }
   },
@@ -183,10 +339,133 @@ export default {
         this.showDate = this.mydata
        
        })
-     }
+     },
+     sliderShow(val){
+        this.setobj = row;
+        //console.log(this.setobj);
+        this.slider = true;
+        this.getrecord();
+        //获取已经添加的权限
+        this.getRights();
+        //获取所有出入口
+        this.getright();
+     },
+    getRights(){
+        this.$api.post("/client_query_person_auth_api",
+        {
+          company_id:this.id,
+          face_id:this.setobj.face_id
+        },
+        su=>{
+          if(su.code==200){
+            //console.log(222)
+            if(su.num==0){
+              this.rightcontent = [];
+              return
+            }
+            su.total_data.forEach((val,idx)=>{
+             
+                val.data.forEach((value,index)=>{
+                  
+                  let num = [];
+                  value.acPkCode.forEach((place,i)=>{
+                   
+                     let arr = place.split("-");
 
+                     num.push(arr[0]+"-"+arr[1]);
+                     num.push(arr[0]+"-"+arr[2]);
+                     
+                  })
+                  value.code = num;
+                })
+            })
+            this.rightcontent = su.total_data;
+            //console.log(this.rightcontent,"ssssss")
+          }
+        },err=>{
 
-  },
+        })
+      },
+       getrecord(){
+        this.$api.post("/client_query_face_id_record_api",{
+            company_id:this.id,
+            face_id:this.setobj.face_id,
+            place_id:0,
+            fromTimeStamp:"2018-1-1 00:22:22",
+            toTimeStamp:"2100-1-1 00:22:22"
+          },
+          su=>{
+            if(su.code==200){
+              this.totaldata = su.total_data;
+            }
+          },
+          err=>{
+
+        })
+      },
+      getright(){
+        this.$api.post("/common_query_company_api",{
+          company_id:this.id
+        },su=>{
+          if(su.code===200){
+            let obj = su.data;
+            obj.ischeck = false;
+            obj.forEach((val,index)=>{
+                val.data = [];
+                val.ischeck = false;
+                this.delist(val.place_id,index);
+            })
+            //console.log(obj);
+            this.placelistin = obj;
+            this.placelistout = JSON.parse(JSON.stringify(obj));
+            this.placelistout.ischeck = false;
+          }else{
+            this.$message({
+                message: su.msg,
+                type: 'warning'
+            });
+          }
+        },err=>{
+            this.$message({
+                message: su.msg,
+                type: 'warning'
+            });
+        })
+      },
+      closeFn(){
+       this.slider = false;
+      },
+      editman(){
+        this.editdialog = true;
+        console.log(this.setobj.face_type);
+        this.type = this.setobj.face_type.toString();
+      },
+       editConfirm(){
+          this.$api.post("/client_mng_modify_face_api",{
+              company_id:this.id,
+              face_id:this.setobj.face_id,
+              face_type:Number(this.type)
+            },
+            su=>{
+              if(su.code==200){
+                this.setobj.face_type = this.type;
+                this.editdialog = false;
+                this.getList();
+                this.$message({
+                  message: su.msg,
+                  type: 'success'
+                });
+              }else{
+                this.$message({
+                  message: su.msg,
+                  type: 'warning'
+                });
+              }
+            },err=>{
+               this.$message.error(err.msg);
+            })
+        },
+  }
 
 }
 </script>
@@ -198,6 +477,7 @@ export default {
     margin:19px;
     min-height: 700px;
     padding: 30px 32px 50px 30px;
+    position: relative;
     .header{
       background:rgba(234,234,234,1);
       height: 80px;
@@ -296,5 +576,416 @@ export default {
 
   [v-cloak] {
   display: none;
+}
+
+
+
+ .slider-box{
+    width: 922px;
+    min-height: 1037px;
+    position: absolute;
+    top:0;
+    right: 0;
+    background: #fff;
+    z-index: 10;
+    border: 1px solid #ccc;
+    padding:33px 33px 33px 71px;
+    box-sizing: border-box;
+  }
+  .close-p{
+    text-align: right;
+  }
+  .close-p i{
+    display: inline-block;
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+    text-align: center;
+    line-height: 18px;
+    font-size: 24px;
+  }
+  .fade-enter-active {
+      transition: all .5s ease;
+  }
+  .fade-leave-active {
+      transition: all .6s ease;
+  }
+  .fade-enter, .fade-leave-to {
+    transform: translateX(944px);
+  }
+  .info{
+    >img{
+      width: 170px;
+      height: 170px;
+      border-radius: 50%;
+    }
+    >div{
+      display: inline-block;
+      vertical-align: top;
+      margin-left: 31px;
+      .name{
+        margin-top: 27px;
+        font-size:24px;
+        color:rgba(26,26,26,1);
+      }
+      >img{
+        width: 59px;
+        height: 26px;
+        margin-top: 16px;
+      }
+      >div{
+        margin-top: 29px;
+        width: 388px;
+        p{
+          color: #4D4D4D;
+          font-size: 14px;
+          line-height: 22px;
+          span{
+            color: #999999;
+          }
+        }
+        button{
+          width: 106px;
+          height: 36px;
+          background:#378EEF;
+          border: none;
+          outline: none;
+          cursor: pointer;
+          border-radius: 2px;
+          color: #fff;
+          float: right;
+         position: relative;
+         top:-36px;
+        }
+      }
+    }
+  }
+  .time-div{
+    margin-top: 25px;
+    border: 1px solid #ccc;
+    font-size: 12px;
+    white-space:nowrap;
+    >p{
+      height:39px; 
+      background:rgba(237,237,237,1);
+      color: #4D4D4D;
+      text-indent: 29px;
+      line-height: 39px;
+      font-size: 14px;
+    }
+    >div{
+      line-height: 116px;
+      >span{
+        padding-left: 29px;
+      }
+    }
+  }
+  .record{
+    >div{
+      padding: 5px;
+      >img{
+        float: right;
+        position: relative;
+        top:-82px;
+        right: 34px;
+      }
+      >p{
+        line-height: 34px;
+        text-indent: 29px;
+        .reder{
+          color: #F84C4C;
+        }
+        .green{
+          color: #98C56B;
+        }
+      }
+    }
+  }
+  .edit-class{
+    height:60px; 
+    background:rgba(241,243,244,1);
+    border-radius: 2px;
+    line-height: 60px;
+    text-indent: 22px;
+    margin-top: 12px;
+    margin-bottom: 
+    27px;
+    color: #000;
+    button{
+      width:106px;
+      height:36px; 
+      background:rgba(255,255,255,1);
+      border-radius: 2px;
+      color: #4D4D4D;
+      float: right;
+      position: relative;
+      top:12px;
+      border: 1px solid #ccc;
+      margin-right: 12px;
+      cursor: pointer;
+    }
+    button.color{
+      border: 1px solid #378EEF;
+      color: #fff;
+      background: #378EEF;
+    } 
+  }
+  .rep-class{
+    padding-left: 23px;
+  }
+  .per-p{
+    font-size:16px;
+    font-weight: bold;
+    color:rgba(26,26,26,1);
+    line-height: 40px;
+    >i{
+      display: inline-block;
+      width:4px;
+      height:16px; 
+      background:rgba(55,142,239,1);
+      margin-right: 12px;
+    }
+    >span{
+      margin-right: 18px;
+    }
+  }
+  .con-box{
+    margin-left: 15px;
+    p{
+      margin-top: 20px;
+    }
+  }
+  .check-box{
+    width:600px;
+    height:160px; 
+    border-radius: 4px;
+    border: 1px solid #CCCCCC;
+    overflow: auto;
+    margin:17px 0 5px 15px;
+    line-height: 43px;
+    padding: 0 29px;
+    box-sizing: border-box;
+    >p{
+      display: inline-block;
+      margin-right: 54px;
+    }
+    >p:nth-child(4n){
+      margin-right: 0;
+    }
+  }
+  .select-box{
+    >p{
+      i{
+        display:inline-block;
+        width:16px;
+        height:16px;
+        background:url(../../assets/images/unchose-l.png);
+        background-size: cover;
+        margin-right:5px;
+        position:relative;
+        top:2px;
+      }
+    }
+    >p.chose{
+      color:#409EFF;
+      i{
+        display:inline-block;
+        width:16px;
+        height:16px;
+        background:url(../../assets/images/chose-l.png);
+        background-size: cover;
+      }
+    }
+  }
+  .box .el-dialog__footer{
+  box-shadow: 0 0 4px #ccc;
+}
+
+.content-up{
+  text-align: center;
+   .img-box:hover{
+      >div{
+        display: block;
+      }
+    }
+  .img-box{
+    display: inline-block;
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    font-size:16px;
+    color:rgba(77,77,77,1);
+    position: relative;
+    cursor: pointer;
+    >img{
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      border: 2px solid transparent;
+    }
+    >img.uncheck{
+      border: 2px solid #F84C4C;
+    }
+  }
+  .tit-tou{
+    color: RGBA(77, 77, 77, 1);
+    font-size: 16px;
+    background: #fff;
+    border: none;
+  }
+  .name-ipt{
+    font-size:14px;
+    color:rgba(153,153,153,1);
+    margin-top: 26px;
+    text-align: left;
+    span{
+      margin-right: 10px;
+      margin: 0 10px 0 140px;
+    }
+    input{
+      width:372px;
+      height:34px; 
+      background:rgba(255,255,255,1);
+      border-radius: 4px;
+      border:1px solid RGBA(204, 204, 204, 1); 
+      text-indent: 10px;
+    }
+    input.uncheck{
+      border:1px solid #F84C4C; 
+    }
+  }
+}
+.red{
+  color: RGBA(229, 56, 56, 1);
+  margin-right: 3px;
+  display: inline-block;
+  width: 12px;
+}
+.upload-style{
+  display: inline-block;
+}
+.btn-upload{
+  border: 1px solid #ccc;
+  background: #fff;
+  color: #4D4D4D;
+  text-indent: 16px;
+  text-align: left;
+  cursor: pointer;
+  i{
+    display:inline-block;
+    content: "";
+    width: 14px;
+    height: 11px;
+    background: url(../../assets/images/camera-icon.png);
+    float: right;
+    margin-right: 15px;
+    position: relative;
+    top:3px;
+  }
+}
+.img-size{
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+}
+.del-tit{
+  font-size:18px; 
+  color:rgba(77,77,77,1);                          
+}
+.del-box{
+  float: left;
+  font-size: 14px;
+  color: #999999;
+  position: relative;
+  top:6px;
+  i{
+    color: #378EEF;
+    margin: 0 3px;
+  }
+}
+.select-p{
+  color: #4D4D4D;
+  font-size: 14px;
+}
+.select-div{
+  width:678px;
+  height:104px;
+  overflow: auto;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 12px 16px;
+  box-sizing:border-box;
+  .el-tag{
+    margin:0 12px 12px 0;
+  } 
+}
+.pic-cla i{
+  display: inline-block;
+  width: 30px;
+  height: 30px;
+  background: url(../../assets/images/tip-warn.png);
+  margin-right: 16px;
+  position: relative;
+  top:8px;
+}
+.pad-class{
+  padding: 6px;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  margin-bottom: 18px;
+}
+.pad-warn{
+   border: 1px solid #F84C4C;
+}
+.content-set{
+  height: 600px;
+  overflow: auto;
+}
+::-webkit-scrollbar{
+      background-color:white !important;
+      width: 5px;
+      height:8px;
+
+     
+}
+::-webkit-scrollbar-thumb{
+    background-color:rgba(186,190,193,1);
+    width: 5px !important;
+    border-radius: 2px 2px 2px 2px;
+    height:5px;
+  
+}
+
+::-webkit-scrollbar-button{
+  height:5px;
+  background-color: white;
+}
+.over-auto{
+  overflow:auto;
+}
+.line-class{
+  display:inline-block;
+  position:relative;
+  white-space:nowrap;
+  line-height:30px;
+}
+.ad-box{
+  height: 110px;
+  white-space:nowrap;
+  display:inline-block;
+  position:relative;
+  top:33px;
+  .address{
+    padding:10px 20px;
+    min-width:30px;
+    line-height:20px;
+    border:1px solid #ff9900;
+  }
+  .in-out{
+    text-align:center;
+  }
+  .time{
+    text-align:center;
+  }
 }
 </style>
