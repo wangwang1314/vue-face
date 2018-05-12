@@ -132,6 +132,25 @@
               <div>
                  <el-tabs v-model="activeName" @tab-click="handleClick">
                   <el-tab-pane label="线路轨迹" name="first">
+                   <div class="time-div over-auto">
+                        <p>
+                          <span>出入时间 ：</span>
+                           <span >2018-03-10</span>
+                        </p>
+                        <div>
+                          <span>线路轨迹 :</span> 
+                            <div class="line-class">
+                              <div>
+                                
+                              </div>
+                              <span class="in-out">入</span>
+                              <span class="address">汇通大厦</span>
+                              <i class="time">09:29:01</i>
+                              <img src="../../assets/images/jtou.png">
+                             
+                            </div>
+                        </div>
+                    </div>
                     <template v-for="item in totaldata">
                       <div class="time-div">
                         <p>
@@ -467,7 +486,7 @@ export default {
   data () {
     return {
       value4:"",
-      slider:true,
+      slider:false,
       activeName:"first",
       value3:"",
       isIndeterminate:true,
@@ -532,7 +551,7 @@ export default {
     },
     show(){
       this.slider = true;
-      this.getrecord();
+     
     },
     getrecord(){
       this.$api.post("/client_query_face_id_record_api",{
@@ -693,8 +712,9 @@ export default {
     },
     sliderShow(row){
       this.setobj = row;
-      console.log(this.setobj);
+      //console.log(this.setobj);
       this.slider = true;
+      this.getrecord();
     },
     delMan(){
       if(this.selectval.length<=0){
@@ -972,7 +992,7 @@ export default {
         let placeid = this.placelistin[i].place_id;
         for(let j = 0;j< devicein.length;j++){
           if(devicein[j].ischeck){
-            if(outnum.indexOf(placeid)==-1){
+            if(innum.indexOf(placeid)==-1){
               innum.push(placeid);
             }
             if(deviceout.length<=0){
@@ -997,19 +1017,20 @@ export default {
         }
        
         for(let y = 0;y< deviceout.length;y++){
-          console.log(deviceout[y],"444");
+          //console.log(deviceout[y],"444");
 
           if(deviceout[y].ischeck&&outnum.indexOf(placeid)==-1){
             outnum.push(placeid);
           }
         }
       }
+      //console.log(outnum,innum)
       if(data.length<=0||outnum.length!=innum.length){
         this.err = true;
         this.errtit = "请选择入口权限";
         return
       }
-         console.log(this.setobj)
+         //console.log(this.setobj)
         this.$api.post("/client_add_auth_api",{
           company_id:this.id,
           face_id:this.setobj.face_id,
@@ -1036,18 +1057,20 @@ export default {
     },
     editman(){
       this.editdialog = true;
-      this.type = this.setobj.face_type;
+      console.log(this.setobj.face_type);
+      this.type = this.setobj.face_type.toString();
     },
     editConfirm(){
       this.$api.post("/client_mng_modify_face_api",{
           company_id:this.id,
           face_id:this.setobj.face_id,
-          face_type:this.type
+          face_type:Number(this.type)
         },
         su=>{
           if(su.code==200){
             this.setobj.face_type = this.type;
             this.editdialog = false;
+            this.getList();
             this.$message({
               message: su.msg,
               type: 'success'
@@ -1556,6 +1579,13 @@ export default {
 ::-webkit-scrollbar-button{
   height:5px;
   background-color: white;
+}
+.over-auto{
+  overflow:auto;
+}
+.line-class{
+  display:inline-block;
+  position:relative;
 }
 </style>
 
