@@ -62,50 +62,24 @@
            </tr>
          </thead>
          <tbody>
-           <tr>
-             <td>2018-03-11 22:00:00</td>
-             <td><img src="../../assets/images/sur-bg1.png"></td>
-             <td>2018-03-11 22:00:00</td>
-             <td>于文文1号</td>
+           <tr v-for="(item,ind) in showDate">
+             <td>{{item.timeStamp}}</td>
+             <td> <img :src="'data:image/'+item.face_image_type+';base64,'+item.face_image_data"></td>
+             <td>{{item.face_user_name}}</td>
              <td>
                <span class="red">出</span>
                <span class="green">绿</span>
              </td>
-             <td>篮球场</td>
-           </tr>
-               <tr>
-             <td>2018-03-11 22:00:00</td>
-             <td><img src="../../assets/images/sur-bg1.png"></td>
-             <td>2018-03-11 22:00:00</td>
-             <td>于文文1号</td>
              <td>
-               <span class="red">出</span>
-               <span class="green">绿</span>
+               
+               {{item.place_address}}
+          </p>
              </td>
-             <td>篮球场</td>
+             <td>{{item.device_address}}</td>
            </tr>
-               <tr>
-             <td>2018-03-11 22:00:00</td>
-             <td><img src="../../assets/images/sur-bg1.png"></td>
-             <td>2018-03-11 22:00:00</td>
-             <td>于文文1号</td>
-             <td>
-               <span class="red">出</span>
-               <span class="green">绿</span>
-             </td>
-             <td>篮球场</td>
-           </tr>
-               <tr>
-             <td>2018-03-11 22:00:00</td>
-             <td><img src="../../assets/images/sur-bg1.png"></td>
-             <td>2018-03-11 22:00:00</td>
-             <td>于文文1号</td>
-             <td>
-               <span class="red">出</span>
-               <span class="green">绿</span>
-             </td>
-             <td>篮球场</td>
-           </tr>
+               
+             
+              
          </tbody>
        </table>
       <div class="page">
@@ -128,8 +102,13 @@ export default {
     return {
       id:sessionStorage.getItem("users"),
       fromTimeStamp:'2018-1-1 00:22:22',
-      toTimeStamp:"2018-1-1 00:22:22",
+      toTimeStamp:"2019-1-2 00:22:22",
       name:"",
+      place_id:0,
+      dataList:[],
+      total_num:0,
+      mydata:[],
+      showDate:[],
       options: [{
           value: '选项1',
           label: '黄金糕'
@@ -153,7 +132,7 @@ export default {
   },
   mounted(){
       //获取信息
-    this.getInout();
+     this.getInout(this.id,this.fromTimeStamp,this.toTimeStamp,this.place_id);
   },
   methods:{
      handleSizeChange(){
@@ -163,8 +142,9 @@ export default {
 
     },
 
-    //查询所有记录
-     getInout(id,fromTimeStamp,toTimeStamp,place_id){
+   getInout(id,fromTimeStamp,toTimeStamp,place_id){
+       this.mydata = [];
+       this.showDate = [];
         this.$api.post("/client_query_time_record_api",{
           company_id:parseInt(id),
           fromTimeStamp:fromTimeStamp,
@@ -173,12 +153,29 @@ export default {
         },su=>{
            console.log(su)
            if(su.code==200){
+
               this.dataList = su.total_data;
               //设置imgsrc属性
               this.dataList.forEach((el,ind)=>{
-                     this.$set(el,"imgsrc",'');
+                   let face_id = el.face_id;
+                   let user_name = el.face_user_name;
+                   el.face_data.forEach((ele,index)=>{
+                       let place_address = ele.place_address;
+                       ele.data.forEach((e,i)=>{
+                           this.$set(e,"face_id",face_id);
+                           this.$set(e,"face_user_name",user_name);
+                           this.$set(e,"place_address",place_address);
+                           this.mydata.push(e);
+                           console.log(this.mydata);
+                        
+                       })
+                   })
+
               })
-              this.total_num = su.num;
+            this.$nextTick(function(){
+                 this.getface(this.mydata);
+             })
+              this.total_num = su.total_num;
            }
 
         },err=>{
@@ -187,7 +184,7 @@ export default {
 
       },
       //
-       searchChange(file){
+      searchChange(file){
       let blob = new Blob([file.raw],{type:file.raw.type});
       let that = this;
       let reader = new FileReader();
@@ -271,20 +268,29 @@ export default {
 
 
      /* 获取图片*/
-     getface(){
-        this.dataList.foreach((el,ind)=>{
+    getface(d){  
+       d.forEach((el,ind)=>{
              this.$api.post('/client_get_face_image_api',{
-                "company_id":this.id,
+                "company_id":parseInt(this.id),
                 "face_id":el.face_id,
              },su=>{
+         
               if(su.code==200){
-                 el.imgsrc = su.face_image_data;
+                 this.$set(el,"face_image_type",su.face_image_type);
+                 this.$set(el,"face_image_data",su.face_image_data);
+               
+               
               }
 
              },err=>{
 
              })
         })
+       
+       this.$nextTick(function(){
+        this.showDate = this.mydata;
+          console.log("我的数据",this.showDate)
+       })
      }
 
 

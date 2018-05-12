@@ -126,7 +126,7 @@ export default {
 
   .slider-lt{
     height:74px; 
-    background:rgba(29,37,44,1);
+    background:#2f323a;
     text-align:center;
     line-height:90px;
     padding-top:16px;
@@ -140,11 +140,17 @@ export default {
       text-indent:40px;
       text-align:left;
       cursor: pointer;
+
     }
     li.router-link-active{
-      background-color: RGBA(31, 165, 255, 1);
+      background-color: #378EEF;
     }
   }
+  
+  .slider-ul li:hover{
+      background-color: #378EEF;
+  }
+
 }
 
 .nav-tit {

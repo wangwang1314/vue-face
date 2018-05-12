@@ -42,12 +42,12 @@ export default new Router({
            component:OpenList
         },
         {
-          path:"/places/:id",
+          path:"/places/:id/:cname",
           name:"Places",
           component:Places
         },
         {
-          path:"/equipment/:id",
+          path:"/openListindex/equipment/:id/:pid/:cname",
           name:"Equipment",
           component:Equipment
         },

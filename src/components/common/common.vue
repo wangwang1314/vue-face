@@ -240,7 +240,7 @@ export default {
 
   .slider-lt{
     height:74px; 
-    background:rgba(29,37,44,1);
+    background:#2f323a;
     text-align:center;
     line-height:90px;
     padding-top:16px;
