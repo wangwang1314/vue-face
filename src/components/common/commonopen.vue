@@ -18,7 +18,7 @@
           <div class="admin-name">
             <div class="adm-le">
               <p>欢迎进入祺眼平台管理（出入系统）</p> 
-              <p><span>{{data.user_name}}</span></p>
+              <p><span>{{id}}</span></p>
             </div> 
             <a class="adm-ri" @click="exit">退出</a>
           </div>
@@ -86,7 +86,7 @@ export default {
     },
   },
   mounted(){
-      this.id = Number(sessionStorage.getItem("users"));
+      this.id = sessionStorage.getItem("users");
       if(JSON.stringify(this.$store.state.data)=="{}"){
         this.getInfo();
       }

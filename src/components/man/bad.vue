@@ -412,6 +412,7 @@ export default {
       this.selectval = val;
     },
     sliderShow(val){
+      return;
       if(val.num>0){
         this.editdialog = true;
         this.setobj = val;

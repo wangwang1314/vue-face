@@ -92,6 +92,7 @@
               show-overflow-tooltip>
               <template slot-scope="scope">
                 <el-button type="text" @click.stop="addright(scope)">添加权限</el-button>
+                <el-button type="text" @click.stop="clearright(scope)">清除权限</el-button>
               </template>
             </el-table-column>
           </el-table>
@@ -132,40 +133,40 @@
               <div>
                  <el-tabs v-model="activeName" @tab-click="handleClick">
                   <el-tab-pane label="线路轨迹" name="first">
-                   <div class="time-div over-auto">
+                   <!-- <div class="time-div over-auto">
                         <p>
                           <span>出入时间 ：</span>
                            <span >2018-03-10</span>
                         </p>
-                        <div>
+                        <div style="overflow:auto">
                           <span>线路轨迹 :</span> 
                             <div class="line-class">
-                              <div>
-                                
+                              <div class="ad-box">
+                                <p class="in-out">入</p>
+                                <p class="address">汇通大厦</p>
+                                <p class="time">09:29:01</p>
                               </div>
-                              <span class="in-out">入</span>
-                              <span class="address">汇通大厦</span>
-                              <i class="time">09:29:01</i>
                               <img src="../../assets/images/jtou.png">
-                             
                             </div>
                         </div>
-                    </div>
+                    </div> -->
                     <template v-for="item in totaldata">
-                      <div class="time-div">
+                      <div class="time-div over-auto">
                         <p>
                           <span>出入时间 ：</span>
                            <span v-for="(child,index) in item.data" v-show="index==0">{{child.timeStamp.split(" ")[0]}}</span>
                         </p>
-                        <div>
+                        <div style="overflow:auto">
                           <span>线路轨迹 :</span>
                           <template v-for="(child,index) in item.data">
-                            <div>
-                              <span v-if="child.device_id%2!=0">入</span>
-                              <span v-else>出</span>
-                              <span>{{child.device_addres}}</span>
-                              <img src="../../assets/images/jtou.png">
-                              <i>{{child.timeStamp.split(" ")[1]}}</i>
+                            <div class="line-class">
+                              <div class="ad-box">
+                                <p class="in-out" v-if="child.device_id%2!=0">入</p>
+                                <p class="in-out" v-else>出</p>
+                                <p class="address">{{child.device_addres}}</p>
+                                <p class="time">{{child.timeStamp.split(" ")[1]}}</p>
+                              </div>
+                              <img src="../../assets/images/jtou.png"> 
                             </div>
                           </template>
                         </div>
@@ -200,57 +201,28 @@
                     </div>
                   </el-tab-pane>
                   <el-tab-pane label="出入权限" name="third">
-                    <div class="edit-class">权限1
-                      <button>删除</button>
-                      <button class="color">编辑</button>             
+                  <div style="overflow:auto;height:700px;">
+                    <template v-for="(item,index) in rightcontent">
+                    <div class="edit-class">权限{{index+1}}
+                      <button @click="delright(item)">删除</button>     
                     </div>
                     <div class="rep-class">
                         <p class="per-p">
                           <i></i>
                           <span>出入时间段</span> 
-                          <el-date-picker
-                            v-model="value3"
-                            type="datetimerange"
-                            range-separator="至"
-                            start-placeholder="开始日期"
-                            end-placeholder="结束日期">
-                          </el-date-picker>
+                          {{item.data[0].fromTimeStamp}} 至 {{item.data[0].toTimeStamp}}
                         </p>
                         <p class="per-p">
                           <i></i>
                           <span>入口权限</span> 
                         </p>
                         <div class="con-box">
-                          <p><el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" @change="handleCheckAllChange">全选</el-checkbox></p>
-                          <div style="margin-left:15px;">
-                            <p><el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" @change="handleCheckAllChange">场地名称1</el-checkbox></p>
-                            <div class="check-box">
-                              <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
-                              <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
-                              <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
-                              <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
-                              <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
-                              <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
-                              <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
-                              <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
-                              <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
-                              <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
-                              <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
-                            </div>
-                            <p><el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" @change="handleCheckAllChange">场地名称2</el-checkbox></p>
-                            <div class="check-box">
-                              <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
-                              <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
-                              <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
-                              <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
-                              <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
-                              <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
-                              <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
-                              <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
-                              <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
-                              <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
-                              <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
-                            </div>
+                          <div style="margin-left:15px;" v-for="child in placelistin">
+                            <p>{{child.place_address}}</p>
+                            <div class="check-box select-box">
+
+                              <p v-for="children in child.data" :class="{'chose':item.data[0].code.indexOf(children.placestring)!=-1}"><i></i><span>{{children.device_address}}</span></p>
+                            </div>                   
                           </div>
                         </div>
                         <p class="per-p">
@@ -258,39 +230,17 @@
                           <span>出口权限</span> 
                         </p> 
                          <div class="con-box">
-                          <p><el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" @change="handleCheckAllChange">全选</el-checkbox></p>
-                          <div style="margin-left:15px;">
-                            <p><el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" @change="handleCheckAllChange">场地名称1</el-checkbox></p>
-                            <div class="check-box">
-                              <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
-                              <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
-                              <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
-                              <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
-                              <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
-                              <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
-                              <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
-                              <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
-                              <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
-                              <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
-                              <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
+                          <div style="margin-left:15px;" v-for="child in placelistout">
+                            <p>{{child.place_address}}</p>
+                            <div class="check-box select-box">
+                                 <p v-for="children in child.data" :class="{'chose':item.data[0].code.indexOf(children.placestring)!=-1}"><i></i><span>{{children.device_address}}</span></p>
                             </div>
-                            <p><el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" @change="handleCheckAllChange">场地名称2</el-checkbox></p>
-                            <div class="check-box">
-                              <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
-                              <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
-                              <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
-                              <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
-                              <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
-                              <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
-                              <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
-                              <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
-                              <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
-                              <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
-                              <p><el-checkbox  v-model="checkAll" @change="handleCheckAllChange">设备管理</el-checkbox></p>
-                            </div>
+    
                           </div>
                         </div> 
                     </div>
+                    </template>
+                  </div> 
                   </el-tab-pane>
                 </el-tabs>
               </div>
@@ -532,7 +482,8 @@ export default {
         out:false
       },
       editdialog:false,
-      totaldata:[]
+      totaldata:[],
+      rightcontent:[]
     }
   },
   mounted(){
@@ -715,6 +666,46 @@ export default {
       //console.log(this.setobj);
       this.slider = true;
       this.getrecord();
+      //获取已经添加的权限
+      this.getRights();
+      //获取所有出入口
+      this.getright();
+    },
+    getRights(){
+        this.$api.post("/client_query_person_auth_api",
+        {
+          company_id:this.id,
+          face_id:this.setobj.face_id
+        },
+        su=>{
+          if(su.code==200){
+            //console.log(222)
+            if(su.num==0){
+              this.rightcontent = [];
+              return
+            }
+            su.total_data.forEach((val,idx)=>{
+             
+                val.data.forEach((value,index)=>{
+                  
+                  let num = [];
+                  value.acPkCode.forEach((place,i)=>{
+                   
+                     let arr = place.split("-");
+
+                     num.push(arr[0]+"-"+arr[1]);
+                     num.push(arr[0]+"-"+arr[2]);
+                     
+                  })
+                  value.code = num;
+                })
+            })
+            this.rightcontent = su.total_data;
+            //console.log(this.rightcontent,"ssssss")
+          }
+        },err=>{
+
+        })
     },
     delMan(){
       if(this.selectval.length<=0){
@@ -819,16 +810,17 @@ export default {
             });
         })
     },
-    delist(val,index){     
+    delist(vals,index){     
         this.$api.post("/common_query_place_api",{
           company_id:this.id,
-          place_id:val
+          place_id:vals
         },su=>{
           if(su.code==200&&su.data.length>0){
               this.placelistin[index].data = [];
               this.placelistout[index].data = [];
               su.data.forEach((val)=>{
                   val.ischeck = false;
+                  val.placestring = vals+"-"+val.device_id;
                   //console.log(val,"ssssssss")
                   if(parseInt(val.device_id)%2!=0){
                     this.placelistin[index].data.push(val);
@@ -836,6 +828,7 @@ export default {
                     this.placelistout[index].data.push(val);
                   } 
               })
+              //console.log(su.data)
               // this.placelistin[index].data = su.data;
               // this.placelistout[index].data = JSON.parse(JSON.stringify(su.data));
           }
@@ -1084,6 +1077,69 @@ export default {
         },err=>{
            this.$message.error(err.msg);
         })
+    },
+    clearright(val){
+        //console.log(row)
+         this.$confirm('确定清除该人员权限吗？', '清除权限', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+          }).then(() => {
+                this.$api.post("/client_del_person_auth_api",{
+                  company_id:this.id,
+                  face_id:val.row.face_id
+                },
+                su=>{
+                  if(su.code==200){
+                    
+                    //this.getRights();
+                    this.$message({
+                      message: su.msg,
+                      type: 'success'
+                    });
+                  }else{
+                    this.$message({
+                      message: su.msg,
+                      type: 'warning'
+                    });
+                  }
+                },err=>{
+                   this.$message.error(err.msg);
+                })
+          }).catch(() => {
+                   
+          });
+    },
+    delright(val){
+          //console.log(val)
+          this.$confirm('确定删除该条权限吗？', '删除权限', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+          }).then(() => {
+                this.$api.post("/client_del_one_auth_api",{
+                  company_id:this.id,
+                  face_id:this.setobj.face_id,
+                  face_record_id:val.face_record_id
+                },
+                su=>{
+                  if(su.code==200){
+                    
+                    this.getRights();
+                    this.$message({
+                      message: su.msg,
+                      type: 'success'
+                    });
+                  }else{
+                    this.$message({
+                      message: su.msg,
+                      type: 'warning'
+                    });
+                  }
+                },err=>{
+                   this.$message.error(err.msg);
+                })
+          }).catch(() => {
+                   
+          });
     }
 
 
@@ -1309,6 +1365,7 @@ export default {
     margin-top: 25px;
     border: 1px solid #ccc;
     font-size: 12px;
+    white-space:nowrap;
     >p{
       height:39px; 
       background:rgba(237,237,237,1);
@@ -1415,6 +1472,30 @@ export default {
     }
     >p:nth-child(4n){
       margin-right: 0;
+    }
+  }
+  .select-box{
+    >p{
+      i{
+        display:inline-block;
+        width:16px;
+        height:16px;
+        background:url(../../assets/images/unchose-l.png);
+        background-size: cover;
+        margin-right:5px;
+        position:relative;
+        top:2px;
+      }
+    }
+    >p.chose{
+      color:#409EFF;
+      i{
+        display:inline-block;
+        width:16px;
+        height:16px;
+        background:url(../../assets/images/chose-l.png);
+        background-size: cover;
+      }
     }
   }
   .box .el-dialog__footer{
@@ -1586,6 +1667,27 @@ export default {
 .line-class{
   display:inline-block;
   position:relative;
+  white-space:nowrap;
+  line-height:30px;
+}
+.ad-box{
+  height: 110px;
+  white-space:nowrap;
+  display:inline-block;
+  position:relative;
+  top:33px;
+  .address{
+    padding:10px 20px;
+    min-width:30px;
+    line-height:20px;
+    border:1px solid #ff9900;
+  }
+  .in-out{
+    text-align:center;
+  }
+  .time{
+    text-align:center;
+  }
 }
 </style>
 
