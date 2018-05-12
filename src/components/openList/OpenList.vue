@@ -397,7 +397,16 @@ export default{
                 if(su.data){
                   let pnum = 0;
                   this.$set(this.companyList[ind],"device_num",su.num);
-                  this.$set(this.companyList[ind],"place_num",su.data.length);
+                  su.data.forEach((el,ind)=>{
+                     pnum += el.device_num;
+                  })
+
+                  if(pnum == 0){
+                     this.$set(this.companyList[ind],"place_num","--");
+                  }else{
+                      this.$set(this.companyList[ind],"place_num",pnum);
+                  }
+                 
                 }else{
                   this.$set(this.companyList[ind],"device_num","场地设置");
                   this.$set(this.companyList[ind],"place_num","--");
@@ -424,6 +433,7 @@ export default{
         this.ed_cpnerr = false;
         this.ed_pawerr = false;
       },
+      //过滤数据
       fileName(){
          this.cpnList = [];
          if(this.companyName){

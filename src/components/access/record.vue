@@ -13,26 +13,12 @@
                 <button  class="sur-selct btn-upload">请上传图片搜头像<i></i></button>
             </el-upload>
           <span>场地名称</span>
-           <el-select v-model="value4" clearable placeholder="请选择" class="sur-selct">
-            <el-option
-              v-for="item in options"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value">
-            </el-option>
-          </el-select>
+          <el-input @blur="filterDate(place_name,1)" @focus="optionNow(1)" class="ipt-inline" v-model="place_name" placeholder="请输入场地名称"></el-input>
           <span>设备地址</span>
-           <el-select v-model="value4" clearable placeholder="请选择" class="sur-selct">
-            <el-option
-              v-for="item in options"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value">
-            </el-option>
-          </el-select>
+           <el-input @blur="filterDate(dv_address,2)" @focus="optionNow(2)" class="ipt-inline" v-model="dv_address" placeholder="请输入设备地址"></el-input>
           <br>
            <span>姓名</span>
-           <el-input class="ipt-inline" v-model="name" placeholder="请输入内容"></el-input>
+           <el-input  @blur="filterDate(us_name,3)" @focus="optionNow(3)" class="ipt-inline" v-model="us_name" placeholder="请输入姓名"></el-input>
            <span>拍摄时间</span>
            <el-date-picker
             v-model="value3"
@@ -46,7 +32,7 @@
           </el-date-picker>
           <span class="add-cou">增加过滤条件</span>
        </div>
-       <p class="su-tit">共 <span>992</span> 条数据</p>
+       <p class="su-tit">共 <span>{{total_num}}</span> 条数据</p>
        <p class="sur-num">
          <span>导出数据</span>
        </p>
@@ -102,13 +88,16 @@ export default {
     return {
       id:sessionStorage.getItem("users"),
       fromTimeStamp:'2018-1-1 00:22:22',
-      toTimeStamp:"2019-1-2 00:22:22",
+      toTimeStamp:"2119-1-2 00:22:22",
       name:"",
       place_id:0,
       dataList:[],
       total_num:0,
       mydata:[],
       showDate:[],
+      place_name:"",//场地名称
+      dv_address:"",//设备地址
+      us_name:"",//姓名
       options: [{
           value: '选项1',
           label: '黄金糕'
@@ -155,6 +144,7 @@ export default {
            if(su.code==200){
 
               this.dataList = su.total_data;
+              this.total_num = su.total_num;
               //设置imgsrc属性
               this.dataList.forEach((el,ind)=>{
                    let face_id = el.face_id;
@@ -265,7 +255,48 @@ export default {
         }
        }
        ,
+       //聚焦
+       optionNow(v){
+          if(v==1){
+             this.dv_address = "";
+             this.us_name = "";
+          }else if(v==2){
+              this.place_name = "";
+              this.us_name = "";
+          }else if(v==3){
+             this.place_name = "";
+             this.dv_address = "";
+          }
+       },
+      //过滤数据
+      filterDate(v,num){
+          this.showDate = [];
+          
+          if(v){
+            this.mydata.forEach((el,ind)=>{
+             if(num==1){
+               
+                if(el.place_address == v){
+                   this.showDate.push(el);
+                }
+             }else if(num == 2){
+                
+                 if(el.device_address== v){
+                   this.showDate.push(el);
+                }
+             }else if(num == 3){
+                  
+                  if(el.face_user_name== v){
+                   this.showDate.push(el);
+                }
+             }
+          })
+          }else{
+             this.showDate = this.mydata;
+          }
+         
 
+      },
 
      /* 获取图片*/
     getface(d){  
@@ -288,7 +319,7 @@ export default {
         })
        
        this.$nextTick(function(){
-        this.showDate = this.mydata;
+        this.showDate = d;
           console.log("我的数据",this.showDate)
        })
      }
