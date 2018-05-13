@@ -118,7 +118,7 @@
            <td>
             <div class="err-cont">
                 <em v-show="isEdite==true">{{fixid}}</em>
-                <input placeholder="" v-show="isEdite==false"  v-model="place_id" class='place-set' :class="{'ip-err':pliderr==true}"/>
+                <input placeholder="20个字以内，不能重名" @keydown="pliderr=false" v-show="isEdite==false" maxlength="20" v-model="place_id" class='place-set' :class="{'ip-err':pliderr==true}"/>
                 <span v-show="pliderr==true">
                   <i class="el-icon-warning"></i>
                   {{plerrtxt}}
@@ -132,7 +132,7 @@
             </td>
            <td>
            <div class="err-cont">
-             <input  class='place-set' v-model="place_address" placeholder="" :class="{'ip-err':plname==true}"/>
+             <input maxlength="20" @keydown="plname=false" class='place-set' v-model="place_address" placeholder="20个字以内" :class="{'ip-err':plname==true}"/>
                <span v-show="plname==true">
                   <i class="el-icon-warning"></i>
                   场地名称不能为空
@@ -147,9 +147,9 @@
             </td>
            <td>
            <div class="err-cont after-ip">
-              <input type="" name="" v-model="place_latitude.lat1" class="ip-lt" :class="{'ip-err':longerr==true}">
-              <input type="" name="" v-model="place_latitude.lat2" class="ip-lt" :class="{'ip-err':longerr==true}">
-              <input type="" name="" v-model="place_latitude.lat3" class="ip-lt" :class="{'ip-err':longerr==true}">
+              <input placeholder="请输入度" type="" name="" @keydown="longerr=false" onkeypress="return event.keyCode>=48&&event.keyCode<=57" maxlength="3" v-model="lat1" class="ip-lt" :class="{'ip-err':longerr==true}">
+              <input  placeholder="请输入分" type="" name="" @keydown="longerr=false" maxlength="2" onkeypress="return event.keyCode>=48&&event.keyCode<=57" v-model="lat2" class="ip-lt" :class="{'ip-err':longerr==true}">
+             
                <span v-show="longerr==true">
                   <i class="el-icon-warning"></i>
                   经度不能为空
@@ -157,7 +157,7 @@
                 </span>
                 <em class="h">。</em>
                 <em class="s">'</em>
-                <em class="mm">"</em>
+            
            </div>
               
            </td>
@@ -168,16 +168,15 @@
             </td>
            <td>
             <div class="err-cont after-ip">
-                <input type="" name=""  v-model="place_longitude.long1" class="ip-lt" :class="{'ip-err':laterr==true}">
-              <input type="" name="" v-model="place_longitude.long2" class="ip-lt" :class="{'ip-err':laterr==true}">
-              <input type="" name=""  v-model="place_longitude.long3" class="ip-lt" :class="{'ip-err':laterr==true}">
+                <input type="" name="" placeholder="请输入度"  @keydown="laterr=false"  maxlength="2" onkeypress="return event.keyCode>=48&&event.keyCode<=57"  v-model="long1" class="ip-lt" :class="{'ip-err':laterr==true}">
+              <input type="" placeholder="请输入分" name="" @keydown="laterr=false"  maxlength="2" onkeypress="return event.keyCode>=48&&event.keyCode<=57" v-model="long2" class="ip-lt" :class="{'ip-err':laterr==true}">
                <span v-show="laterr==true">
                   <i class="el-icon-warning"></i>
                   纬度不能为空
                 </span>
                 <em class="h">。</em>
                 <em class="s">'</em>
-                <em class="mm">"</em>
+               
             </div>
             
            </td>
@@ -238,16 +237,13 @@ export default{
          isEdite:false,//是否编辑
          alldata:0,
          fixid:"",
-         place_latitude:{
-            lat1:"",
-            lat2:"",
-            lat3:""
-         },//经度
-         place_longitude:{
+         lat1:"",
+         lat2:"",
+         lat3:"",
+         //经度
             long1:"",
             long2:"",
-            long3:""
-         },
+            long3:"",
 
          tableData3: [
            
@@ -262,6 +258,28 @@ export default{
     this.user_name = this.$route.params.cname;
     this.initList();
     console.log(this.id);
+  },
+  watch:{
+     lat1:function(val,oldVal){
+          if(parseInt(val)>180){
+              this.lat1 = oldVal;
+          }
+      },
+      lat2:function(v,o){
+          if(parseInt(v)>60){
+              this.lat2 = o;
+          }
+      },
+      long1:function(val,o){
+         if(parseInt(val)>90){
+              this.long1 = o;
+          }
+      },
+      long2:function(v,o){
+          if(parseInt(v)>60){
+              this.long2 = o;
+          }
+      },
   },
   methods:{
     
@@ -305,16 +323,16 @@ export default{
          this.laterr=false;
          this.place_id = "";
          this.place_address = "";
-         this.place_latitude = {
-            lat1:"",
-            lat2:"",
-            lat3:""
-         };//经度
-         this.place_longitude = {
-            long1:"",
-            long2:"",
-            long3:""
-         };
+       
+            this.lat1 = "",
+            this.lat2 = "",
+            this.lat3 = ""
+         //经度
+    
+            this.long1 = "",
+            this.long2 = "",
+            this.long3 = ""
+         
        }
          else{
          this.dtital="编辑场地";
@@ -326,17 +344,17 @@ export default{
          this.isEdite = true;
          this.fixid = d.place_id;
          this.place_address = d.place_address;
-          this.place_latitude = {
-            lat1:d.place_latitude,
-            lat2:d.place_latitude,
-            lat3:""
-         };//经度
-         this.place_longitude = {
-            long1:d.place_longitude,
-            long2:d.place_longitude,
-            long3:""
-         };
-
+         let latarr = d.place_latitude.split(".");
+         let longarr = d.place_longitude.split(".");
+       
+            this.lat1 = latarr[0];
+            this.lat2 = latarr[1];
+            
+         //经度
+      
+            this.long1 = longarr[0];
+            this.long2 = longarr[1];
+           
          }
          
 
@@ -380,7 +398,7 @@ export default{
         let url = "";
 
         if(v==1){
-           url = "/admin_add_place_api";
+          url = "/admin_add_place_api";
           if(!this.place_id){
            this.pliderr=true,
            this.plerrtxt="场地编号不能为空";
@@ -397,18 +415,18 @@ export default{
            this.plname=true;
            return
         }
-        if(!this.place_latitude.lat1 || !this.place_latitude.lat2){
+        if(!this.lat1 || !this.lat2){
            this.longerr=true;
            return
         }
 
-        if(!this.place_longitude.long1 || !this.place_longitude.long2){
+        if(!this.long1 || !this.long2){
            this.laterr=true;
            return
         }
 
-        let lats= this.place_latitude.lat1+'.'+this.place_latitude.lat2;
-        let longs = this.place_longitude.long1+'.'+this.place_longitude.long2;
+        let lats= this.lat1+'.'+this.lat2;
+        let longs = this.long1+'.'+this.long2;
         this.$api.post(url,{
 
             company_id:parseInt(this.id),
@@ -427,6 +445,10 @@ export default{
                 message: '添加场地成功！',
                 type: 'success'
               });
+           }else if(su.code == 408){
+              this.pliderr = true;
+              this.plerrtxt = "存在相同的场地编号"
+
            }else{
               this.$message.error('添加场地失败，请稍后再试！');
            }
@@ -750,6 +772,7 @@ position: relative;
 .err-cont span{
    position:absolute;
    bottom: -25px;
+   left:0;
    color:#F84C4C;
    font-size:12px;
 }

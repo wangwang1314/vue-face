@@ -135,7 +135,7 @@
               <dd>
                 <span class="le-text" style="margin-left:12px">公司电话：</span>
                 <span class="ri-text"  v-show="editFlag==false">{{editList.tel}}</span>
-                <input type="text" v-model="ed_tel" v-show="editFlag==true" name="cpmtel">
+                <input type="text"  onkeyup="value=value.replace(/[^\d]/g,'')"  v-model="ed_tel" v-show="editFlag==true" name="cpmtel">
               </dd>
              </dl>
              <h4 class="sld-info-tt">联系人信息</h4>
@@ -149,7 +149,7 @@
               <dd>
                 <span class="le-text">联系人号码：</span>
                 <span class="ri-text"  v-show="editFlag==false">{{editList.mobile}}</span>
-                <input type="text"  v-model="ed_mobil" v-show="editFlag==true" name="ctnumber">
+                <input type="text"  onkeyup="value=value.replace(/[^\d]/g,'')"   v-model="ed_mobil" v-show="editFlag==true" name="ctnumber">
               </dd>
              </dl>
 
@@ -173,7 +173,7 @@
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
       :current-page.sync="currentPage2"
-      :page-sizes="[20, 50, 100]"
+      :page-sizes="[20]"
       :page-size="pageSize"
       layout="prev, pager, next,sizes"
       :total="allDate">
@@ -201,7 +201,7 @@
    </div>
     <div>
       <span>公司电话</span>
-      <input type="" v-model.number="tel" maxlength="20" placeholder="请输入公司座机" name="" class="cpn-ip">
+      <input type="" onkeyup="value=value.replace(/[^\d]/g,'')"  v-model = "tel" maxlength="20" placeholder="请输入公司座机" name="" class="cpn-ip">
    </div>
 
      <h3 class="ct-info">联系人信息</h3>
@@ -211,7 +211,7 @@
      </div>
       <div>
       <span>联系人号码</span>
-       <input type="" v-model="mobile" maxlength="20" placeholder="请输入座机或手机号" name="" class="person-ip">
+       <input type=""  onkeyup="value=value.replace(/[^\d]/g,'')"  v-model="mobile" maxlength="20" placeholder="请输入座机或手机号" name="" class="person-ip">
      </div>
 
   </div>
@@ -358,7 +358,7 @@ export default{
         console.log(`当前页: ${val}`);
       },
       handleClose(){
-
+        this.dialogVisible = false;
       },
        open() {
         this.$alert('请至少选择1家公司进行操作！', '删除公司', {

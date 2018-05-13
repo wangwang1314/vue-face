@@ -57,7 +57,7 @@
             <div class="slider-box" v-if="slider">
               <p class="close-p"><i @click="closeFn">×</i></p>
               <div class="info">
-                <img :src="setobj.face_image_data">
+                <img :src="'data:image/'+';base64,'+setobj.face_image_data">
                 <div>
                   <p class="name">{{setobj.face_user_name}}</p>
                   <img v-if="setobj.face_type!=1" src="../../assets/images/fk.png">
@@ -65,11 +65,11 @@
                   <div>
                     <p>
                       <span>入库时间：</span>
-                      {{setobj.build_time}}
+                      {{setobj.timeStamp}}
                     </p>
                     <p>
                       <span>更新时间：</span>
-                      {{setobj.build_time}}
+                      {{setobj.timeStamp}}
                     </p>
                     <button @click="editman">编辑</button>
                   </div>
@@ -179,7 +179,7 @@
                 </div> -->
            
                  <div class="img-box">
-                    <img :src="setobj.img" >
+                    <img :src="'data:image/'+setobj.face_image_type+';base64,'+setobj.face_image_data" >
                   </div>
               <!--   <p class="tit-tou">上传头像</p> -->
                 <p class="name-ipt">
@@ -341,7 +341,10 @@ export default {
        })
      },
      sliderShow(val){
-        this.setobj = row;
+
+        this.setobj = val;
+        console.log("我的参数",this.setobj);
+
         //console.log(this.setobj);
         this.slider = true;
         this.getrecord();
@@ -353,7 +356,7 @@ export default {
     getRights(){
         this.$api.post("/client_query_person_auth_api",
         {
-          company_id:this.id,
+          company_id:parseInt(this.id),
           face_id:this.setobj.face_id
         },
         su=>{
@@ -388,7 +391,7 @@ export default {
       },
        getrecord(){
         this.$api.post("/client_query_face_id_record_api",{
-            company_id:this.id,
+            company_id:parseInt(this.id),
             face_id:this.setobj.face_id,
             place_id:0,
             fromTimeStamp:"2018-1-1 00:22:22",
@@ -396,6 +399,7 @@ export default {
           },
           su=>{
             if(su.code==200){
+
               this.totaldata = su.total_data;
             }
           },
@@ -405,17 +409,33 @@ export default {
       },
       getright(){
         this.$api.post("/common_query_company_api",{
-          company_id:this.id
+          company_id:parseInt(this.id)
         },su=>{
           if(su.code===200){
+
             let obj = su.data;
+
             obj.ischeck = false;
+         
             obj.forEach((val,index)=>{
-                val.data = [];
-                val.ischeck = false;
+
+                if(val.data){
+                   val.data = [];
+                }else{
+                   this.$set(val,"data",[])
+                }
+                  
+                if(val.ischeck){
+                   val.ischeck = false;
+                }else{
+                   this.$set(val,"ischeck",false)
+                }
+                
+                 console.log(val.place_id,index);
                 this.delist(val.place_id,index);
             })
-            //console.log(obj);
+             
+             console.log(obj);
             this.placelistin = obj;
             this.placelistout = JSON.parse(JSON.stringify(obj));
             this.placelistout.ischeck = false;
@@ -427,7 +447,7 @@ export default {
           }
         },err=>{
             this.$message({
-                message: su.msg,
+                message:"error",
                 type: 'warning'
             });
         })
@@ -435,20 +455,49 @@ export default {
       closeFn(){
        this.slider = false;
       },
+       delist(vals,index){     
+        this.$api.post("/common_query_place_api",{
+          company_id:parseInt(this.id),
+          place_id:vals
+        },su=>{
+          if(su.code==200&&su.data.length>0){
+              console.log();
+              this.placelistin[index].data = [];
+              this.placelistout[index].data = [];
+              su.data.forEach((val)=>{
+                  val.ischeck = false;
+                  val.placestring = vals+"-"+val.device_id;
+                  //console.log(val,"ssssssss")
+                  if(parseInt(val.device_id)%2!=0){
+                    this.placelistin[index].data.push(val);
+                  }else{
+                    this.placelistout[index].data.push(val);
+                  } 
+              })
+              //console.log(su.data)
+              // this.placelistin[index].data = su.data;
+              // this.placelistout[index].data = JSON.parse(JSON.stringify(su.data));
+          }
+        },err=>{
+              
+        })
+ 
+    },
       editman(){
+        console.log("mm",this.setobj);
         this.editdialog = true;
-        console.log(this.setobj.face_type);
-        this.type = this.setobj.face_type.toString();
+        console.log(this.setobj.face_image_type);
+        this.type = this.setobj.face_image_type.toString();
       },
        editConfirm(){
           this.$api.post("/client_mng_modify_face_api",{
-              company_id:this.id,
+              company_id:parseInt(this.id),
               face_id:this.setobj.face_id,
               face_type:Number(this.type)
             },
             su=>{
               if(su.code==200){
-                this.setobj.face_type = this.type;
+                this.setobj.face_image_type = this.type;
                 this.editdialog = false;
                 this.getList();
                 this.$message({

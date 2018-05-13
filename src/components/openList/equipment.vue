@@ -36,14 +36,15 @@
         </el-table-column>
 
         <el-table-column
-          prop="cpnId"
+          prop="device_id"
           label="出入类型"
           show-overflow-tooltip
            >
 
            <template slot-scope="scope">
-                <span v-if="inout==0" class="type-in">出</span>
-                <span v-if="inout==1" class="type-out">入</span>
+              
+                <span v-if="scope.row.device_id%2==0" class="type-in">出</span>
+                <span v-if="scope.row.device_id%2==1" class="type-out">入</span>
           </template>
         </el-table-column>
 
@@ -109,7 +110,7 @@
           >
           <template slot-scope="scope">
               <div class="opartion">
-                <span @click="addequimentFn(2,scope.row)">编辑</span>|
+                  <span  @click="addequimentFn(2,scope.row)">编辑</span>|
                   <span @click="delPlace(scope.row.device_id)">删除</span>
               </div>
           </template>
@@ -133,7 +134,7 @@
 
   <el-dialog
   class="add-equip add-user"
-  title="添加设备"
+  :title="dtitle"
   :visible.sync="addequiment"
   width="616px"
   :before-close="handleClose">
@@ -146,7 +147,8 @@
              </td>
              <td>
           
-               <input type="" class="place-set"  v-model="device_id" @keyup="errhide" placeholder="50个字符以内" maxlength="50" :class="{'ip-err':deverr1==true}" name="">
+               <input  v-show="dtitle == '添加设备'" onkeypress="return event.keyCode>=48&&event.keyCode<=57" type="" class="place-set"  v-model="device_id" @blur="inoutFn" @keyup="errhide" placeholder="50个字符以内" maxlength="50" :class="{'ip-err':deverr1==true}" name="">
+               <span v-show="dtitle == '编辑设备'">{{device_id}}</span>
              </td>
            </tr>
             <tr>
@@ -155,8 +157,10 @@
              </td>
              <td class="radios">
                 <template>
-                  <el-radio v-model="radio" label="1">出</el-radio>
-                  <el-radio v-model="radio" label="2">入</el-radio>
+                  <el-radio v-if="radio!=''" :disabled="radio==1"   v-model="radio" label="2">出</el-radio>
+                  <el-radio v-else  disabled   v-model="radio" label="2">出</el-radio>
+                  <el-radio v-if="radio!=''" :disabled="radio==2"  v-model="radio" label="1">入</el-radio>
+                   <el-radio v-else disabled  v-model="radio" label="1">入</el-radio>
                 </template>
 
              </td>
@@ -176,13 +180,12 @@
              <td>
               
             <div class="err-cont after-ip">
-              <input type="" name="" class="ip-lt" v-model = "place_latitude.lat1"  @keyup="errhide" :class="{'ip-err':deverr3==true}">
-              <input type="" name="" class="ip-lt" v-model = "place_latitude.lat2"  @keyup="errhide" :class="{'ip-err':deverr3==true}">
-              <input type="" name="" class="ip-lt"  v-model ="place_latitude.lat3"  @keyup="errhide" :class="{'ip-err':deverr3==true}">
+              <input type="" name=""  onkeypress="return event.keyCode>=48&&event.keyCode<=57" placeholder="请输入度" maxlength="3" class="ip-lt" v-model = "lat1"  @keyup="errhide" :class="{'ip-err':deverr3==true}">
+              <input type=""  onkeypress="return event.keyCode>=48&&event.keyCode<=57" placeholder="请输入分" maxlength="2"  name="" class="ip-lt" v-model = "lat2"  @keyup="errhide" :class="{'ip-err':deverr3==true}">
                
                 <em class="h">。</em>
                 <em class="s">'</em>
-                <em class="mm">"</em>
+            
         
                </div>
              </td>
@@ -193,14 +196,10 @@
              </td>
              <td>
                <div class="err-cont after-ip">
-              <input type="" name="" class="ip-lt"  v-model = "place_longitude.long1" @keyup="errhide"  :class="{'ip-err':deverr4==true}">
-              <input type="" name="" class="ip-lt"  v-model = "place_longitude.long2" @keyup="errhide" :class="{'ip-err':deverr4==true}">
-              <input type="" name="" class="ip-lt"  v-model = "place_longitude.long3" @keyup="errhide" :class="{'ip-err':deverr4==true}">
-               
+              <input type="" onkeypress="return event.keyCode>=48&&event.keyCode<=57"  placeholder="请输入度" maxlength="2"  name="" class="ip-lt"  v-model = "long1" @keyup="errhide"  :class="{'ip-err':deverr4==true}">
+              <input type="" onkeypress="return event.keyCode>=48&&event.keyCode<=57" name="" placeholder="请输入分" maxlength="2" class="ip-lt"  v-model = "long2" @keyup="errhide" :class="{'ip-err':deverr4==true}">
                 <em class="h">。</em>
                 <em class="s">'</em>
-                <em class="mm">"</em>
-        
                </div>
              </td>
            </tr>
@@ -209,7 +208,7 @@
                  <span class="ms-write">摄像头IP</span>
              </td>
              <td>
-               <input type="" class="place-set"  v-model="device_ip" name=""  @keyup="errhide" :class="{'ip-err':deverr5==true}">
+               <input type="" class="place-set" placeholder="50个字符以内" maxlength="50"  v-model="device_ip" name=""  @keyup="errhide" :class="{'ip-err':deverr5==true}">
              </td>
            </tr>
             <tr>
@@ -217,7 +216,7 @@
                 <span class="ms-write">摄像头像素高度</span>
              </td>
              <td>
-               <input type="" class="place-set" v-model="device_heigh" @keyup="errhide"  name="" :class="{'ip-err':deverr6==true}">
+               <input type=""  placeholder="50个字符以内" maxlength="50" class="place-set" v-model="device_heigh" @keyup="errhide"  name="" :class="{'ip-err':deverr6==true}">
              </td>
            </tr>
             <tr>
@@ -225,7 +224,7 @@
                   <span class="ms-write">摄像头像素宽度</span>
              </td>
              <td>
-                 <input type="" class="place-set" v-model="device_width"  @keyup="errhide" name="" :class="{'ip-err':deverr7==true}">
+                 <input type="" placeholder="50个字符以内" maxlength="50"  class="place-set" v-model="device_width"  @keyup="errhide" name="" :class="{'ip-err':deverr7==true}">
              </td>
            </tr>
             <tr>
@@ -233,7 +232,7 @@
                 <span class="ms-write">摄像头账号</span>
              </td>
              <td>
-               <input type="" class="place-set" name="" v-model="device_login" @keyup="errhide"  :class="{'ip-err':deverr8==true}">
+               <input type="" placeholder="50个字符以内" maxlength="50"  class="place-set" name="" v-model="device_login" @keyup="errhide"  :class="{'ip-err':deverr8==true}">
              </td>
            </tr>
             <tr>
@@ -241,7 +240,7 @@
                 <span class="ms-write">摄像头密码</span> 
              </td>
              <td>
-               <input type="" class="place-set"  v-model="device_pwd" name=""  @keyup="errhide" :class="{'ip-err':deverr9==true}">
+               <input type="" placeholder="50个字符以内" maxlength="50"  class="place-set"  v-model="device_pwd" name=""  @keyup="errhide" :class="{'ip-err':deverr9==true}">
              </td>
            </tr>
          </tbody>
@@ -284,7 +283,7 @@ export default{
          cpnerr:true,
          pawerr:true,
          inout:1,
-         radio:'1',
+         radio:'',
          cname:"",
          addequiment:false,
          currentPage2: 5,
@@ -292,16 +291,15 @@ export default{
          totalList:0,
          eqplace:"",
          errtx:"",
-          place_latitude:{//经度
+        //经度
             lat1:"",
             lat2:"",
-            lat3:""
-         },//经度
-         place_longitude:{
+            lat3:"",//经度
+      
             long1:"",
             long2:"",
             long3:""
-         },//纬度
+         ,//纬度
          tableData3: [
            
          ],
@@ -342,6 +340,30 @@ export default{
     this.cname = this.$route.params.cname;
     this.initList();
   },
+
+   watch:{
+     lat1:function(val,oldVal){
+          if(parseInt(val)>180){
+              this.lat1 = oldVal;
+          }
+      },
+      lat2:function(v,o){
+          if(parseInt(v)>60){
+              this.lat2 = o;
+          }
+      },
+      long1:function(val,o){
+         if(parseInt(val)>90){
+              this.long1 = o;
+          }
+      },
+      long2:function(v,o){
+          if(parseInt(v)>60){
+              this.long2 = o;
+          }
+      },
+  }
+  ,
   methods:{
     
        handleSelectionChange(val) {
@@ -359,18 +381,16 @@ export default{
 
       //添加设备
       addequimentFn(v,d){
+        this.radio = "";
          if(v==1){
           this.dtitle="添加设备";
-          this.place_latitude={//经度
-            lat1:"",
-            lat2:"",
-            lat3:""
-         },//经度
-         this.place_longitude={
-            long1:"",
-            long2:"",
-            long3:""
-         },//纬度
+         //经度
+            this.lat1 = "";
+            this.lat2 = "";
+            this.lat3 = "";//经度
+            this.long1 = "";
+            this.long2 = "";
+            this.long3 = "";//纬度
          this.device_id="";
          this.device_address="";
          this.device_latitude="";
@@ -382,19 +402,19 @@ export default{
          this.device_pwd="";
 
          }else{
-           this.dtitle="修改设备";
-            this.place_latitude = {
-            lat1:d.device_latitude,
-            lat2:d.device_latitude,
-            lat3:""
-         };//经度
-         this.place_longitude = {
-            long1:d.device_longitude,
-            long2:d.device_longitude,
-            long3:""
-         };
 
-          this.device_id=d.device_id;
+           this.dtitle="编辑设备";
+            let  latarr = d.device_latitude.split(".");
+            let  lonarr = d.device_longitude.split(".");
+            this.lat1 = latarr[0];
+            this.lat2 = latarr[1];
+           
+        //经度
+         
+            this.long1 = lonarr[0];
+            this.long2 = lonarr[1];
+
+         this.device_id=d.device_id;
          this.device_address=d.device_address;
          this.device_latitude=d.device_latitude;
          this.device_longitude=d.device_longitude;
@@ -403,7 +423,14 @@ export default{
          this.device_width=d.device_width;
          this.device_login=d.device_login;
          this.device_pwd=d.device_pwd;
+
+          if(this.device_id%2==0){
+              this.radio = "2"
+            }else if(this.device_id%2==1){
+              this.radio = "1"
+            }
          }
+          
 
          this.isErr = false;
          this.deverr1 = false;
@@ -436,7 +463,19 @@ export default{
 
          })
       },
+      inoutFn(){
+         if(this.device_id){
+            if(this.device_id%2==0){
+              this.radio = "2"
+            }else if(this.device_id%2==1){
+              this.radio = "1"
+            }
+         }else{
+          this.radio = "";
+         }
+      },
       errhide(){
+         
          this.deverr1 = false,
          this.deverr2 = false,
          this.deverr3 = false,
@@ -464,13 +503,13 @@ export default{
              return
           }
 
-           if(!this.place_latitude.lat1 || !this.place_latitude.lat2){
+           if(!this.lat1 || !this.lat2){
              this.deverr3 = true;
              this.isErr =true;
              this.errtx = "经度不能为空"
              return
           }
-           if(!this.place_longitude.long1 || !this.place_longitude.long2){
+           if(!this.long1 || !this.long2){
              this.deverr4 = true;
              this.isErr =true;
              this.errtx = "纬度不能为空"
@@ -506,8 +545,8 @@ export default{
              this.errtx = "摄像头密码不能为空"
              return
           }
-          let lats= this.place_latitude.lat1+'.'+this.place_latitude.lat2;
-          let longs = this.place_longitude.long1+'.'+this.place_longitude.long2;
+          let lats= this.lat1+'.'+this.lat2;
+          let longs = this.long1+'.'+this.long2;
           let url = "";
           if(this.dtitle == "添加设备"){
              url = "/admin_add_device_api";
@@ -527,7 +566,6 @@ export default{
              device_width:parseInt(this.device_width),
              device_login:this.device_login,
              device_pwd:this.device_pwd
-
           },su=>{
               console.log(su)
               if(su.code==200){
@@ -915,7 +953,7 @@ position: relative;
 .after-ip em.s{
   position: absolute;
   left:260px;
-  top:-13px;
+  top:-9px;
   font-size:16px;
 }
 .after-ip em.mm{
