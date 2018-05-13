@@ -73,12 +73,13 @@
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
         :current-page.sync="page"
-        :page-sizes="[100, 200, 300, 400]"
-        :page-size="100"
+        :page-sizes="[20]"
+        :page-size="20"
         layout="prev, pager, next,sizes "
-        :total="1000">
+        :total="20">
       </el-pagination>
     </div>
+
   </div>
 </template>
 
@@ -269,7 +270,7 @@ export default {
            this.fromTimeStamp = this.GMTToStr(v[0]);
            this.toTimeStamp = this.GMTToStr(v[1]);
            console.log(this.fromTimeStamp);
-           //this.getInout(this.id,this.fromTimeStamp,this.toTimeStamp,this.place_id);
+           this.getInout(this.id,this.fromTimeStamp,this.toTimeStamp,this.place_id);
         }
        }
        ,
@@ -327,8 +328,6 @@ export default {
               if(su.code==200){
                  this.$set(el,"face_image_type",su.face_image_type);
                  this.$set(el,"face_image_data",su.face_image_data);
-               
-               
               }
 
              },err=>{
