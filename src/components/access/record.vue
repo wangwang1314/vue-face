@@ -28,9 +28,28 @@
             start-placeholder="开始日期"
             end-placeholder="结束日期"
             class="data-class"
+            :default-time="['00:00:00', '23:59:59']"
             >
           </el-date-picker>
-          <span class="add-cou">增加过滤条件</span>
+          <span class="add-cou" @click="addfilter">增加过滤条件</span>
+          <div class="ftime">
+             <h3 v-if="filtTime.length>0">过滤以下时间段的人员记录</h3>
+             <p v-for="(item,ind) in filtTime">
+                   <el-date-picker
+              v-model="item.val"
+              @change="filterTimes"
+              type="datetimerange"
+              range-separator="至"
+              start-placeholder="开始日期"
+              end-placeholder="结束日期"
+              class="data-class"
+          
+              >
+            </el-date-picker>
+             </p>
+           
+            
+          </div>
        </div>
        <p class="su-tit">共 <span>{{total_num}}</span> 条数据</p>
        <p class="sur-num">
@@ -91,6 +110,7 @@ export default {
       fromTimeStamp:'2018-1-1 00:22:22',
       toTimeStamp:"2119-1-2 00:22:22",
       name:"",
+      filtTime:[],
       place_id:0,
       dataList:[],
       total_num:0,
@@ -99,6 +119,8 @@ export default {
       place_name:"",//场地名称
       dv_address:"",//设备地址
       us_name:"",//姓名
+      tstart:0,
+      tend:0,
       options: [{
           value: '选项1',
           label: '黄金糕'
@@ -116,7 +138,7 @@ export default {
           label: '北京烤鸭'
         }],
         value4: '',
-        value3:"",
+        value3:[new Date(new Date().getFullYear(),new Date().getMonth(),new Date().getDate(),0,0,0),new Date(new Date().getFullYear(),new Date().getMonth(),new Date().getDate(),23,59,59)],
         page:0
     }
   },
@@ -272,8 +294,19 @@ export default {
            console.log(this.fromTimeStamp);
            this.getInout(this.id,this.fromTimeStamp,this.toTimeStamp,this.place_id);
         }
-       }
-       ,
+       },
+
+     /* filterTimes(v){
+           console.log(this.filtTime);
+           if(v){
+           this.tstart = this.GMTToStr(v[0]);
+           this.tend = this.GMTToStr(v[1]);
+           console.log(new Date(this.tstart).getTime());
+           console.log(new Date(this.tend).getTime());
+           
+        }
+       },
+      */
        //聚焦
        optionNow(v){
           if(v==1){
@@ -316,8 +349,48 @@ export default {
          
 
       },
+     addfilter(){
+          this.filtTime.push({
+             val:[],
+             bgtime:"",
+            endtime:""
+          })
+       },
+     filterTimes(){
+        console.log(this.filtTime);
+       
+       this.filtTime.forEach((el,ind)=>{
+                console.log(el);
+                let tstart = this.GMTToStr(el.val[0]);
+                let tend = this.GMTToStr(el.val[1]);
+                console.log(tstart,tend);
+                el.bgtime = new Date(tstart).getTime();
+                el.endtime = new Date(tend).getTime();
+       })
+       var arr = [];
+       this.showDate.forEach((el,ind)=>{
+           
+            let cpt = new Date(el.timeStamp).getTime();
+            console.log("aa",cpt);
+            this.filtTime.forEach((ele,i)=>{
+
+               if(ele){
+                  if(ele.bgtime<cpt && cpt<ele.endtime){
+                       arr.push(ind);
+                  }
+               }else{
+
+               }
+            })
+       })
      
+       
+          
+        
+
+     },  
      /* 获取图片*/
+       
     getface(d){  
        d.forEach((el,ind)=>{
              this.$api.post('/client_get_face_image_api',{
@@ -373,6 +446,7 @@ export default {
       .add-cou{
         font-size:14px;
         color:rgba(55,142,239,1);
+        cursor: pointer;
       }
     }
   }
@@ -492,5 +566,8 @@ export default {
     position: relative;
     top:3px;
   }
+}
+.ftime{
+  padding-left:568px;
 }
 </style>
