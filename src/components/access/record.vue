@@ -53,8 +53,8 @@
              <td> <img :src="'data:image/'+item.face_image_type+';base64,'+item.face_image_data"></td>
              <td>{{item.face_user_name}}</td>
              <td>
-               <span class="red">出</span>
-               <span class="green">绿</span>
+               <span class="red" v-if="item.device_id%2==0">出</span>
+               <span class="green" v-else>入</span>
              </td>
              <td>
                
@@ -179,31 +179,49 @@ export default {
       let blob = new Blob([file.raw],{type:file.raw.type});
       let that = this;
       let reader = new FileReader();
+     
+       let imgtype = "";
+      if(file.name.indexOf(".")!=-1){
+            let arr = file.name.split(".");
+            imgtype = arr[arr.length-1];
+            name = arr[0];
+          }
       reader.readAsDataURL(blob);
       reader.onload = function (e) {
-          // 图片的 base64 格式, 可以直接当成 img 的 src 属性值      
+          // 图片的 base64 格式, 可以直接当成 img 的 src 属性值     
+          console.log(imgtype); 
           that.searchimg = reader.result;
-      };
-    },
-      //根据人脸图片查询进出记录
-      byfaceImg(id,imgtype,img,placeId,fromTimeStamp,toTimeStamp){
-          this.$api.post("/client_query_face_image_record_api",{
-              "company_id":id,
+          let img = that.searchimg.split(",")[1];
+            that.$api.post("/client_query_face_image_record_api",{
+              "company_id":parseInt(that.id),
               "face_image_type":imgtype,
               "face_image_data":img,
-              "place_id":placeId,
-              "fromTimeStamp":fromTimeStamp,
-              "toTimeStamp":toTimeStamp
+              "place_id":0,
+              "fromTimeStamp":that.fromTimeStamp,
+              "toTimeStamp":that.toTimeStamp
           },su=>{
             if(su.code==200){
-
+               that.showDate = [];
+               if(su.face_id){
+                 that.mydata.forEach((el,ind)=>{
+                   if(el.face_id == su.face_id){
+                       that.showDate.push(el);
+                   }
+                })
+               }else{
+                  that.showDate = that.mydata;
+               }
+               
             }
 
           },err=>{
 
           })
-      },
-
+          console.log(img);
+      };
+    },
+      //根据人脸图片查询进出记录
+    
       //根据faceID查询进出记录
      byfaceId(id,faceid,placeId,fromTimeStamp,toTimeStamp){
           this.$api.post("/client_query_face_id_record_api",{
@@ -298,7 +316,7 @@ export default {
          
 
       },
-
+     
      /* 获取图片*/
     getface(d){  
        d.forEach((el,ind)=>{
