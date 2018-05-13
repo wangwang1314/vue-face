@@ -25,6 +25,7 @@
             :data="realdata"
             tooltip-effect="dark"
             style="width: 100%"
+            v-show="total!=0"
             @selection-change="handleSelectionChange"
             @row-click="sliderShow"
             id="pdf"
@@ -65,7 +66,7 @@
             </el-table-column> -->
           </el-table>
 
-          <div class="page">
+          <div class="page" v-show="total!=0">
             <el-pagination
               @size-change="handleSizeChange"
               @current-change="handleCurrentChange"
@@ -75,6 +76,9 @@
               layout="prev, pager, next,sizes"
               :total="total">
             </el-pagination>
+          </div>
+          <div style="text-align:center;margin-top:216px;" v-show="total==0">
+            <img src="../../assets/images/no-num.png">
           </div>
           <!--侧边栏-->
         <transition name="fade">

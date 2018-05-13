@@ -1,4 +1,5 @@
 export default {
 	name:"",
-	data:{}
+	data:{},
+	slider:false
 }

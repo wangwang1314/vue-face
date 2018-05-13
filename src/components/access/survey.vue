@@ -54,7 +54,7 @@
     </div>
     <!--侧边栏-->
     <transition name="fade">
-            <div class="slider-box" v-if="slider">
+            <div class="slider-box" v-if="slider" @click.stop="">
               <p class="close-p"><i @click="closeFn">×</i></p>
               <div class="info">
                 <img :src="'data:image/'+';base64,'+setobj.face_image_data">
@@ -203,6 +203,7 @@
 </template>
 
 <script>
+import { mapState } from "vuex";
 export default {
   data () {
     return {
@@ -218,7 +219,6 @@ export default {
       mydata:[],
       showDate:[],
       setobj:{},
-      slider:false,
       placelistin:[],
       placelistout:[],
       editdialog:false,
@@ -232,6 +232,13 @@ export default {
   mounted(){
     this.getInout(this.id,this.fromTimeStamp,this.toTimeStamp,this.place_id);
    
+  },
+  computed:{
+    ...mapState({
+      slider:function(state){    
+        return state.slider;
+      }
+    })
   },
   methods:{
     handleSizeChange(){
@@ -340,13 +347,13 @@ export default {
        
        })
      },
-     sliderShow(val){
-
+     sliderShow(val,event){
+        event.cancelBubble = true;
         this.setobj = val;
         console.log("我的参数",this.setobj);
 
         //console.log(this.setobj);
-        this.slider = true;
+        this.$store.state.slider = true;
         this.getrecord();
         //获取已经添加的权限
         this.getRights();
@@ -453,7 +460,7 @@ export default {
         })
       },
       closeFn(){
-       this.slider = false;
+       this.$store.state.slider = false;
       },
        delist(vals,index){     
         this.$api.post("/common_query_place_api",{
