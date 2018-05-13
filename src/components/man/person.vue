@@ -49,6 +49,7 @@
             :data="realdata"
             tooltip-effect="dark"
             style="width: 100%"
+            v-show="total!=0"
             @selection-change="handleSelectionChange"
             @row-click="sliderShow"
             id="pdf"
@@ -96,7 +97,7 @@
               </template>
             </el-table-column>
           </el-table>
-          <div class="page">
+          <div class="page" v-show="total!=0">
             <el-pagination
               @size-change="handleSizeChange"
               @current-change="handleCurrentChange"
@@ -109,7 +110,7 @@
           </div>
 
           <transition name="fade">
-            <div class="slider-box" v-if="slider">
+            <div class="slider-box" v-if="slider" @click.stop="">
               <p class="close-p"><i @click="closeFn">×</i></p>
               <div class="info">
                 <img :src="setobj.img">
@@ -431,15 +432,19 @@
           </span>
         </el-dialog>
       </div>
+      <div style="text-align:center;margin-top:216px;" v-show="total==0">
+        <img src="../../assets/images/no-num.png">
+      </div>
     </div>
 </template>
 
 <script>
+import { mapState } from "vuex";
 export default {
+
   data () {
     return {
       value4:"",
-      slider:true,
       activeName:"first",
       value3:"",
       isIndeterminate:true,
@@ -493,6 +498,18 @@ export default {
       this.id = Number(sessionStorage.getItem("users"));
       this.getList();
   },
+  computed:{
+    ...mapState({
+      slider:function(state){    
+        return state.slider;
+      }
+    })
+  },
+  watch:{
+    isShow:function(){
+     // console.log(11111)
+    }
+  },
   methods:{
     handleSizeChange(val){
       this.pagesize = val;
@@ -504,7 +521,7 @@ export default {
       this.dataFn();
     },
     show(){
-      this.slider = true;
+      this.$store.state.slider = true;
      
     },
     getrecord(){
@@ -525,7 +542,7 @@ export default {
       })
     },
     closeFn(){
-       this.slider = false;
+       this.$store.state.slider = false;
     },
     handleClick(){
 
@@ -664,10 +681,11 @@ export default {
     handleSelectionChange(val){
       this.selectval = val;
     },
-    sliderShow(row){
+    sliderShow(row,event){
+      event.cancelBubble = true;
       this.setobj = row;
       //console.log(this.setobj);
-      this.slider = true;
+      this.$store.state.slider = true;
       this.getrecord();
       //获取已经添加的权限
       this.getRights();

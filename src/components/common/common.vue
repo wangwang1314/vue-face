@@ -120,7 +120,9 @@ export default {
       this.change = true;
     },
     closedia(){
-      this.change = false
+      this.change = false;
+      this.$store.state.slider = false;
+     // console.log(1111)
     },
     initcheck(){
       this.err = false;
