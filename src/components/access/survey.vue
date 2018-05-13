@@ -16,7 +16,7 @@
     </div>
     <div class="tit">共<span>{{total_num}}</span>人</div>
     <ul class="list">
-      <li v-for="(item,ind) in showDate" v-cloak @click="sliderShow(item)">
+      <li v-for="(item,ind) in showDate" v-cloak @click="sliderShow(item,$event)">
         <img :src="'data:image/'+item.face_image_type+';base64,'+item.face_image_data">
         <p class="name">{{item.face_user_name}}</p>
         <p>{{item.timeStamp}}</p>
