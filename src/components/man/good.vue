@@ -73,6 +73,7 @@
           </div>
         <div style="text-align:center;margin-top:216px;" v-show="total==0">
           <img src="../../assets/images/no-num.png">
+          <p style="margin-top:44px;color:#999999;font-size:18px;">抱歉！~暂无数据~</p>
         </div>
        <!--  添加白名单 -->
        <div class="box">
