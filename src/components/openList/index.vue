@@ -1,5 +1,6 @@
 <template>
-  <open>
+  <div @click="closeFn">
+    <open>
       <span class="tit" slot="title">开户管理</span>
       <ul class="nav-class" slot="nav">
         <li><router-link to="/openListindex" tag="a">开户列表</router-link></li>     
@@ -8,6 +9,8 @@
           <router-view></router-view>
       </div>
   </open>
+  </div>
+  
 </template>
 
 <script>
@@ -19,6 +22,11 @@ export default {
   },
   mounted(){
    // this.$router.go({path:"/openListindex/openlist"})
+  },
+  methods:{
+     closeFn(){
+        this.$store.state.slider = false;
+      }
   }
 }
 </script>

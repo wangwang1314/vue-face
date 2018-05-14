@@ -104,7 +104,7 @@
     </template>
 
      <transition name="slide-fade">
-          <div v-if="slideFlag" class="slideout">
+          <div v-if="slideFlag" class="slideout" @click.stop="">
              <h3>{{userName}}</h3>
              <div class="sli-head-cont">
                <div class="li-cpnid">
@@ -157,7 +157,7 @@
               <button type="button" class="comf-btn" @click="editComf">确定</button>
               <button type="button" class="cal-btn" @click="calEd">取消</button>
              </div>
-             <i class="sld-close" @click="slideFlag=false"></i>
+             <i class="sld-close" @click="closeFn"></i>
           </div>
      </transition>
         <!--  设备列表 -->
@@ -249,13 +249,14 @@
   </div>
 </template>
 <script>
+import { mapState } from "vuex";
 export default{
 
   data(){
 
       return {
          companyName:"",
-         slideFlag:false,
+         //slideFlag:false,
          page:1,
          pagesize:20,
          notEdite:false,
@@ -298,8 +299,18 @@ export default{
   mounted(){
     this.initList();
   },
+  computed:{
+    ...mapState({
+      slideFlag:function(state){    
+        return state.slider;
+      }
+    })
+  },
   methods:{
-       dataFn(){
+      closeFn(){
+        this.$store.state.slider = false;
+      },
+      dataFn(){
         //this.realdata = [];
         //console.log(this.pagesize,"qqqqqqqqq",this.page)
         let start = (this.page-1)*this.pagesize;
@@ -346,11 +357,11 @@ export default{
         
       },
       //点击列表编辑
-      rowFn(row){
-        
+      rowFn(row,event){
+        event.cancelBubble = true;
         this.editFlag = false;
         this.ed_cpnerr = false;
-        this.slideFlag = !this.slideFlag;
+        this.$store.state.slider = !this.$store.state.slider;
         this.editList = row ;
         this.eidtDate = row;
         this.userName = this.editList.user_name;
@@ -533,7 +544,7 @@ export default{
               type: 'success'
             });
             this.editFlag = false;
-            this.slideFlag = false;
+            this.$store.state.slider = false;
             this.initList();
            }else{
               console.log(su);
