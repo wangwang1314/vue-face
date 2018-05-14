@@ -51,11 +51,11 @@
           </tr>
           <tr>
             <td>新密码</td>
-            <td><input type="password" name="" placeholder="请输入你的新密码，50个字符以内" v-model="reseted.new" :class="{'border-red':check.new}"></td>
+            <td><input type="password" name="" maxlength="50" placeholder="请输入你的新密码，50个字符以内" v-model="reseted.new" :class="{'border-red':check.new}"></td>
           </tr>
           <tr>
             <td>重复新密码</td>
-            <td><input type="password" name="" placeholder="请再次输入你的新密码，50个字符以内"  v-model="reseted.res" :class="{'border-red':check.res}"></td>
+            <td><input type="password" name="" maxlength="50" placeholder="请再次输入你的新密码，50个字符以内"  v-model="reseted.res" :class="{'border-red':check.res}"></td>
           </tr>
         </table>
         <span slot="footer" class="dialog-footer">

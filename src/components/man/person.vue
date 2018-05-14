@@ -290,7 +290,7 @@
           <!--   <p class="tit-tou">上传头像</p> -->
             <p class="name-ipt">
               <span><i class="red">*</i>姓名</span>
-              <input type="text" name="" placeholder="请输入姓名，20字以内，必须填" :class="{'uncheck':check.input}" v-model="name">
+              <input type="text" name="" maxlength="20" placeholder="请输入姓名，20字以内，必须填" :class="{'uncheck':check.input}" v-model="name">
             </p>
             <p class="name-ipt">
               <span><i class="red"></i>类型</span>
@@ -777,7 +777,7 @@ export default {
       }
     },
     handleExceed(){
-        this.$message.warning(`当前限制选择 100 个文件，本次选择了 ${files.length} 个文件，共选择了 ${files.length + fileList.length} 个文件`);
+        this.$message.warning(`图片不能超过100张`);
     },
     delFn(){
       let arr = [];
