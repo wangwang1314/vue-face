@@ -16,7 +16,7 @@
     </div>
     <div class="tit">共<span>{{total_num}}</span>人</div>
     <ul class="list">
-      <li v-for="(item,ind) in showDate" v-cloak @click="sliderShow(item,$event)">
+      <li v-for="(item,ind) in realdata" v-cloak @click="sliderShow(item,$event)">
         <img v-if="item.face_image_data" :src="'data:image/'+item.face_image_type+';base64,'+item.face_image_data">
         <div v-else style="width:150px;height:150px;"></div>
         <p class="name">{{item.face_user_name}}</p>
@@ -43,13 +43,22 @@
       <p>抱歉！~暂无数据~</p>
     </div>
     <div class="page">
-      <el-pagination
+     <!--  <el-pagination
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
         :current-page.sync="page"
         :page-sizes="[20, 50, 100]"
         :page-size="100"
         layout="prev, pager, next,sizes "
+        :total="showDate.length">
+      </el-pagination> -->
+      <el-pagination
+        @size-change="handleSizeChange"
+        @current-change="handleCurrentChange"
+        :current-page.sync="page"
+        :page-sizes="[20]"
+        :page-size="pagesize"
+        layout="prev, pager, next,sizes"
         :total="showDate.length">
       </el-pagination>
     </div>
@@ -226,7 +235,10 @@ export default {
       type:"1",
       activeName:"first",
       totaldata:[],
-      rightcontent:[]
+      rightcontent:[],
+      page:1,
+      pagesize:20,
+      realdata:[],
 
     }
   },
@@ -242,11 +254,17 @@ export default {
     })
   },
   methods:{
+    dataFn(){
+      let start = (this.page-1)*this.pagesize;
+      let end = this.page*this.pagesize;
+      this.realdata = this.showDate.slice(start,end);
+    },
     handleSizeChange(){
 
     },
-    handleCurrentChange(){
-
+    handleCurrentChange(val){
+      this.page = val;
+      this.dataFn();
     },
     GMTToStr(time){
     let date = new Date(time);
@@ -344,7 +362,8 @@ export default {
         })
        
        this.$nextTick(function(){
-        this.showDate = this.mydata
+        this.showDate = this.mydata;
+        this.dataFn()
        
        })
      },
