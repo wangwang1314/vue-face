@@ -69,7 +69,7 @@
          <tbody>
            <tr v-for="(item,ind) in showDate">
              <td>{{item.timeStamp}}</td>
-             <td> <img :src="'data:image/'+item.face_image_type+';base64,'+item.face_image_data"></td>
+             <td> <img v-if="item.face_image_data" :src="'data:image/'+item.face_image_type+';base64,'+item.face_image_data"></td>
              <td>{{item.face_user_name}}</td>
              <td>
                <span class="red" v-if="item.device_id%2==0">出</span>
@@ -121,30 +121,17 @@ export default {
       us_name:"",//姓名
       tstart:0,
       tend:0,
-      options: [{
-          value: '选项1',
-          label: '黄金糕'
-        }, {
-          value: '选项2',
-          label: '双皮奶'
-        }, {
-          value: '选项3',
-          label: '蚵仔煎'
-        }, {
-          value: '选项4',
-          label: '龙须面'
-        }, {
-          value: '选项5',
-          label: '北京烤鸭'
-        }],
-        value4: '',
-        value3:[new Date(new Date().getFullYear(),new Date().getMonth(),new Date().getDate(),0,0,0),new Date(new Date().getFullYear(),new Date().getMonth(),new Date().getDate(),23,59,59)],
+      value4: '',
+      value3:[new Date(new Date().getFullYear(),new Date().getMonth(),new Date().getDate(),0,0,0),new Date(new Date().getFullYear(),new Date().getMonth(),new Date().getDate(),23,59,59)],
         page:0
     }
   },
   mounted(){
       //获取信息
-     this.getInout(this.id,this.fromTimeStamp,this.toTimeStamp,this.place_id);
+    
+      this.fromTimeStamp = this.GMTToStr(this.value3[0]);
+      this.toTimeStamp   = this.GMTToStr(this.value3[1]);
+      this.getInout(this.id,this.fromTimeStamp,this.toTimeStamp,this.place_id,[]);
   },
   methods:{
      handleSizeChange(){
@@ -154,14 +141,15 @@ export default {
 
     },
 
-   getInout(id,fromTimeStamp,toTimeStamp,place_id){
+   getInout(id,fromTimeStamp,toTimeStamp,place_id,arr){
        this.mydata = [];
        this.showDate = [];
         this.$api.post("/client_query_time_record_api",{
           company_id:parseInt(id),
           fromTimeStamp:fromTimeStamp,
           toTimeStamp:toTimeStamp,
-          place_id:place_id
+          place_id:place_id,
+          except_date:arr
         },su=>{
            console.log(su)
            if(su.code==200){
@@ -271,15 +259,20 @@ export default {
 
     if(hour<10){
         hour = "0"+hour+":"
+    }else{
+        hour = hour+":" 
     }
 
     if(mit<10){
         mit = "0"+mit+":"
+    }else{
+        mit = mit+":"
     }
 
     if(sec<10){
         sec = "0"+sec
     }
+   
     let Str=date.getFullYear() + '-' +
     (date.getMonth() + 1) + '-' + 
     date.getDate() + ' ' + hour + mit +sec;
@@ -289,24 +282,15 @@ export default {
     logTimeChange(v){
        console.log(v);
        if(v){
+           console.log("时间",v);
            this.fromTimeStamp = this.GMTToStr(v[0]);
            this.toTimeStamp = this.GMTToStr(v[1]);
            console.log(this.fromTimeStamp);
-           this.getInout(this.id,this.fromTimeStamp,this.toTimeStamp,this.place_id);
+           console.log(this.toTimeStamp);
+           this.getInout(this.id,this.fromTimeStamp,this.toTimeStamp,this.place_id,[]);
         }
        },
 
-     /* filterTimes(v){
-           console.log(this.filtTime);
-           if(v){
-           this.tstart = this.GMTToStr(v[0]);
-           this.tend = this.GMTToStr(v[1]);
-           console.log(new Date(this.tstart).getTime());
-           console.log(new Date(this.tend).getTime());
-           
-        }
-       },
-      */
        //聚焦
        optionNow(v){
           if(v==1){
@@ -352,43 +336,30 @@ export default {
      addfilter(){
           this.filtTime.push({
              val:[],
-             bgtime:"",
-            endtime:""
+             begin_time:"",
+             end_time:""
           })
        },
      filterTimes(){
-        console.log(this.filtTime);
-       
+       let arr = [];
+       console.log("time",this.filtTime);
        this.filtTime.forEach((el,ind)=>{
-                console.log(el);
+             if(el.val!==null){
                 let tstart = this.GMTToStr(el.val[0]);
                 let tend = this.GMTToStr(el.val[1]);
-                console.log(tstart,tend);
-                el.bgtime = new Date(tstart).getTime();
-                el.endtime = new Date(tend).getTime();
-       })
-       var arr = [];
-       this.showDate.forEach((el,ind)=>{
-           
-            let cpt = new Date(el.timeStamp).getTime();
-            console.log("aa",cpt);
-            this.filtTime.forEach((ele,i)=>{
-
-               if(ele){
-                  if(ele.bgtime<cpt && cpt<ele.endtime){
-                       arr.push(ind);
-                  }
-               }else{
-
-               }
-            })
-       })
-     
-       
-          
+                el.begin_time = tstart;
+                el.end_time = tend;
+              console.log(el);      
+            arr.push({
+            begin_time:el.begin_time,
+            end_time:el.end_time
+           })        
+         }       
         
-
-     },  
+       })
+       console.log(arr);
+        this.getInout(this.id,this.fromTimeStamp,this.toTimeStamp,this.place_id,arr);
+       },  
      /* 获取图片*/
        
     getface(d){  
