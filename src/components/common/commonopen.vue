@@ -3,7 +3,7 @@
     <el-container class="container-warp">
    <el-aside width="239px">
     <div class="slider-lt">
-      <img src="../../assets/images/slider-logo.png">
+      <img src="../../assets/images/slider-logo.png" alt="祺眼logo">
     </div>
     <ul class="slider-ul">
       <router-link to="/openListindex" tag="li">开户管理</router-link>
