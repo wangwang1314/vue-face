@@ -90,7 +90,7 @@
             </el-table-column>
              <el-table-column
               label="操作"
-              show-overflow-tooltip>
+              width="300">
               <template slot-scope="scope">
                 <el-button type="text" @click.stop="addright(scope)">添加权限</el-button>
                 <el-button type="text" @click.stop="clearright(scope)">清除权限</el-button>
@@ -159,15 +159,15 @@
                         </p>
                         <div style="overflow:auto">
                           <span>线路轨迹 :</span>
-                          <template v-for="(child,index) in item.data">
+                          <template v-for="(child,ind) in item.data">
                             <div class="line-class">
                               <div class="ad-box">
                                 <p class="in-out" v-if="child.device_id%2!=0">入</p>
                                 <p class="in-out" v-else>出</p>
-                                <p class="address">{{child.device_address}}</p>
+                                <p class="address" :class="{'add-out':child.device_id%2==0}">{{child.device_address}}</p>
                                 <p class="time">{{child.timeStamp.split(" ")[1]}}</p>
                               </div>
-                              <img src="../../assets/images/jtou.png" v-if="index!=(item.length-1)"> 
+                              <img src="../../assets/images/jtou.png" v-if="ind!=(item.data.length-1)"> 
                             </div>
                           </template>
                         </div>
@@ -184,7 +184,7 @@
                         </p>
                         <div>
                           <p>设备地址 ： {{child.device_address}}</p>
-                         <!--  <p>场地名称 ： 足球场</p> -->
+                          <p>场地名称 ： {{item.place_address}}</p>
                           <p>出入类型 ： <span class="reder" v-if="child.device_id%2!=0">出</span><span class="reder" v-else>入</span></p>
                           <img src="../../assets/images/out.png" v-if="child.device_id%2!=0">
                           <img src="../../assets/images/to.png" v-else>
@@ -214,7 +214,7 @@
                         <p class="per-p">
                           <i></i>
                           <span>出入时间段</span> 
-                          {{item.data[0].fromTimeStamp}} 至 {{item.data[0].toTimeStamp}}
+                          <span style="font-size:14px;color:#303133;font-weight:500;">{{item.data[0].fromTimeStamp}} 至 {{item.data[0].toTimeStamp}}</span>
                         </p>
                         <p class="per-p">
                           <i></i>
@@ -294,7 +294,7 @@
         </el-dialog>
       </div>
        <!--  编辑人员 -->
-       <div class="box">
+       <div class="box" @click.stop="">
           <el-dialog
           title="编辑人员资料"
           :visible.sync="editdialog"
@@ -534,6 +534,10 @@ export default {
         },
         su=>{
           if(su.code==200){
+            su.total_data.forEach((val,index)=>{
+              val.place_address="";
+              this.getplacename(val.place_id,index);
+            })
             this.totaldata = su.total_data;
           }
         },
@@ -706,7 +710,7 @@ export default {
               return
             }
             su.total_data.forEach((val,idx)=>{
-             
+              
                 val.data.forEach((value,index)=>{
                   
                   let num = [];
@@ -727,6 +731,19 @@ export default {
         },err=>{
 
         })
+    },
+    getplacename(val,index){
+      this.$api.post("/common_query_place_api",{
+        company_id:this.id,
+        place_id:val
+      },su=>{
+        if(su.code==200){
+         // console.log("huoqu",this.rightcontent[index])
+          this.totaldata[index].place_address = su.place_address;
+        }
+      },err=>{
+
+      })
     },
     delMan(){
       if(this.selectval.length<=0){
@@ -1173,7 +1190,7 @@ export default {
     min-width: 950px;
     background-color: #fff;
     margin:19px;
-    min-height: 700px;
+    min-height: 1046px;
     padding: 30px 32px 50px 30px;
     position: relative;
     .header{
@@ -1702,6 +1719,9 @@ export default {
     min-width:30px;
     line-height:20px;
     border:1px solid #ff9900;
+  }
+  .add-out{
+     border:1px solid red;
   }
   .in-out{
     text-align:center;
