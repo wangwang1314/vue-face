@@ -53,50 +53,78 @@
        </div>
        <p class="su-tit">共 <span>{{total_num}}</span> 条数据</p>
        <p class="sur-num">
-         <span>导出数据</span>
+         <span @click="getnum">导出数据</span>
        </p>
-       <table class="sort-tab">
-         <thead>
-           <tr>
-             <td>拍摄时间</td>
-             <td>出入人头像</td>
-             <td>出入人姓名</td>
-             <td>出入类型</td>
-             <td>场地名称</td>
-             <td>设备地址</td>
-           </tr>
-         </thead>
-         <tbody>
-           <tr v-for="(item,ind) in showDate">
-             <td>{{item.timeStamp}}</td>
-             <td> <img v-if="item.face_image_data" :src="'data:image/'+item.face_image_type+';base64,'+item.face_image_data"></td>
-             <td>{{item.face_user_name}}</td>
-             <td>
-               <span class="red" v-if="item.device_id%2==0">出</span>
-               <span class="green" v-else>入</span>
-             </td>
-             <td>
-               
-               {{item.place_address}}
-          </p>
-             </td>
-             <td>{{item.device_address}}</td>
-           </tr>
-               
-             
-              
-         </tbody>
-       </table>
+       <div style="height:0;overflow:hidden">
+         <table class="sort-tab" id="pdf" >
+           <thead>
+             <tr>
+               <td>拍摄时间</td>
+               <td>出入人头像</td>
+               <td>出入人姓名</td>
+               <td>出入类型</td>
+               <td>场地名称</td>
+               <td>设备地址</td>
+             </tr>
+           </thead>
+           <tbody>
+             <tr v-for="(item,ind) in showDate">
+               <td>{{item.timeStamp}}</td>
+               <td> <img v-if="item.face_image_data" :src="'data:image/'+item.face_image_type+';base64,'+item.face_image_data"></td>
+               <td>{{item.face_user_name}}</td>
+               <td>
+                 <span class="red" v-if="item.device_id%2==0">出</span>
+                 <span class="green" v-else>入</span>
+               </td>
+               <td>
+                 
+                 {{item.place_address}}
+            </p>
+               </td>
+               <td>{{item.device_address}}</td>
+             </tr>      
+           </tbody>
+         </table>
+      </div>
+       <table class="sort-tab"  >
+           <thead>
+             <tr>
+               <td>拍摄时间</td>
+               <td>出入人头像</td>
+               <td>出入人姓名</td>
+               <td>出入类型</td>
+               <td>场地名称</td>
+               <td>设备地址</td>
+             </tr>
+           </thead>
+           <tbody>
+             <tr v-for="(item,ind) in realdata">
+               <td>{{item.timeStamp}}</td>
+               <td> <img v-if="item.face_image_data" :src="'data:image/'+item.face_image_type+';base64,'+item.face_image_data"></td>
+               <td>{{item.face_user_name}}</td>
+               <td>
+                 <span class="red" v-if="item.device_id%2==0">出</span>
+                 <span class="green" v-else>入</span>
+               </td>
+               <td>
+                 
+                 {{item.place_address}}
+            </p>
+               </td>
+               <td>{{item.device_address}}</td>
+             </tr>      
+           </tbody>
+        </table>
       <div class="page">
-      <el-pagination
-        @size-change="handleSizeChange"
-        @current-change="handleCurrentChange"
-        :current-page.sync="page"
-        :page-sizes="[20]"
-        :page-size="20"
-        layout="prev, pager, next,sizes "
-        :total="20">
-      </el-pagination>
+     <el-pagination
+      @size-change="handleSizeChange"
+      @current-change="handleCurrentChange"
+      :current-page.sync="page"
+      :page-sizes="[20]"
+      :page-size="pagesize"
+      layout="prev, pager, next,sizes"
+      :total="total_num">
+    </el-pagination>
     </div>
 
   </div>
@@ -123,7 +151,9 @@ export default {
       tend:0,
       value4: '',
       value3:[new Date(new Date().getFullYear(),new Date().getMonth(),new Date().getDate(),0,0,0),new Date(new Date().getFullYear(),new Date().getMonth(),new Date().getDate(),23,59,59)],
-        page:0
+      page:1,
+      pagesize:20,
+      realdata:[]
     }
   },
   mounted(){
@@ -134,13 +164,22 @@ export default {
       this.getInout(this.id,this.fromTimeStamp,this.toTimeStamp,this.place_id,[]);
   },
   methods:{
+    dataFn(){
+      let start = (this.page-1)*this.pagesize;
+      let end = this.page*this.pagesize;
+      this.realdata = this.showDate.slice(start,end);
+    },
      handleSizeChange(){
 
     },
-    handleCurrentChange(){
-
+    handleCurrentChange(val){
+      this.page =val;
+      this.dataFn()
     },
-
+    getnum(){
+      //console.log(this.$getpdf);
+      this.$getpdf.getPdf("pdf","#pdf")
+    },
    getInout(id,fromTimeStamp,toTimeStamp,place_id,arr){
        this.mydata = [];
        this.showDate = [];
@@ -221,7 +260,7 @@ export default {
                }else{
                   that.showDate = that.mydata;
                }
-               
+               that.dataFn();
             }
 
           },err=>{
@@ -330,7 +369,7 @@ export default {
           }else{
              this.showDate = this.mydata;
           }
-         
+          this.dataFn()
 
       },
      addfilter(){
@@ -381,6 +420,7 @@ export default {
        
        this.$nextTick(function(){
         this.showDate = d;
+        this.dataFn()
           console.log("我的数据",this.showDate)
        })
      }
