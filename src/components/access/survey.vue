@@ -38,11 +38,11 @@
       </li>
       
     </ul>
-    <div class="no-num" v-show="nomun">
-      <img src="../../assets/images/no-num.png">
-      <p>抱歉！~暂无数据~</p>
+    <div style="text-align:center;margin-top:216px;" v-show="total_num == 0 && ajax">
+        <img src="../../assets/images/no-num.png">
+        <p style="margin-top:44px;color:#999999;font-size:18px;">抱歉！~暂无数据~</p>
     </div>
-    <div class="page">
+    <div class="page" v-show="total_num>0">
      <!--  <el-pagination
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
@@ -88,6 +88,11 @@
               <div>
                  <el-tabs v-model="activeName" >
                   <el-tab-pane label="线路轨迹" name="first">
+
+                     <div style="text-align:center;margin-top:116px;" v-show="totaldata.length == 0">
+                        <img src="../../assets/images/no-num.png">
+                        <p style="margin-top:44px;color:#999999;font-size:18px;">抱歉！~暂无数据~</p>
+                    </div>
                     <template v-for="item in totaldata">
                       <div class="time-div over-auto">
                         <p>
@@ -113,6 +118,10 @@
                     
                   </el-tab-pane>
                   <el-tab-pane label="出入记录" name="second">
+                       <div style="text-align:center;margin-top:116px;" v-show="totaldata.length == 0">
+                        <img src="../../assets/images/no-num.png">
+                        <p style="margin-top:44px;color:#999999;font-size:18px;">抱歉！~暂无数据~</p>
+                    </div>
                     <template v-for="item in totaldata">
                       <div class="time-div record" v-for="(child,index) in item.data">
                         <p>
@@ -130,6 +139,10 @@
                     </template>  
                   </el-tab-pane>
                   <el-tab-pane label="出入权限" name="third">
+                     <div style="text-align:center;margin-top:116px;" v-show="rightcontent.length == 0">
+                        <img src="../../assets/images/no-num.png">
+                        <p style="margin-top:44px;color:#999999;font-size:18px;">抱歉！~暂无数据~</p>
+                    </div> 
                   <div style="overflow:auto;height:700px;">
                     <template v-for="(item,index) in rightcontent">
                     <div class="edit-class">权限{{index+1}}
@@ -177,7 +190,7 @@
          </transition>
 
            <!--  编辑人员 -->
-           <div class="box">
+           <div class="box" @click.stop="">
               <el-dialog
               title="编辑人员资料"
               :visible.sync="editdialog"
@@ -229,6 +242,7 @@ export default {
       mydata:[],
       showDate:[],
       setobj:{},
+      ajax:false,
       placelistin:[],
       placelistout:[],
       editdialog:false,
@@ -310,7 +324,7 @@ export default {
         },su=>{
            console.log(su)
            if(su.code==200){
-
+              if(su.total_data){
               this.dataList = su.total_data;
               //设置imgsrc属性
               this.dataList.forEach((el,ind)=>{
@@ -329,10 +343,19 @@ export default {
                    })
 
               })
-            this.$nextTick(function(){
+              this.$nextTick(function(){
                  this.getface(this.mydata);
-             })
+              })
               this.total_num = su.total_num;
+
+            }else{
+                 this.realdata = [];
+                 this.total_num = 0;
+                 this.ajax = true;
+              
+            }
+             
+           
            }
 
         },err=>{
@@ -368,6 +391,8 @@ export default {
        })
      },
      sliderShow(val,event){
+        this.rightcontent = [];
+        this.totaldata =[];
         event.cancelBubble = true;
         this.setobj = val;
         console.log("我的参数",this.setobj);
@@ -551,7 +576,7 @@ export default {
   .sur{
     background-color: #fff;
     margin:19px;
-    min-height: 700px;
+    min-height: 966px;
     padding: 30px 32px 50px 30px;
     position: relative;
     .header{

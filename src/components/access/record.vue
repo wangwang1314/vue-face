@@ -115,7 +115,12 @@
              </tr>      
            </tbody>
         </table>
-      <div class="page">
+
+      <div style="text-align:center;margin-top:216px;" v-show="total_num == 0 && ajax">
+        <img src="../../assets/images/no-num.png">
+        <p style="margin-top:44px;color:#999999;font-size:18px;">抱歉！~暂无数据~</p>
+     </div>  
+      <div class="page" v-if="total_num>0">
      <el-pagination
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
@@ -143,6 +148,7 @@ export default {
       dataList:[],
       total_num:0,
       mydata:[],
+      ajax:false,
       showDate:[],
       place_name:"",//场地名称
       dv_address:"",//设备地址
@@ -192,7 +198,7 @@ export default {
         },su=>{
            console.log(su)
            if(su.code==200){
-
+              if(su.total_data){
               this.dataList = su.total_data;
               this.total_num = su.total_num;
               //设置imgsrc属性
@@ -212,10 +218,17 @@ export default {
                    })
 
               })
-            this.$nextTick(function(){
+              this.$nextTick(function(){
                  this.getface(this.mydata);
-             })
-              this.total_num = su.total_num;
+              })
+                this.total_num = su.total_num;
+              }else{
+                  this.realdata = [];
+                  this.total_num = 0;
+                  this.ajax = true;
+              }
+              
+             
            }
 
         },err=>{
@@ -224,7 +237,7 @@ export default {
 
       },
       //
-      searchChange(file){
+     searchChange(file){
       let blob = new Blob([file.raw],{type:file.raw.type});
       let that = this;
       let reader = new FileReader();
@@ -259,6 +272,11 @@ export default {
                 })
                }else{
                   that.showDate = that.mydata;
+               }
+
+               that.total_num = that.showDate.length;
+               if(that.total_num == 0){
+                 that.ajax = true;
                }
                that.dataFn();
             }
@@ -319,6 +337,7 @@ export default {
     },
 
     logTimeChange(v){
+       this.filtTime = [];
        console.log(v);
        if(v){
            console.log("时间",v);
@@ -350,7 +369,6 @@ export default {
           if(v){
             this.mydata.forEach((el,ind)=>{
              if(num==1){
-               
                 if(el.place_address == v){
                    this.showDate.push(el);
                 }
@@ -369,6 +387,13 @@ export default {
           }else{
              this.showDate = this.mydata;
           }
+          
+          this.total_num = this.showDate.length;
+          if(this.total_num==0){
+              this.ajax = true;
+          }
+
+
           this.dataFn()
 
       },
