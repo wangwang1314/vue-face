@@ -151,6 +151,10 @@
                             </div>
                         </div>
                     </div> -->
+                     <div style="text-align:center;margin-top:100px;" v-show="totaldata.length==0">
+                      <img src="../../assets/images/no-num.png">
+                      <p style="margin-top:44px;color:#999999;font-size:18px;">抱歉！~暂无数据~</p>
+                    </div>
                     <template v-for="item in totaldata">
                       <div class="time-div over-auto">
                         <p>
@@ -176,6 +180,10 @@
                     
                   </el-tab-pane>
                   <el-tab-pane label="出入记录" name="second">
+                    <div style="text-align:center;margin-top:100px;" v-show="totaldata.length==0">
+                      <img src="../../assets/images/no-num.png">
+                      <p style="margin-top:44px;color:#999999;font-size:18px;">抱歉！~暂无数据~</p>
+                    </div>
                     <template v-for="item in totaldata">
                       <div class="time-div record" v-for="(child,index) in item.data">
                         <p>
@@ -205,6 +213,10 @@
                     </div> -->
                   </el-tab-pane>
                   <el-tab-pane label="出入权限" name="third">
+                    <div style="text-align:center;margin-top:100px;" v-show="rightcontent.length==0">
+                      <img src="../../assets/images/no-num.png">
+                      <p style="margin-top:44px;color:#999999;font-size:18px;">抱歉！~暂无数据~</p>
+                    </div>
                   <div style="overflow:auto;height:700px;">
                     <template v-for="(item,index) in rightcontent">
                     <div class="edit-class">权限{{index+1}}
@@ -691,6 +703,8 @@ export default {
       this.selectval = val;
     },
     sliderShow(row,event){
+      this.totaldata = [];
+      this.rightcontent = [];
       event.cancelBubble = true;
       this.setobj = row;
       //console.log(this.setobj);
@@ -1724,6 +1738,7 @@ export default {
     min-width:30px;
     line-height:20px;
     border:1px solid #ff9900;
+    margin: 0 3px;
   }
   .add-out{
      border:1px solid red;
