@@ -362,6 +362,7 @@ export default {
             this.total = su.num;
              if(su.num==0){
               this.ajax = true;
+              this.realdata = [];
             }
             this.dataFn();
           }
