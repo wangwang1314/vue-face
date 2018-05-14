@@ -3,7 +3,7 @@
     <el-container class="container-warp">
    <el-aside width="239px">
     <div class="slider-lt">
-      <!-- <img src="../../assets/images/slider-logo.png"> -->
+      <img src="../../assets/images/slider-logo.png">
     </div>
     <ul class="slider-ul">
       <router-link to="/home" tag="li">首页</router-link>
