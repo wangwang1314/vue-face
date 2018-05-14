@@ -1190,7 +1190,7 @@ export default {
     min-width: 950px;
     background-color: #fff;
     margin:19px;
-    min-height: 1046px;
+    min-height: 966px;
     padding: 30px 32px 50px 30px;
     position: relative;
     .header{
@@ -1321,7 +1321,7 @@ export default {
   }
   .slider-box{
     width: 922px;
-    min-height: 1037px;
+    height: 1046px;
     position: absolute;
     top:0;
     right: 0;
