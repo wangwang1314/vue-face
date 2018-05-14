@@ -20,7 +20,7 @@
        <template>
       <el-table
         ref="multipleTable"
-        :data="tableData3"
+        :data="realdata"
         tooltip-effect="dark"
         class="text-center"
         style="width: 100%"
@@ -91,11 +91,11 @@
     <el-pagination
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
-      :current-page.sync="currentPage2"
-      :page-sizes="[100, 200, 300, 400]"
-      :page-size="100"
+      :current-page.sync="page"
+      :page-sizes="[20]"
+      :page-size="pagesize"
       layout=" prev, pager, next,sizes"
-      :total="1000">
+      :total="alldata">
     </el-pagination>
   </div>
 
@@ -248,7 +248,10 @@ export default{
          tableData3: [
            
          ],
-        multipleSelection: []
+        multipleSelection: [],
+        page:1,
+        pagesize:20,
+        realdata:[]
       }
       
 
@@ -282,15 +285,20 @@ export default{
       },
   },
   methods:{
-    
+      dataFn(){
+        let start = (this.page-1)*this.pagesize;
+        let end = this.page*this.pagesize;
+        this.realdata = this.tableData3.slice(start,end);
+      },
       handleSelectionChange(val) {
         this.multipleSelection = val;
       },
       handleSizeChange(val) {
-        console.log(`每页 ${val} 条`);
+        //console.log(`每页 ${val} 条`);
       },
       handleCurrentChange(val) {
-        console.log(`当前页: ${val}`);
+        this.page = val;
+        this.dataFn()
       },
       handleClose(){
          this.dialogVisible = false;
@@ -303,7 +311,8 @@ export default{
           if(su.code==200){
              this.tableData3 = su.data;
              this.contNum = su.mobile;
-             this.alldata = su.num
+             this.alldata = su.num;
+             this.dataFn()
           }else{
                this.alldata = 0;
           }

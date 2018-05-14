@@ -22,7 +22,7 @@
        <template>
       <el-table
         ref="multipleTable"
-        :data="tableData3"
+        :data="realdata"
         tooltip-effect="dark"
         class="text-center"
         style="width: 100%"
@@ -124,11 +124,11 @@
     <el-pagination
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
-      :current-page.sync="currentPage2"
-      :page-sizes="[100, 200, 300, 400]"
-      :page-size="100"
-      layout="prev, pager, next,sizes"
-      :total="1000">
+      :current-page.sync="page"
+      :page-sizes="[20]"
+      :page-size="pagesize"
+      layout=" prev, pager, next,sizes"
+      :total="totalList">
     </el-pagination>
   </div>
 
@@ -327,9 +327,10 @@ export default{
          dtitle:"",
          isDel:false,
          delId:'',
-
-
-        multipleSelection: []
+        multipleSelection: [],
+        page:1,
+        pagesize:20,
+        realdata:[]
       }
       
 
@@ -365,7 +366,11 @@ export default{
   }
   ,
   methods:{
-    
+      dataFn(){
+        let start = (this.page-1)*this.pagesize;
+        let end = this.page*this.pagesize;
+        this.realdata = this.tableData3.slice(start,end);
+      },
        handleSelectionChange(val) {
         this.multipleSelection = val;
       },
@@ -373,7 +378,8 @@ export default{
         
       },
       handleCurrentChange(val) {
-       
+        this.page = val;
+        this.dataFn()
       },
       handleClose(){
          this.addequiment = false;
@@ -458,6 +464,7 @@ export default{
                this.contNum = su.mobile;
                this.eqplace = su.place_address;
                this.user_name = su.user_name;
+               this.dataFn();
           }
          },err=>{
 

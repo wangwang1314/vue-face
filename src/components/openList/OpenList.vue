@@ -21,7 +21,7 @@
        <template>
       <el-table
         ref="multipleTable"
-        :data="cpnList"
+        :data="realdata"
         tooltip-effect="dark"
         class="text-center"
         style="width: 100%"
@@ -172,9 +172,9 @@
     <el-pagination
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
-      :current-page.sync="currentPage2"
+      :current-page.sync="page"
       :page-sizes="[20]"
-      :page-size="pageSize"
+      :page-size="pagesize"
       layout="prev, pager, next,sizes"
       :total="allDate">
     </el-pagination>
@@ -256,7 +256,8 @@ export default{
       return {
          companyName:"",
          slideFlag:false,
-         pageSize:20,
+         page:1,
+         pagesize:20,
          notEdite:false,
          cpnerr:true,
          pawerr:true,
@@ -288,7 +289,8 @@ export default{
          delcout:0,
          allDate:0,
          dataTotle:0,
-         cpnList:[]
+         cpnList:[],
+         realdata:[],
       }
       
 
@@ -297,9 +299,17 @@ export default{
     this.initList();
   },
   methods:{
-    
+       dataFn(){
+        //this.realdata = [];
+        //console.log(this.pagesize,"qqqqqqqqq",this.page)
+        let start = (this.page-1)*this.pagesize;
+        let end = this.page*this.pagesize;
+       // console.log(start,end,"sssssssssssssssssssssss");
+        this.realdata = this.cpnList.slice(start,end);
+        //console.log(this.realdata,this.cpnList,"sssssssssss");
+      },
       handleSelectionChange(val) {
-        console.log(val);
+        //console.log(val);
         this.multipleSelection = val;
       },
       //删除公司
@@ -352,10 +362,11 @@ export default{
         console.log(row);
       },
         handleSizeChange(val) {
-        console.log(`每页 ${val} 条`);
+        //console.log(`每页 ${val} 条`);
       },
       handleCurrentChange(val) {
-        console.log(`当前页: ${val}`);
+        this.page = val;
+        this.dataFn();
       },
       handleClose(){
         this.dialogVisible = false;
@@ -378,6 +389,7 @@ export default{
                 })
               }
               this.cpnList = this.companyList;
+              this.dataFn();
               console.log("我需要的数据",this.cpnList);
               this.allDate = su.num;
             }else{
@@ -449,6 +461,7 @@ export default{
          }
 
         this.allDate = this.cpnList.length;
+        this.dataFn();
          
       },
 
