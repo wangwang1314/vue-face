@@ -24,11 +24,10 @@
         tooltip-effect="dark"
         class="text-center"
         style="width: 100%"
+        v-show="alldata>0"
         @selection-change="handleSelectionChange"
         
         >
-
-       
 
         <el-table-column
           label="场地编号"
@@ -86,7 +85,11 @@
  
        </el-table>
     </template>
- <div class="block pages-cont">
+   <div style="text-align:center;margin-top:216px;" v-show="alldata == 0 && ajax">
+        <img src="../../assets/images/no-num.png">
+        <p style="margin-top:44px;color:#999999;font-size:18px;">抱歉！~暂无数据~</p>
+    </div>  
+ <div class="block pages-cont" v-show="alldata>0">
    
     <el-pagination
       @size-change="handleSizeChange"
@@ -157,7 +160,6 @@
                 </span>
                 <em class="h">。</em>
                 <em class="s">'</em>
-            
            </div>
               
            </td>
@@ -236,6 +238,7 @@ export default{
          isDel:false,//是否删除场地,
          isEdite:false,//是否编辑
          alldata:0,
+         ajax:false,
          fixid:"",
          lat1:"",
          lat2:"",
@@ -312,9 +315,13 @@ export default{
              this.tableData3 = su.data;
              this.contNum = su.mobile;
              this.alldata = su.num;
+             if(su.num==0){
+               this.ajax = true;
+             }
              this.dataFn()
           }else{
                this.alldata = 0;
+               this.ajax = true;
           }
          },err=>{
 

@@ -26,6 +26,7 @@
         tooltip-effect="dark"
         class="text-center"
         style="width: 100%"
+        v-show="totalList>0"
         @selection-change="handleSelectionChange"   
         >
         <el-table-column
@@ -118,8 +119,11 @@
  
        </el-table>
     </template>
-
-    <div class="block pages-cont">
+    <div style="text-align:center;margin-top:216px;" v-show="totalList == 0 && ajax">
+        <img src="../../assets/images/no-num.png">
+        <p style="margin-top:44px;color:#999999;font-size:18px;">抱歉！~暂无数据~</p>
+    </div>
+    <div class="block pages-cont" v-show="totalList>0">
    
     <el-pagination
       @size-change="handleSizeChange"
@@ -290,6 +294,7 @@ export default{
          isErr:false,
          totalList:0,
          eqplace:"",
+         ajax:false,
          errtx:"",
         //经度
             lat1:"",
@@ -465,6 +470,9 @@ export default{
                this.eqplace = su.place_address;
                this.user_name = su.user_name;
                this.dataFn();
+               if(su.num==0){
+                 this.ajax = true;
+               }
           }
          },err=>{
 

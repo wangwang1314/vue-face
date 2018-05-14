@@ -26,6 +26,7 @@
         class="text-center"
         style="width: 100%"
         @row-click="rowFn"
+        v-show="allDate>0"
         @selection-change="handleSelectionChange"
         >
         <el-table-column
@@ -86,7 +87,10 @@
           show-overflow-tooltip
           >
           <template slot-scope="scope">
-              <router-link :to="{name :'Places',params:{id:scope.row.company_id,cname:scope.row.user_name}}" class="eq-link">{{scope.row.device_num}}</router-link>
+              <span @click.stop="">
+                  <router-link  :to="{name :'Places',params:{id:scope.row.company_id,cname:scope.row.user_name}}" class="eq-link">{{scope.row.device_num}}</router-link>
+              </span>
+             
           </template>
         </el-table-column>
  
@@ -166,8 +170,12 @@
         <router-view></router-view>
       </keep-alive>
     </transition>
-
- <div class="block pages-cont">
+ 
+    <div style="text-align:center;margin-top:216px;" v-show="allDate == 0 && ajax">
+        <img src="../../assets/images/no-num.png">
+        <p style="margin-top:44px;color:#999999;font-size:18px;">抱歉！~暂无数据~</p>
+    </div>
+ <div class="block pages-cont" v-show="allDate>0">
    
     <el-pagination
       @size-change="handleSizeChange"
@@ -256,6 +264,7 @@ export default{
 
       return {
          companyName:"",
+         nomun:true,
          //slideFlag:false,
          page:1,
          pagesize:20,
@@ -292,6 +301,7 @@ export default{
          dataTotle:0,
          cpnList:[],
          realdata:[],
+         ajax:false
       }
       
 
@@ -380,6 +390,7 @@ export default{
         this.dataFn();
       },
       handleClose(){
+        this.delet = false;
         this.dialogVisible = false;
       },
        open() {
@@ -403,6 +414,9 @@ export default{
               this.dataFn();
               console.log("我需要的数据",this.cpnList);
               this.allDate = su.num;
+              if(su.num ==0){
+                 this.ajax = true;
+              }
             }else{
                this.$message.error(su.msg);
             }
@@ -472,6 +486,9 @@ export default{
          }
 
         this.allDate = this.cpnList.length;
+        if(this.cpnList.length == 0){
+           this.ajax = true;
+        }
         this.dataFn();
          
       },
@@ -943,10 +960,22 @@ export default{
       height:32px;
     }
 
+     .add-user .el-button span{position: relative;top:-3px;}
+
     .add-err{
       margin-top:10px;
     }
     .bd-red{
       border:1px solid #F84C4C !important;
     }
+
+  .no-num{
+    margin:130px 0 130px 0;
+    text-align: center;
+    p{
+      margin-top: 44px;
+      font-size:18px;
+      color:rgba(153,153,153,1);
+    }
+  }
 </style>
