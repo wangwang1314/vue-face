@@ -77,7 +77,7 @@
               :total="total">
             </el-pagination>
           </div>
-          <div style="text-align:center;margin-top:216px;" v-show="total==0">
+          <div style="text-align:center;margin-top:216px;" v-show="total==0&&ajax">
             <img src="../../assets/images/no-num.png">
              <p style="margin-top:44px;color:#999999;font-size:18px;">抱歉！~暂无数据~</p>
           </div>
@@ -244,7 +244,8 @@ export default {
       activeName:"second",
       chosere:[{data:[1]}],
       choseimg:"",
-      imgshow:false
+      imgshow:false,
+      ajax:false
     }
   },
   mounted(){
@@ -359,6 +360,9 @@ export default {
             }
             this.data = su.data;
             this.total = su.num;
+             if(su.num==0){
+              this.ajax = true;
+            }
             this.dataFn();
           }
         },
