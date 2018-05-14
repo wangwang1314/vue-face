@@ -151,7 +151,7 @@
              </td>
              <td>
           
-               <input  v-show="dtitle == '添加设备'" onkeypress="return event.keyCode>=48&&event.keyCode<=57" type="" class="place-set"  v-model="device_id" @blur="inoutFn" @keyup="errhide" placeholder="50个字符以内" maxlength="50" :class="{'ip-err':deverr1==true}" name="">
+               <input  v-show="dtitle == '添加设备'" oninput="this.value=this.value.replace(/\D/g,'')" type="" class="place-set"  v-model="device_id" @blur="inoutFn" @keyup="errhide" placeholder="50个字符以内" maxlength="50" :class="{'ip-err':deverr1==true}" name="">
                <span v-show="dtitle == '编辑设备'">{{device_id}}</span>
              </td>
            </tr>
@@ -184,8 +184,8 @@
              <td>
               
             <div class="err-cont after-ip">
-              <input type="" name=""  onkeypress="return event.keyCode>=48&&event.keyCode<=57" placeholder="请输入度" maxlength="3" class="ip-lt" v-model = "lat1"  @keyup="errhide" :class="{'ip-err':deverr3==true}">
-              <input type=""  onkeypress="return event.keyCode>=48&&event.keyCode<=57" placeholder="请输入分" maxlength="2"  name="" class="ip-lt" v-model = "lat2"  @keyup="errhide" :class="{'ip-err':deverr3==true}">
+              <input type="" name=""  oninput="this.value=this.value.replace(/\D/g,'')" placeholder="请输入度" maxlength="3" class="ip-lt" v-model = "lat1"  @keyup="errhide" :class="{'ip-err':deverr3==true}">
+              <input type=""  oninput="this.value=this.value.replace(/\D/g,'')" placeholder="请输入分" maxlength="2"  name="" class="ip-lt" v-model = "lat2"  @keyup="errhide" :class="{'ip-err':deverr3==true}">
                
                 <em class="h">。</em>
                 <em class="s">'</em>
@@ -200,8 +200,8 @@
              </td>
              <td>
                <div class="err-cont after-ip">
-              <input type="" onkeypress="return event.keyCode>=48&&event.keyCode<=57"  placeholder="请输入度" maxlength="2"  name="" class="ip-lt"  v-model = "long1" @keyup="errhide"  :class="{'ip-err':deverr4==true}">
-              <input type="" onkeypress="return event.keyCode>=48&&event.keyCode<=57" name="" placeholder="请输入分" maxlength="2" class="ip-lt"  v-model = "long2" @keyup="errhide" :class="{'ip-err':deverr4==true}">
+              <input type="" oninput="this.value=this.value.replace(/\D/g,'')"  placeholder="请输入度" maxlength="2"  name="" class="ip-lt"  v-model = "long1" @keyup="errhide"  :class="{'ip-err':deverr4==true}">
+              <input type="" oninput="this.value=this.value.replace(/\D/g,'')" name="" placeholder="请输入分" maxlength="2" class="ip-lt"  v-model = "long2" @keyup="errhide" :class="{'ip-err':deverr4==true}">
                 <em class="h">。</em>
                 <em class="s">'</em>
                </div>

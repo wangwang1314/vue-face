@@ -150,8 +150,8 @@
             </td>
            <td>
            <div class="err-cont after-ip">
-              <input placeholder="请输入度" type="" name="" @keydown="longerr=false" onkeypress="return event.keyCode>=48&&event.keyCode<=57" maxlength="3" v-model="lat1" class="ip-lt" :class="{'ip-err':longerr==true}">
-              <input  placeholder="请输入分" type="" name="" @keydown="longerr=false" maxlength="2" onkeypress="return event.keyCode>=48&&event.keyCode<=57" v-model="lat2" class="ip-lt" :class="{'ip-err':longerr==true}">
+              <input placeholder="请输入度" oninput="this.value=this.value.replace(/\D/g,'')"  type="" name="" @keydown="longerr=false"  maxlength="3" v-model="lat1" class="ip-lt" :class="{'ip-err':longerr==true}">
+              <input  placeholder="请输入分" type="" name="" @keydown="longerr=false" maxlength="2" oninput="this.value=this.value.replace(/\D/g,'')" v-model="lat2" class="ip-lt" :class="{'ip-err':longerr==true}">
              
                <span v-show="longerr==true">
                   <i class="el-icon-warning"></i>
@@ -170,8 +170,8 @@
             </td>
            <td>
             <div class="err-cont after-ip">
-                <input type="" name="" placeholder="请输入度"  @keydown="laterr=false"  maxlength="2" onkeypress="return event.keyCode>=48&&event.keyCode<=57"  v-model="long1" class="ip-lt" :class="{'ip-err':laterr==true}">
-              <input type="" placeholder="请输入分" name="" @keydown="laterr=false"  maxlength="2" onkeypress="return event.keyCode>=48&&event.keyCode<=57" v-model="long2" class="ip-lt" :class="{'ip-err':laterr==true}">
+                <input type="" name="" placeholder="请输入度"  @keydown="laterr=false"  maxlength="2" oninput="this.value=this.value.replace(/\D/g,'')"  v-model="long1" class="ip-lt" :class="{'ip-err':laterr==true}">
+              <input type="" placeholder="请输入分" name="" @keydown="laterr=false"  maxlength="2" oninput="this.value=this.value.replace(/\D/g,'')" v-model="long2" class="ip-lt" :class="{'ip-err':laterr==true}">
                <span v-show="laterr==true">
                   <i class="el-icon-warning"></i>
                   纬度不能为空
