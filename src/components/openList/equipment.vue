@@ -473,6 +473,9 @@ export default{
                if(su.num==0){
                  this.ajax = true;
                }
+          }else{
+              this.totalList = 0;
+               this.ajax = true;
           }
          },err=>{
 
