@@ -405,10 +405,10 @@ export default {
       text-align: center;
       cursor: pointer;
       width: 100%;
+      margin-top: 2px;
     }
     >p:hover{
-      color: #fff;
-      margin-top: 2px;
+      color: #fff;  
       background: #378eef;
     }
 }

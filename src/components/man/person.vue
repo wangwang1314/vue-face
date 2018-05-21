@@ -935,6 +935,7 @@ export default {
                 }
                 if((that.info.sunum+that.info.fanum)==len){
                    that.infoFn();
+                   that.getList();
                 }
               },
               err=>{
@@ -942,6 +943,7 @@ export default {
                 that.info.fanum++;
                 if((that.info.sunum+that.info.fanum)==len){
                    that.infoFn();
+                   that.getList();
                 }
               })
           };

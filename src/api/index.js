@@ -4,7 +4,7 @@ var baseUrl = "";
 if (process.env.NODE_ENV == 'development') {
   baseUrl = '/rank';
 }else if(process.env.NODE_ENV == 'production'){
-  baseUrl = "http://www.qytmail.com:18889"
+  baseUrl = ""
 }
 var root = baseUrl;
 // 引用axios
