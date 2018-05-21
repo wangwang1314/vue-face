@@ -53,6 +53,7 @@
             @selection-change="handleSelectionChange"
             @row-click="sliderShow"
             id="pdf"
+            align="center"
             >
             <el-table-column
               type="selection"
@@ -922,7 +923,7 @@ export default {
               that.$api.post("/client_mng_add_face_api",
               {
                 company_id:that.id,
-                face_type:2,
+                face_type:1,
                 face_user_name:name,
                 face_image_type:imgtype,
                 face_image_data:img
