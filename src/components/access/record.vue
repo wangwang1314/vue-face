@@ -279,6 +279,9 @@ export default {
                  that.ajax = true;
                }
                that.dataFn();
+            }else{
+               that.total_num = 0;
+               that.ajax = true;
             }
 
           },err=>{
