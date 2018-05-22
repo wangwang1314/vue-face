@@ -854,8 +854,12 @@ export default {
       }
     },
     addright(val){
+         this.err = false;
          this.value1 = "";
          this.value2 = "";
+         this.rightwarn.time = false;
+         this.rightwarn.in = false;
+         this.rightwarn.out = false;
          this.setobj = val.row;
          //console.log(this.setobj);
          this.setdialog = true;
