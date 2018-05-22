@@ -1,8 +1,43 @@
 <template>
   <div class="rec">
        <div class="header">
-
-           <span>头像</span>
+           <span style="margin-right:10px;"><el-radio v-model="isselect" :label="false">条件一</el-radio></span>
+           <span>场地名称</span>
+           <select class="select-class" v-model="selectvalue2" :disabled="isselect">
+            <option :value="0">全部</option>
+            <template v-for="item in selectlist">
+              <option :value="item.place_id">{{item.place_address}}</option>
+            </template>
+           </select>
+           <span>拍摄时间</span>
+           <el-date-picker
+            v-model="value3"
+            type="datetimerange"
+            range-separator="至"
+            start-placeholder="开始日期"
+            end-placeholder="结束日期"
+            class="data-class"
+            value-format="yyyy-MM-dd hh:mm:ss"
+            :disabled="isselect"
+            >
+          </el-date-picker>
+           <span>过滤时间</span>
+           <el-date-picker
+            v-model="value4"
+            type="datetimerange"
+            range-separator="至"
+            start-placeholder="开始日期"
+            end-placeholder="结束日期"
+            class="data-class"
+            value-format="yyyy-MM-dd hh:mm:ss"
+            :disabled="isselect"
+            >
+          </el-date-picker>
+          <el-button type="primary" v-if="(!isselect)&&value3&&value3.length>0" @click="searchFn1">查&nbsp;&nbsp;询</el-button>
+          <el-button type="info"  v-else disabled>查&nbsp;&nbsp;询</el-button> 
+          <br>
+          <span style="margin-right:10px;"><el-radio v-model="isselect" :label="true">条件二</el-radio></span>
+           <span>人员头像</span>
               <el-upload
                 class="upload-style"
                 action="https://jsonplaceholder.typicode.com/posts/"
@@ -10,30 +45,33 @@
                 :auto-upload="false"
                 :show-file-list="false"
                 >
-                <button  class="sur-selct btn-upload">请上传图片搜头像<i></i></button>
+                <button  class="sur-selct btn-upload" :disabled="!isselect">请上传图片搜头像<i></i></button>
             </el-upload>
           <span>场地名称</span>
-          <el-input @blur="filterDate(place_name,1)" @focus="optionNow(1)" class="ipt-inline" v-model="place_name" placeholder="请输入场地名称"></el-input>
-          <span>设备地址</span>
-           <el-input @blur="filterDate(dv_address,2)" @focus="optionNow(2)" class="ipt-inline" v-model="dv_address" placeholder="请输入设备地址"></el-input>
-          <br>
-           <span>姓名</span>
-           <el-input  @blur="filterDate(us_name,3)" @focus="optionNow(3)" class="ipt-inline" v-model="us_name" placeholder="请输入姓名"></el-input>
-           <span>拍摄时间</span>
+          <select class="select-class" v-model="selectvalue1" :disabled="!isselect">
+            <option :value="0">全部</option>
+            <template v-for="item in selectlist">
+              <option :value="item.place_id">{{item.place_address}}</option>
+            </template>
+          </select>
+          <span>拍摄时间</span>
            <el-date-picker
-            v-model="value3"
-            @change="logTimeChange"
+            v-model="value5"
+    
             type="datetimerange"
             range-separator="至"
             start-placeholder="开始日期"
             end-placeholder="结束日期"
             class="data-class"
-            :default-time="['00:00:00', '23:59:59']"
+            value-format="yyyy-MM-dd hh:mm:ss"
+            :disabled="!isselect"
             >
           </el-date-picker>
-          <span class="add-cou" @click="addfilter">增加过滤条件</span>
-          <div class="ftime">
-             <h3 v-if="filtTime.length>0">过滤以下时间段的人员记录</h3>
+           <el-button type="primary" v-if="isselect&&value5&&value5.length>0&&searchimg" @click="searchFn">查&nbsp;&nbsp;询</el-button>
+           <el-button type="info" v-else disabled>查&nbsp;&nbsp;询</el-button>
+          
+        <!--   <div class="ftime">
+             
              <p v-for="(item,ind) in filtTime">
                    <el-date-picker
               v-model="item.val"
@@ -49,8 +87,9 @@
              </p>
            
             
-          </div>
+          </div> -->
        </div>
+      <div v-show="!(total_num == 0 && ajax)">
        <p class="su-tit">共 <span>{{total_num}}</span> 条数据</p>
        <p class="sur-num">
          <span @click="getnum">导出数据</span>
@@ -115,12 +154,12 @@
              </tr>      
            </tbody>
         </table>
-
+      </div>
       <div style="text-align:center;margin-top:216px;" v-show="total_num == 0 && ajax">
         <img src="../../assets/images/no-num.png">
         <p style="margin-top:44px;color:#999999;font-size:18px;">抱歉！~暂无数据~</p>
      </div>  
-      <div class="page" v-if="total_num>0">
+      <div class="page" v-if="!(total_num == 0 && ajax)">
      <el-pagination
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
@@ -139,7 +178,8 @@
 export default {
   data () {
     return {
-      id:sessionStorage.getItem("users"),
+      isselect:false,
+      id:parseInt(sessionStorage.getItem("users")),
       fromTimeStamp:'2018-1-1 00:22:22',
       toTimeStamp:"2119-1-2 00:22:22",
       name:"",
@@ -155,11 +195,17 @@ export default {
       us_name:"",//姓名
       tstart:0,
       tend:0,
-      value4: '',
-      value3:[new Date(new Date().getFullYear(),new Date().getMonth(),new Date().getDate(),0,0,0),new Date(new Date().getFullYear(),new Date().getMonth(),new Date().getDate(),23,59,59)],
+      value4:[],
+      value3:[],
       page:1,
       pagesize:20,
-      realdata:[]
+      realdata:[],
+      selectlist:[],
+      value5:[],
+      selectvalue1:0,
+      selectvalue2:0,
+      imgtype:"",
+      searchimg:""
     }
   },
   mounted(){
@@ -167,7 +213,8 @@ export default {
     
       this.fromTimeStamp = this.GMTToStr(this.value3[0]);
       this.toTimeStamp   = this.GMTToStr(this.value3[1]);
-      this.getInout(this.id,this.fromTimeStamp,this.toTimeStamp,this.place_id,[]);
+      this.getInout();
+      this.getpalce();
   },
   methods:{
     dataFn(){
@@ -186,19 +233,18 @@ export default {
       //console.log(this.$getpdf);
       this.$getpdf.getPdf("pdf","#pdf")
     },
-   getInout(id,fromTimeStamp,toTimeStamp,place_id,arr){
+   getInout(){
        this.mydata = [];
        this.showDate = [];
         this.$api.post("/client_query_time_record_api",{
-          company_id:parseInt(id),
-          fromTimeStamp:fromTimeStamp,
-          toTimeStamp:toTimeStamp,
-          place_id:place_id,
-          except_date:arr
+          company_id:this.id,
+          fromTimeStamp:"2000-01-01 00:00:00",
+          toTimeStamp:"2100-01-01 00:00:00",
+          place_id:0
         },su=>{
            console.log(su)
            if(su.code==200){
-              if(su.total_data){
+              if(su.total_num>0){
               this.dataList = su.total_data;
               this.total_num = su.total_num;
               //设置imgsrc属性
@@ -226,13 +272,17 @@ export default {
                   this.realdata = [];
                   this.total_num = 0;
                   this.ajax = true;
-              }
-              
-             
+              }   
+           }else{
+              this.realdata = [];
+              this.total_num = 0;
+              this.ajax = true;
            }
 
         },err=>{
-
+             this.realdata = [];
+              this.total_num = 0;
+              this.ajax = true;
         })
 
       },
@@ -242,52 +292,19 @@ export default {
       let that = this;
       let reader = new FileReader();
      
-       let imgtype = "";
+       //let imgtype = "";
       if(file.name.indexOf(".")!=-1){
             let arr = file.name.split(".");
-            imgtype = arr[arr.length-1];
+            this.imgtype = arr[arr.length-1];
             name = arr[0];
           }
       reader.readAsDataURL(blob);
       reader.onload = function (e) {
           // 图片的 base64 格式, 可以直接当成 img 的 src 属性值     
-          console.log(imgtype); 
-          that.searchimg = reader.result;
-          let img = that.searchimg.split(",")[1];
-            that.$api.post("/client_query_face_image_record_api",{
-              "company_id":parseInt(that.id),
-              "face_image_type":imgtype,
-              "face_image_data":img,
-              "place_id":0,
-              "fromTimeStamp":that.fromTimeStamp,
-              "toTimeStamp":that.toTimeStamp
-          },su=>{
-            if(su.code==200){
-               that.showDate = [];
-               if(su.face_id){
-                 that.mydata.forEach((el,ind)=>{
-                   if(el.face_id == su.face_id){
-                       that.showDate.push(el);
-                   }
-                })
-               }else{
-                  that.showDate = that.mydata;
-               }
-
-               that.total_num = that.showDate.length;
-               if(that.total_num == 0){
-                 that.ajax = true;
-               }
-               that.dataFn();
-            }else{
-               that.total_num = 0;
-               that.ajax = true;
-            }
-
-          },err=>{
-
-          })
-          console.log(img);
+          //console.log(imgtype); 
+          //that.searchimg = reader.result;
+          that.searchimg= reader.result.split(",")[1];
+            
       };
     },
       //根据人脸图片查询进出记录
@@ -449,10 +466,160 @@ export default {
        this.$nextTick(function(){
         this.showDate = d;
         this.dataFn()
-          console.log("我的数据",this.showDate)
+         // console.log("我的数据",this.showDate)
        })
-     }
+    },
+    getpalce(){  
+     
+             this.$api.post('/common_query_company_api',{
+                "company_id":this.id,
+             },su=>{        
+              if(su.code==200&&su.num>0){
+                this.selectlist = su.data;
+              }else{
+                this.selectlist = []
+              }
+             },err=>{
 
+             })
+    },
+    searchFn(){
+        let data = {}
+        // {
+        //         "company_id":this.id,
+        //         fromTimeStamp:this.value3[0],
+        //         toTimeStamp:this.value3[1],
+        //         place_id:this.selectvalue2
+        //  }
+     
+        this.dataList = [];
+        this.realdata = [];
+        this.showDate = [];
+        this.mydata = [];
+         this.$api.post('/client_query_face_image_record_api',{
+            company_id:this.id,
+            face_image_type:this.imgtype,
+            face_image_data:this.searchimg,
+            fromTimeStamp:this.value5[0],
+            toTimeStamp:this.value5[1],
+            place_id:this.selectvalue1
+          },su=>{        
+            if(su.code==200){
+              if(su.total_num>0){
+              this.dataList = su.total_data;
+              this.total_num = su.total_num;
+              //设置imgsrc属性
+              this.dataList.forEach((el,ind)=>{
+                   let face_id = el.face_id;
+                   let user_name = el.face_user_name;
+                   el.face_data.forEach((ele,index)=>{
+                       let place_address = ele.place_address;
+                       ele.data.forEach((e,i)=>{
+                           this.$set(e,"face_id",face_id);
+                           this.$set(e,"face_user_name",user_name);
+                           this.$set(e,"place_address",place_address);
+                           this.mydata.push(e);
+                           console.log(this.mydata);
+                        
+                       })
+                   })
+
+              })
+              this.$nextTick(function(){
+                 this.getface(this.mydata);
+              })
+                this.total_num = su.total_num;
+              }else{
+                  this.realdata = [];
+                  this.total_num = 0;
+                  this.ajax = true;
+              }
+
+           }else{
+              this.realdata = [];
+                  this.total_num = 0;
+                  this.ajax = true;
+           }
+         },err=>{
+              this.realdata = [];
+              this.total_num = 0;
+              this.ajax = true;
+         })
+    },
+    searchFn1(){
+        let data = {}
+        // {
+        //         "company_id":this.id,
+        //         fromTimeStamp:this.value3[0],
+        //         toTimeStamp:this.value3[1],
+        //         place_id:this.selectvalue2
+        //  }
+        if(this.value4&&this.value4.length>0){
+          data = {
+            company_id:this.id,
+            fromTimeStamp:this.value3[0],
+            toTimeStamp:this.value3[1],
+            place_id:this.selectvalue2,
+            except_date:[
+            {
+              begin_time:this.value4[0],
+              end_time:this.value4[1]
+            }]
+          }
+        }else{
+          data = {
+            company_id:this.id,
+            fromTimeStamp:this.value3[0],
+            toTimeStamp:this.value3[1],
+            place_id:this.selectvalue2
+          }
+        }
+        this.dataList = [];
+        this.realdata = [];
+        this.showDate = [];
+        this.mydata = [];
+         this.$api.post('/client_query_time_record_api',data,su=>{        
+            if(su.code==200){
+              if(su.total_num>0){
+              this.dataList = su.total_data;
+              this.total_num = su.total_num;
+              //设置imgsrc属性
+              this.dataList.forEach((el,ind)=>{
+                   let face_id = el.face_id;
+                   let user_name = el.face_user_name;
+                   el.face_data.forEach((ele,index)=>{
+                       let place_address = ele.place_address;
+                       ele.data.forEach((e,i)=>{
+                           this.$set(e,"face_id",face_id);
+                           this.$set(e,"face_user_name",user_name);
+                           this.$set(e,"place_address",place_address);
+                           this.mydata.push(e);
+                           console.log(this.mydata);
+                        
+                       })
+                   })
+
+              })
+              this.$nextTick(function(){
+                 this.getface(this.mydata);
+              })
+                this.total_num = su.total_num;
+              }else{
+                  this.realdata = [];
+                  this.total_num = 0;
+                  this.ajax = true;
+              }   
+           }else{
+            this.realdata = [];
+                  this.total_num = 0;
+                  this.ajax = true;
+           }
+         },err=>{
+             this.realdata = [];
+            this.total_num = 0;
+              this.ajax = true;
+         })
+    }
 
   }
 }
@@ -470,7 +637,7 @@ export default {
     margin:19px;
     min-height: 700px;
     padding: 30px 32px 50px 30px;
-    min-width: 1644px;
+    min-width: 1844px;
     .header{
       padding: 15px;
       line-height: 46px;
@@ -608,5 +775,13 @@ export default {
 }
 .ftime{
   padding-left:568px;
+}
+.select-class{
+  height: 36px;
+  width: 390px;
+  margin-right: 59px;
+}
+.btn-upload:disabled,select:disabled{
+  background: #f5f7fa;
 }
 </style>
