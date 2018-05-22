@@ -12,7 +12,7 @@ module.exports = {
     assetsPublicPath: '/',
     proxyTable: {
        '/rank': {
-                target: 'http://www.qytmail.com:18889', // 你接口的域名
+                target: 'http://www.qytmail.com', // 你接口的域名
                 secure: false,
                 changeOrigin: true,
                 pathRewrite:{'/rank':""}
