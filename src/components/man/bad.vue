@@ -29,6 +29,7 @@
             @selection-change="handleSelectionChange"
             @row-click="sliderShow"
             id="pdf"
+            align="center"
             >
             <el-table-column
               type="selection"
@@ -327,7 +328,7 @@ export default {
           if(su.code==200){
             this.dialogVisible = false;
             this.$message({
-              message: su.msg,
+              message: "操作成功",
               type: 'success'
             });
             this.getList();
@@ -471,7 +472,7 @@ export default {
           if(su.code==200){
             if((i+1)==num){
               this.$message({
-                  message: su.msg,
+                  message: "操作成功",
                   type: 'success'
               });
               this.getList();

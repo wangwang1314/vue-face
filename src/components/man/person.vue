@@ -156,28 +156,30 @@
                       <img src="../../assets/images/no-num.png">
                       <p style="margin-top:44px;color:#999999;font-size:18px;">抱歉！~暂无数据~</p>
                     </div>
-                    <template v-for="item in totaldata">
-                      <div class="time-div over-auto">
-                        <p>
-                          <span>出入时间 ：</span>
-                           <span v-for="(child,index) in item.data" v-show="index==0">{{child.timeStamp.split(" ")[0]}}</span>
-                        </p>
-                        <div style="overflow:auto">
-                          <span>线路轨迹 :</span>
-                          <template v-for="(child,ind) in item.data">
-                            <div class="line-class">
-                              <div class="ad-box">
-                                <p class="in-out" v-if="child.device_id%2!=0">入</p>
-                                <p class="in-out" v-else>出</p>
-                                <p class="address" :class="{'add-out':child.device_id%2==0}">{{child.device_address}}</p>
-                                <p class="time">{{child.timeStamp.split(" ")[1]}}</p>
+                    <div style="overflow:auto;height:700px;">
+                      <template v-for="item in totaldata">
+                        <div class="time-div over-auto">
+                          <p>
+                            <span>出入时间 ：</span>
+                             <span v-for="(child,index) in item.data" v-show="index==0">{{child.timeStamp.split(" ")[0]}}</span>
+                          </p>
+                          <div style="overflow:auto">
+                            <span>线路轨迹 :</span>
+                            <template v-for="(child,ind) in item.data">
+                              <div class="line-class">
+                                <div class="ad-box">
+                                  <p class="in-out" v-if="child.device_id%2!=0">入</p>
+                                  <p class="in-out" v-else>出</p>
+                                  <p class="address" :class="{'add-out':child.device_id%2==0}">{{child.device_address}}</p>
+                                  <p class="time">{{child.timeStamp.split(" ")[1]}}</p>
+                                </div>
+                                <img src="../../assets/images/jtou.png" v-if="ind!=(item.data.length-1)"> 
                               </div>
-                              <img src="../../assets/images/jtou.png" v-if="ind!=(item.data.length-1)"> 
-                            </div>
-                          </template>
+                            </template>
+                          </div>
                         </div>
-                      </div>
-                    </template>
+                      </template>
+                    </div>
                     
                   </el-tab-pane>
                   <el-tab-pane label="出入记录" name="second">
@@ -185,21 +187,23 @@
                       <img src="../../assets/images/no-num.png">
                       <p style="margin-top:44px;color:#999999;font-size:18px;">抱歉！~暂无数据~</p>
                     </div>
-                    <template v-for="item in totaldata">
-                      <div class="time-div record" v-for="(child,index) in item.data">
-                        <p>
-                          <span>出入时间 ：</span>
-                           {{child.timeStamp}}
-                        </p>
-                        <div>
-                          <p>设备地址 ： {{child.device_address}}</p>
-                          <p>场地名称 ： {{item.place_address}}</p>
-                          <p>出入类型 ： <span class="reder" v-if="child.device_id%2!=0">出</span><span class="reder" v-else>入</span></p>
-                          <img src="../../assets/images/out.png" v-if="child.device_id%2!=0">
-                          <img src="../../assets/images/to.png" v-else>
+                    <div style="overflow:auto;height:700px;">
+                      <template v-for="item in totaldata">
+                        <div class="time-div record" v-for="(child,index) in item.data">
+                          <p>
+                            <span>出入时间 ：</span>
+                             {{child.timeStamp}}
+                          </p>
+                          <div>
+                            <p>设备地址 ： {{child.device_address}}</p>
+                            <p>场地名称 ： {{item.place_address}}</p>
+                            <p>出入类型 ： <span class="reder" v-if="child.device_id%2!=0">出</span><span class="reder" v-else>入</span></p>
+                            <img src="../../assets/images/out.png" v-if="child.device_id%2!=0">
+                            <img src="../../assets/images/to.png" v-else>
+                          </div>
                         </div>
-                      </div>
-                    </template>  
+                      </template>
+                    </div>  
                    <!--  <div class="time-div record">
                       <p>
                         <span>出入时间 ：</span>
@@ -392,13 +396,26 @@
                       <p class="per-p">
                         <i></i>
                         <span>出入时间段</span> 
-                        <el-date-picker
+                       <!--  <el-date-picker
                           v-model="value3"
                           type="datetimerange"
                           range-separator="至"
                           start-placeholder="开始日期"
-                          value-format="yyyy-M-d hh-mm-ss"
+                          value-format="yyyy-M-d hh:mm:ss"
                           end-placeholder="结束日期">
+                        </el-date-picker> -->
+                        <el-date-picker
+                          v-model="value1"
+                          type="datetime"
+                          value-format="yyyy-M-d hh:mm:ss"
+                          placeholder="选择开始时间">
+                        </el-date-picker>
+                        <span style="margin:0 18px;font-size:16px;color: #606266;font-weight:normal;">至</span>
+                        <el-date-picker
+                          v-model="value2"
+                          type="datetime"
+                          value-format="yyyy-M-d hh:mm:ss"
+                          placeholder="选择结束时间">
                         </el-date-picker>
                       </p>
                     </div>
@@ -458,6 +475,8 @@ export default {
 
   data () {
     return {
+      value1:"",
+      value2:"",
       value4:"",
       activeName:"first",
       value3:"",
@@ -687,7 +706,7 @@ export default {
             this.dialogVisible = false;
             this.getList();
             this.$message({
-              message: su.msg,
+              message: "操作成功",
               type: 'success'
             });
           }else{
@@ -796,7 +815,7 @@ export default {
           if(su.code==200){
             if((i+1)==num){
               this.$message({
-                  message: su.msg,
+                  message: "操作成功",
                   type: 'success'
               });
               this.getList();
@@ -835,6 +854,8 @@ export default {
       }
     },
     addright(val){
+         this.value1 = "";
+         this.value2 = "";
          this.setobj = val.row;
          //console.log(this.setobj);
          this.setdialog = true;
@@ -1025,9 +1046,27 @@ export default {
       this.rightwarn.in = false;
       this.rightwarn.out = false;
      // console.log(this.value3);
-      if(this.value3.length==0){
+      if(!this.value1){
         this.err = true;
-        this.errtit = "出入时间段不能为空";
+        this.errtit = "请选择开始时间";
+        // this.errtit = "入口权限不能为空";
+        // this.errtit = "出口权限不能为空";
+        this.rightwarn.time = true;
+        return
+      }
+       if(!this.value2){
+        this.err = true;
+        this.errtit = "请选择结束时间";
+        // this.errtit = "入口权限不能为空";
+        // this.errtit = "出口权限不能为空";
+        this.rightwarn.time = true;
+        return
+      }
+      var time1 = new Date(this.value1).getTime();
+      var time2 = new Date(this.value2).getTime();
+      if(time1>=time2){
+        this.err = true;
+        this.errtit = "开始时间不能晚于结束时间";
         // this.errtit = "入口权限不能为空";
         // this.errtit = "出口权限不能为空";
         this.rightwarn.time = true;
@@ -1088,15 +1127,15 @@ export default {
         this.$api.post("/client_add_auth_api",{
           company_id:this.id,
           face_id:this.setobj.face_id,
-          fromTimeStamp:this.value3[0],
-          toTimeStamp:this.value3[1],
+          fromTimeStamp:this.value1,
+          toTimeStamp:this.value2,
           acPkCode:data
         },
         su=>{
           if(su.code==200){
             this.setdialog = false;
             this.$message({
-              message: su.msg,
+              message: "操作成功",
               type: 'success'
             });
           }else{
@@ -1126,7 +1165,7 @@ export default {
             this.editdialog = false;
             this.getList();
             this.$message({
-              message: su.msg,
+              message: "操作成功",
               type: 'success'
             });
           }else{
@@ -1154,7 +1193,7 @@ export default {
                     
                     //this.getRights();
                     this.$message({
-                      message: su.msg,
+                      message: "操作成功",
                       type: 'success'
                     });
                   }else{
@@ -1186,7 +1225,7 @@ export default {
                     
                     this.getRights();
                     this.$message({
-                      message: su.msg,
+                      message: "操作成功",
                       type: 'success'
                     });
                   }else{
