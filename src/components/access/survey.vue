@@ -93,36 +93,38 @@
                         <img src="../../assets/images/no-num.png">
                         <p style="margin-top:44px;color:#999999;font-size:18px;">抱歉！~暂无数据~</p>
                     </div>
-                    <template v-for="item in totaldata">
-                      <div class="time-div over-auto">
-                        <p>
-                          <span>出入时间 ：</span>
-                           <span v-for="(child,index) in item.data" v-show="index==0">{{child.timeStamp.split(" ")[0]}}</span>
-                        </p>
-                        <div style="overflow:auto">
-                          <span>线路轨迹 :</span>
-                          <template v-for="(child,ind) in item.data">
-                            <div class="line-class">
-                              <div class="ad-box">
-                                <p class="in-out" v-if="child.device_id%2!=0">入</p>
-                                <p class="in-out" v-else>出</p>
-                                <p class="address">{{child.device_address}}</p>
-                                <p class="time">{{child.timeStamp.split(" ")[1]}}</p>
+                    <div style="overflow:auto;height:700px;padding:0 5px;">
+                      <template v-for="item in totaldata">
+                        <div class="time-div over-auto">
+                          <p>
+                            <span>出入时间 ：</span>
+                             <span v-for="(child,index) in item.data" v-show="index==0">{{child.timeStamp.split(" ")[0]}}</span>
+                          </p>
+                          <div style="overflow:auto">
+                            <span>线路轨迹 :</span>
+                            <template v-for="(child,ind) in item.data">
+                              <div class="line-class">
+                                <div class="ad-box">
+                                  <p class="in-out" v-if="child.device_id%2!=0">入</p>
+                                  <p class="in-out" v-else>出</p>
+                                  <p class="address">{{child.device_address}}</p>
+                                  <p class="time">{{child.timeStamp.split(" ")[1]}}</p>
+                                </div>
+                                <img src="../../assets/images/jtou.png" v-if="ind!=(item.data.length-1)">
                               </div>
-                              <img src="../../assets/images/jtou.png" v-if="ind!=(item.data.length-1)">
-                            </div>
-                          </template>
+                            </template>
+                          </div>
                         </div>
-                      </div>
-                    </template>
-                    
+                      </template>
+                    </div>
                   </el-tab-pane>
                   <el-tab-pane label="出入记录" name="second">
                        <div style="text-align:center;margin-top:116px;" v-show="totaldata.length == 0">
                         <img src="../../assets/images/no-num.png">
                         <p style="margin-top:44px;color:#999999;font-size:18px;">抱歉！~暂无数据~</p>
-                    </div>
-                    <template v-for="item in totaldata">
+                        </div>
+                   <div style="overflow:auto;height:700px;padding:0 5px;">
+                     <template v-for="item in totaldata">
                       <div class="time-div record" v-for="(child,index) in item.data">
                         <p>
                           <span>出入时间 ：</span>
@@ -136,14 +138,16 @@
                           <img src="../../assets/images/to.png" v-else>
                         </div>
                       </div>
-                    </template>  
+                    </template> 
+                   </div>     
+                     
                   </el-tab-pane>
                   <el-tab-pane label="出入权限" name="third">
                      <div style="text-align:center;margin-top:116px;" v-show="rightcontent.length == 0">
                         <img src="../../assets/images/no-num.png">
                         <p style="margin-top:44px;color:#999999;font-size:18px;">抱歉！~暂无数据~</p>
                     </div> 
-                  <div style="overflow:auto;height:700px;">
+                  <div style="overflow:auto;height:700px;padding:0 5px;">
                     <template v-for="(item,index) in rightcontent">
                     <div class="edit-class">权限{{index+1}}
                       <button @click="delright(item)">删除</button>     
@@ -1097,6 +1101,7 @@ export default {
     min-width:30px;
     line-height:20px;
     border:1px solid #ff9900;
+    margin: 0 3px;
   }
   .in-out{
     text-align:center;

@@ -156,7 +156,7 @@
                       <img src="../../assets/images/no-num.png">
                       <p style="margin-top:44px;color:#999999;font-size:18px;">抱歉！~暂无数据~</p>
                     </div>
-                    <div style="overflow:auto;height:700px;">
+                    <div style="overflow:auto;height:700px;padding:0 5px;">
                       <template v-for="item in totaldata">
                         <div class="time-div over-auto">
                           <p>
@@ -187,7 +187,7 @@
                       <img src="../../assets/images/no-num.png">
                       <p style="margin-top:44px;color:#999999;font-size:18px;">抱歉！~暂无数据~</p>
                     </div>
-                    <div style="overflow:auto;height:700px;">
+                    <div style="overflow:auto;height:700px;padding:0 5px;">
                       <template v-for="item in totaldata">
                         <div class="time-div record" v-for="(child,index) in item.data">
                           <p>
@@ -222,7 +222,7 @@
                       <img src="../../assets/images/no-num.png">
                       <p style="margin-top:44px;color:#999999;font-size:18px;">抱歉！~暂无数据~</p>
                     </div>
-                  <div style="overflow:auto;height:700px;">
+                  <div style="overflow:auto;height:700px;padding:0 5px;">
                     <template v-for="(item,index) in rightcontent">
                     <div class="edit-class">权限{{index+1}}
                       <button @click="delright(item)">删除</button>     
