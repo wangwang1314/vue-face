@@ -640,8 +640,9 @@ export default {
     text-align: center;
   }
   .list{
-    overflow: hidden;
+    overflow: auto;
     padding-bottom: 70px;
+    height: 700px;
     li{
       float: left;
       margin:24px;

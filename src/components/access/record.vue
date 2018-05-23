@@ -800,6 +800,7 @@ export default {
   }
   .page{
     text-align: center;
+    margin-top: 50px;
   }
   .sur-selct{
     height: 36px;

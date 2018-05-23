@@ -1809,7 +1809,7 @@ export default {
 
 
 <style lang='scss'>
- .el-table::before {
+ .el-main .el-table::before {
     content: '';
     position: absolute;
     background-color: #fff;
@@ -1818,7 +1818,7 @@ export default {
 .text-center{
   text-align: center;
  }
-.el-table th{
+.el-main .el-table th{
   height:60px;
   background-color:#EAEAEA;
   color:#1A1A1A;
@@ -1859,7 +1859,7 @@ export default {
     .bd-red{
       border:1px solid #F84C4C !important;
     }
-    .el-table__body{
+   .el-main .el-table__body{
       text-align: center;
     }
 </style>
