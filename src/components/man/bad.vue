@@ -30,6 +30,7 @@
             @row-click="sliderShow"
             id="pdf"
             align="center"
+            height="700"
             >
             <el-table-column
               type="selection"

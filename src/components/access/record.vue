@@ -509,12 +509,11 @@ export default {
               this.dataList = su.total_data;
               this.total_num = su.total_num;
               //设置imgsrc属性
-              this.dataList.forEach((el,ind)=>{
-                   let face_id = el.face_id;
-                   let user_name = el.face_user_name;
-                   el.face_data.forEach((ele,index)=>{
-                       let place_address = ele.place_address;
-                       ele.data.forEach((e,i)=>{
+              let face_id =su.face_id;
+              let user_name = su.face_user_name;
+              this.dataList.forEach((el,ind)=>{     
+                       let place_address = el.place_address;
+                       el.data.forEach((e,i)=>{
                            this.$set(e,"face_id",face_id);
                            this.$set(e,"face_user_name",user_name);
                            this.$set(e,"place_address",place_address);
@@ -522,8 +521,7 @@ export default {
                            console.log(this.mydata);
                         
                        })
-                   })
-
+                 
               })
               this.$nextTick(function(){
                  this.getface(this.mydata);
