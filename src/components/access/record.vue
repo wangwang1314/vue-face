@@ -47,7 +47,7 @@
                 :auto-upload="false"
                 :show-file-list="false"
                 >
-                <button  class="sur-selct btn-upload" :disabled="!isselect"><span :style="{'opacity':searchimg?0:1}">请上传图片搜头像</span><i></i></button>
+                <button  class="sur-selct btn-upload" :disabled="!isselect"><span @click="stopFn($event)" :style="{'opacity':searchimg?0:1}">请上传图片搜头像</span><i  @click="stopFn($event)"></i></button>
             </el-upload>
           </div>  
           <span>场地名称</span>
@@ -279,6 +279,11 @@ export default {
       this.getpalce();
   },
   methods:{
+    stopFn(ev){
+      if(!this.isselect){
+          ev.cancelBubble = true;
+      }
+    },
     dataFn(){
       let start = (this.page-1)*this.pagesize;
       let end = this.page*this.pagesize;
