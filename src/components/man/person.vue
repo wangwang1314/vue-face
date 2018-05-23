@@ -1807,7 +1807,7 @@ export default {
 
 
 
-<style>
+<style lang='scss'>
 .el-table{
   border-right: 1px solid #E6E6E6;
   border-left: 1px solid #E6E6E6;
