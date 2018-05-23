@@ -1,5 +1,162 @@
 <template>
     <div class="person" >
+         <transition name="fade">
+            <div class="slider-box" v-if="slider" @click.stop="">
+              <p class="close-p"><i @click="closeFn">×</i></p>
+              <div class="info">
+                <img :src="setobj.img">
+                <div>
+                  <p class="name">{{setobj.name}}</p>
+                  <img v-if="setobj.face_type!=1" src="../../assets/images/fk.png">
+                  <img v-else src="../../assets/images/vip.png">
+                  <div>
+                    <p>
+                      <span>入库时间：</span>
+                      {{setobj.build_time}}
+                    </p>
+                    <p>
+                      <span>更新时间：</span>
+                      {{setobj.build_time}}
+                    </p>
+                    <button @click="editman">编辑</button>
+                  </div>
+                </div>
+              </div>
+              <div>
+                 <el-tabs v-model="activeName" @tab-click="handleClick">
+                  <el-tab-pane label="线路轨迹" name="first">
+                   <!-- <div class="time-div over-auto">
+                        <p>
+                          <span>出入时间 ：</span>
+                           <span >2018-03-10</span>
+                        </p>
+                        <div style="overflow:auto">
+                          <span>线路轨迹 :</span> 
+                            <div class="line-class">
+                              <div class="ad-box">
+                                <p class="in-out">入</p>
+                                <p class="address">汇通大厦</p>
+                                <p class="time">09:29:01</p>
+                              </div>
+                              <img src="../../assets/images/jtou.png">
+                            </div>
+                        </div>
+                    </div> -->
+                     <div style="text-align:center;margin-top:100px;" v-show="totaldata.length==0">
+                      <img src="../../assets/images/no-num.png">
+                      <p style="margin-top:44px;color:#999999;font-size:18px;">抱歉！~暂无数据~</p>
+                    </div>
+                    <div style="overflow:auto;max-height:700px;padding:0 5px;">
+                      <template v-for="item in totaldata">
+                        <div class="time-div over-auto">
+                          <p>
+                            <span>出入时间 ：</span>
+                             <span v-for="(child,index) in item.data" v-show="index==0">{{child.timeStamp.split(" ")[0]}}</span>
+                          </p>
+                          <div style="overflow:auto">
+                            <span>线路轨迹 :</span>
+                            <template v-for="(child,ind) in item.data">
+                              <div class="line-class">
+                                <div class="ad-box">
+                                  <p class="in-out" v-if="child.device_id%2!=0">入</p>
+                                  <p class="in-out" v-else>出</p>
+                                  <p class="address" :class="{'add-out':child.device_id%2==0}">{{child.device_address}}</p>
+                                  <p class="time">{{child.timeStamp.split(" ")[1]}}</p>
+                                </div>
+                                <img src="../../assets/images/jtou.png" v-if="ind!=(item.data.length-1)"> 
+                              </div>
+                            </template>
+                          </div>
+                        </div>
+                      </template>
+                    </div>
+                    
+                  </el-tab-pane>
+                  <el-tab-pane label="出入记录" name="second">
+                    <div style="text-align:center;margin-top:100px;" v-show="totaldata.length==0">
+                      <img src="../../assets/images/no-num.png">
+                      <p style="margin-top:44px;color:#999999;font-size:18px;">抱歉！~暂无数据~</p>
+                    </div>
+                    <div style="overflow:auto;max-height:700px;padding:0 5px;">
+                      <template v-for="item in totaldata">
+                        <div class="time-div record" v-for="(child,index) in item.data">
+                          <p>
+                            <span>出入时间 ：</span>
+                             {{child.timeStamp}}
+                          </p>
+                          <div>
+                            <p>设备地址 ： {{child.device_address}}</p>
+                            <p>场地名称 ： {{item.place_address}}</p>
+                            <p>出入类型 ： <span class="reder" v-if="child.device_id%2!=0">出</span><span class="reder" v-else>入</span></p>
+                            <img src="../../assets/images/out.png" v-if="child.device_id%2!=0">
+                            <img src="../../assets/images/to.png" v-else>
+                          </div>
+                        </div>
+                      </template>
+                    </div>  
+                   <!--  <div class="time-div record">
+                      <p>
+                        <span>出入时间 ：</span>
+                         2018-03-10
+                      </p>
+                      <div>
+                        <p>设备地址 ： B口</p>
+                        <p>场地名称 ： 足球场</p>
+                        <p>出入类型 ： <span class="reder">入</span></p>
+                        <img src="../../assets/images/to.png">
+                      </div>
+                    </div> -->
+                  </el-tab-pane>
+                  <el-tab-pane label="出入权限" name="third">
+                    <div style="text-align:center;margin-top:100px;" v-show="rightcontent.length==0">
+                      <img src="../../assets/images/no-num.png">
+                      <p style="margin-top:44px;color:#999999;font-size:18px;">抱歉！~暂无数据~</p>
+                    </div>
+                  <div style="overflow:auto;max-height:700px;padding:0 5px;">
+                    <template v-for="(item,index) in rightcontent">
+                    <div class="edit-class">权限{{index+1}}
+                      <button @click="delright(item)">删除</button>     
+                    </div>
+                    <div class="rep-class">
+                        <p class="per-p">
+                          <i></i>
+                          <span>出入时间段</span> 
+                          <span style="font-size:14px;color:#303133;font-weight:500;">{{item.data[0].fromTimeStamp}} 至 {{item.data[0].toTimeStamp}}</span>
+                        </p>
+                        <p class="per-p">
+                          <i></i>
+                          <span>入口权限</span> 
+                        </p>
+                        <div class="con-box">
+                          <div style="margin-left:15px;" v-for="child in placelistin">
+                            <p>{{child.place_address}}</p>
+                            <div class="check-box select-box">
+
+                              <p v-for="children in child.data" :class="{'chose':item.data[0].code.indexOf(children.placestring)!=-1}"><i></i><span>{{children.device_address}}</span></p>
+                            </div>                   
+                          </div>
+                        </div>
+                        <p class="per-p">
+                          <i></i>
+                          <span>出口权限</span> 
+                        </p> 
+                         <div class="con-box">
+                          <div style="margin-left:15px;" v-for="child in placelistout">
+                            <p>{{child.place_address}}</p>
+                            <div class="check-box select-box">
+                                 <p v-for="children in child.data" :class="{'chose':item.data[0].code.indexOf(children.placestring)!=-1}"><i></i><span>{{children.device_address}}</span></p>
+                            </div>
+    
+                          </div>
+                        </div> 
+                    </div>
+                    </template>
+                  </div> 
+                  </el-tab-pane>
+                </el-tabs>
+              </div>
+            </div>
+         </transition>
       <!-- <div class="header">
         <span>头像</span>
          <el-select v-model="value4" clearable placeholder="请选择" class="sur-selct">
@@ -111,163 +268,7 @@
             </el-pagination>
           </div>
 
-          <transition name="fade">
-            <div class="slider-box" v-if="slider" @click.stop="">
-              <p class="close-p"><i @click="closeFn">×</i></p>
-              <div class="info">
-                <img :src="setobj.img">
-                <div>
-                  <p class="name">{{setobj.name}}</p>
-                  <img v-if="setobj.face_type!=1" src="../../assets/images/fk.png">
-                  <img v-else src="../../assets/images/vip.png">
-                  <div>
-                    <p>
-                      <span>入库时间：</span>
-                      {{setobj.build_time}}
-                    </p>
-                    <p>
-                      <span>更新时间：</span>
-                      {{setobj.build_time}}
-                    </p>
-                    <button @click="editman">编辑</button>
-                  </div>
-                </div>
-              </div>
-              <div>
-                 <el-tabs v-model="activeName" @tab-click="handleClick">
-                  <el-tab-pane label="线路轨迹" name="first">
-                   <!-- <div class="time-div over-auto">
-                        <p>
-                          <span>出入时间 ：</span>
-                           <span >2018-03-10</span>
-                        </p>
-                        <div style="overflow:auto">
-                          <span>线路轨迹 :</span> 
-                            <div class="line-class">
-                              <div class="ad-box">
-                                <p class="in-out">入</p>
-                                <p class="address">汇通大厦</p>
-                                <p class="time">09:29:01</p>
-                              </div>
-                              <img src="../../assets/images/jtou.png">
-                            </div>
-                        </div>
-                    </div> -->
-                     <div style="text-align:center;margin-top:100px;" v-show="totaldata.length==0">
-                      <img src="../../assets/images/no-num.png">
-                      <p style="margin-top:44px;color:#999999;font-size:18px;">抱歉！~暂无数据~</p>
-                    </div>
-                    <div style="overflow:auto;height:700px;padding:0 5px;">
-                      <template v-for="item in totaldata">
-                        <div class="time-div over-auto">
-                          <p>
-                            <span>出入时间 ：</span>
-                             <span v-for="(child,index) in item.data" v-show="index==0">{{child.timeStamp.split(" ")[0]}}</span>
-                          </p>
-                          <div style="overflow:auto">
-                            <span>线路轨迹 :</span>
-                            <template v-for="(child,ind) in item.data">
-                              <div class="line-class">
-                                <div class="ad-box">
-                                  <p class="in-out" v-if="child.device_id%2!=0">入</p>
-                                  <p class="in-out" v-else>出</p>
-                                  <p class="address" :class="{'add-out':child.device_id%2==0}">{{child.device_address}}</p>
-                                  <p class="time">{{child.timeStamp.split(" ")[1]}}</p>
-                                </div>
-                                <img src="../../assets/images/jtou.png" v-if="ind!=(item.data.length-1)"> 
-                              </div>
-                            </template>
-                          </div>
-                        </div>
-                      </template>
-                    </div>
-                    
-                  </el-tab-pane>
-                  <el-tab-pane label="出入记录" name="second">
-                    <div style="text-align:center;margin-top:100px;" v-show="totaldata.length==0">
-                      <img src="../../assets/images/no-num.png">
-                      <p style="margin-top:44px;color:#999999;font-size:18px;">抱歉！~暂无数据~</p>
-                    </div>
-                    <div style="overflow:auto;height:700px;padding:0 5px;">
-                      <template v-for="item in totaldata">
-                        <div class="time-div record" v-for="(child,index) in item.data">
-                          <p>
-                            <span>出入时间 ：</span>
-                             {{child.timeStamp}}
-                          </p>
-                          <div>
-                            <p>设备地址 ： {{child.device_address}}</p>
-                            <p>场地名称 ： {{item.place_address}}</p>
-                            <p>出入类型 ： <span class="reder" v-if="child.device_id%2!=0">出</span><span class="reder" v-else>入</span></p>
-                            <img src="../../assets/images/out.png" v-if="child.device_id%2!=0">
-                            <img src="../../assets/images/to.png" v-else>
-                          </div>
-                        </div>
-                      </template>
-                    </div>  
-                   <!--  <div class="time-div record">
-                      <p>
-                        <span>出入时间 ：</span>
-                         2018-03-10
-                      </p>
-                      <div>
-                        <p>设备地址 ： B口</p>
-                        <p>场地名称 ： 足球场</p>
-                        <p>出入类型 ： <span class="reder">入</span></p>
-                        <img src="../../assets/images/to.png">
-                      </div>
-                    </div> -->
-                  </el-tab-pane>
-                  <el-tab-pane label="出入权限" name="third">
-                    <div style="text-align:center;margin-top:100px;" v-show="rightcontent.length==0">
-                      <img src="../../assets/images/no-num.png">
-                      <p style="margin-top:44px;color:#999999;font-size:18px;">抱歉！~暂无数据~</p>
-                    </div>
-                  <div style="overflow:auto;height:700px;padding:0 5px;">
-                    <template v-for="(item,index) in rightcontent">
-                    <div class="edit-class">权限{{index+1}}
-                      <button @click="delright(item)">删除</button>     
-                    </div>
-                    <div class="rep-class">
-                        <p class="per-p">
-                          <i></i>
-                          <span>出入时间段</span> 
-                          <span style="font-size:14px;color:#303133;font-weight:500;">{{item.data[0].fromTimeStamp}} 至 {{item.data[0].toTimeStamp}}</span>
-                        </p>
-                        <p class="per-p">
-                          <i></i>
-                          <span>入口权限</span> 
-                        </p>
-                        <div class="con-box">
-                          <div style="margin-left:15px;" v-for="child in placelistin">
-                            <p>{{child.place_address}}</p>
-                            <div class="check-box select-box">
-
-                              <p v-for="children in child.data" :class="{'chose':item.data[0].code.indexOf(children.placestring)!=-1}"><i></i><span>{{children.device_address}}</span></p>
-                            </div>                   
-                          </div>
-                        </div>
-                        <p class="per-p">
-                          <i></i>
-                          <span>出口权限</span> 
-                        </p> 
-                         <div class="con-box">
-                          <div style="margin-left:15px;" v-for="child in placelistout">
-                            <p>{{child.place_address}}</p>
-                            <div class="check-box select-box">
-                                 <p v-for="children in child.data" :class="{'chose':item.data[0].code.indexOf(children.placestring)!=-1}"><i></i><span>{{children.device_address}}</span></p>
-                            </div>
-    
-                          </div>
-                        </div> 
-                    </div>
-                    </template>
-                  </div> 
-                  </el-tab-pane>
-                </el-tabs>
-              </div>
-            </div>
-         </transition>
+         
 
        <!--  添加人员 -->
        <div class="box">
@@ -1808,9 +1809,11 @@ export default {
 
 
 <style lang='scss'>
-.el-table{
-  border-right: 1px solid #E6E6E6;
-  border-left: 1px solid #E6E6E6;
+ .el-table::before {
+    content: '';
+    position: absolute;
+    background-color: #fff;
+    z-index: 1;
 }
 .text-center{
   text-align: center;

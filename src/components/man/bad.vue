@@ -985,10 +985,12 @@ export default {
 
 
 
-<style>
-.el-table{
-  border-right: 1px solid #E6E6E6;
-  border-left: 1px solid #E6E6E6;
+<style lang='scss'>
+ .el-table::before {
+    content: '';
+    position: absolute;
+    background-color: #fff;
+    z-index: 1;
 }
 .text-center{
   text-align: center;

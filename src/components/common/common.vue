@@ -28,9 +28,10 @@
                         <p @click.stop="reset">修改密码</p>
                     </div>
                 </span>
+                <a class="adm-ri" @click="exit">退出</a>
               </p>
             </div> 
-            <a class="adm-ri" @click="exit">退出</a>
+            
           </div>
         </div>
       </div>
@@ -295,13 +296,13 @@ export default {
     float: left;
 }
 .adm-ri {
-    float: left;
     width: 30px;
     height: 24px;
     font-weight: 700;
     color: #378eef;
     margin-top: 36px;
     cursor: pointer;
+    margin-left: 10px;
 }
 .adm-le p, .adm-ri {
     font-size: 14px;
@@ -311,7 +312,7 @@ export default {
     color: #2f323a;
     margin-top: 8px;
     text-align: right;
-    margin-right:28px;
+   
     white-space:nowrap;
     span{
       position: relative;

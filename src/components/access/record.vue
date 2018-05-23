@@ -38,6 +38,8 @@
           <br>
           <span style="margin-right:10px;"><el-radio v-model="isselect" :label="true">条件二</el-radio></span>
            <span>人员头像</span>
+           <div class="up-box">
+              <img v-if="imgtype&&searchimg" :src="'data:image/'+imgtype+';base64,'+searchimg" class="img-tit">
               <el-upload
                 class="upload-style"
                 action="https://jsonplaceholder.typicode.com/posts/"
@@ -45,8 +47,9 @@
                 :auto-upload="false"
                 :show-file-list="false"
                 >
-                <button  class="sur-selct btn-upload" :disabled="!isselect">请上传图片搜头像<i></i></button>
+                <button  class="sur-selct btn-upload" :disabled="!isselect"><span :style="{'opacity':searchimg?0:1}">请上传图片搜头像</span><i></i></button>
             </el-upload>
+          </div>  
           <span>场地名称</span>
           <select class="select-class" v-model="selectvalue1" :disabled="!isselect">
             <option :value="0">全部</option>
@@ -54,6 +57,14 @@
               <option :value="item.place_id">{{item.place_address}}</option>
             </template>
           </select>
+         <!--   <el-select  placeholder="请选择" class="select-class" v-model="selectvalue1" :disabled="!isselect">
+            <el-option :value="0" :label="全部"></el-option>
+            <el-option
+              v-for="item in selectlist"
+              :label="item.place_address"
+              :value="item.place_id">
+            </el-option>
+          </el-select> -->
           <span>拍摄时间</span>
            <el-date-picker
             v-model="value5"
@@ -125,7 +136,7 @@
            </tbody>
          </table>
       </div>
-       <table class="sort-tab"  >
+      <!--  <table class="sort-tab"  >
            <thead>
              <tr>
                <td>拍摄时间</td>
@@ -153,7 +164,58 @@
                <td>{{item.device_address}}</td>
              </tr>      
            </tbody>
-        </table>
+        </table> -->
+             <el-table
+            ref="multipleTable"
+            :data="realdata"
+            tooltip-effect="dark"
+            style="width: 100%"
+            align="center"
+            height="700"
+            >
+            <el-table-column
+              label="拍摄时间"
+              prop="timeStamp"
+             >
+            <!--  <template slot-scope="scope">
+               <img class="img-size" v-if="scope.row.img" :src="scope.row.img">
+             </template> -->
+            </el-table-column>
+            <el-table-column
+              
+              label="出入人头像"
+             >
+             <template slot-scope="scope">
+               <img v-if="scope.row.face_image_data" :src="'data:image/'+scope.row.face_image_type+';base64,'+scope.row.face_image_data">
+             </template> 
+            </el-table-column>
+             <el-table-column
+              label="出入人姓名"
+              prop="face_user_name"
+              show-overflow-tooltip>
+            </el-table-column>
+             <el-table-column
+              label="出入类型"
+              
+              show-overflow-tooltip>
+               <template slot-scope="scope">
+                  <span class="red" v-if="scope.row.device_id%2==0">出</span>
+                   <span class="green" v-else>入</span>
+               </template>
+            </el-table-column>
+             <el-table-column
+              label="场地名称"
+               prop="place_address"
+              >
+             
+            </el-table-column>
+             <el-table-column
+              label="设备地址"
+               prop="device_address"
+              >
+             
+            </el-table-column>
+          </el-table>
       </div>
       <div style="text-align:center;margin-top:216px;" v-show="total_num == 0 && ajax">
         <img src="../../assets/images/no-num.png">
@@ -661,7 +723,6 @@ export default {
   }
   .data-class{
     height: 36px;
-    width: 390px;
     margin-right: 59px;
   }
   .su-tit{
@@ -676,6 +737,7 @@ export default {
     height: 56px;
     line-height: 56px;
     background:rgba(213,226,245,1);
+    margin-bottom: 18px;
     span{
       display: inline-block;
       width:116px;
@@ -733,11 +795,10 @@ export default {
   }
   .page{
     text-align: center;
-    margin-bottom: 80px;
   }
   .sur-selct{
     height: 36px;
-    width: 390px;
+    width: 400px;
     margin-right: 59px;
   }
   .su-tit{
@@ -755,10 +816,12 @@ export default {
 .btn-upload{
   border: 1px solid #ccc;
   background: #fff;
-  color: #4D4D4D;
-  text-indent: 16px;
+  color: #ccc;
+  text-indent: 10px;
   text-align: left;
   cursor: pointer;
+  border-radius: 4px;
+
   i{
     display:inline-block;
     content: "";
@@ -776,10 +839,118 @@ export default {
 }
 .select-class{
   height: 36px;
-  width: 390px;
+  width: 400px;
   margin-right: 59px;
+  border: 1px solid #ccc;
+  color: #ccc;
+  border-radius: 4px;
+  text-indent: 10px;
 }
 .btn-upload:disabled,select:disabled{
-  background: #f5f7fa;
+  background: #dcdcdc;
 }
+</style>
+
+
+<style lang='scss'>
+ .el-table::before {
+    content: '';
+    position: absolute;
+    background-color: #fff;
+    z-index: 1;
+}
+.text-center{
+  text-align: center;
+ }
+ .el-table img{
+      width: 55px;
+      height: 55px;
+      border-radius: 50%;
+    }
+.el-table th{
+  height:60px;
+  background-color:#EAEAEA;
+  color:#1A1A1A;
+  text-align: center;
+  font-size:14px;
+ }
+ .person .el-table td{
+  font-size:12px;
+  color:#1A1A1A;
+  height: 102px;
+ }
+
+ .err{
+  color:#F84C4C;
+  font-size: 12px;
+ }
+  .err i{margin:0 11px 0 16px;}
+
+  .ip-err{
+    border:1px solid #F84C4C !important;
+  }
+  .add-user .el-dialog__body{
+    padding:0 20px 0 36px;
+  }
+  .add-user .el-dialog__footer{
+    padding:20px 26px;
+    border-top:1px solid #CCCCCC;
+    margin-top:25px;
+  }
+    .add-user .el-button{
+      width: 78px;
+      height:32px;
+    }
+
+    .add-err{
+      margin-top:10px;
+    }
+    .bd-red{
+      border:1px solid #F84C4C !important;
+    }
+    .el-table__body{
+      text-align: center;
+    }
+    .show-class{
+      z-index: 10;
+      width: 260px;
+      height: 260px;
+      position: fixed;
+      top:50%;
+      left: 50%;
+      margin:-130px 0 0 -130px;
+    }
+
+    .rec .el-table td {
+        font-size: 12px;
+        color: #1A1A1A;
+        height: 102px;
+    }
+    .up-box{
+      display: inline-block;
+      position: relative;
+      .img-tit{
+        border-radius: 50%;
+        height: 28px;
+        width: 28px;
+        position: absolute;
+        top:9px;
+        left: 5px;
+      }
+    }
+</style>
+<style lang='scss'>
+  .el-range-editor.is-disabled{
+    background-color:#dcdcdc;
+    border-color: #CCCCCC ;
+    color: #CCCCCC;
+  }
+  .el-range-editor{
+     border-color: #CCCCCC ;
+      color: #CCCCCC;
+  }
+  .el-range-editor.is-disabled input{
+     background-color:#dcdcdc;
+    color: #CCCCCC;
+  }
 </style>

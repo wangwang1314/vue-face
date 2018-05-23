@@ -18,9 +18,9 @@
           <div class="admin-name">
             <div class="adm-le">
               <p>欢迎进入祺眼平台管理（出入系统）</p> 
-              <p><span>{{id}}</span></p>
+              <p><span>{{id}}</span> <a class="adm-ri chose-open" @click="exit">退出</a></p>
             </div> 
-            <a class="adm-ri" @click="exit">退出</a>
+           
           </div>
         </div>
       </div>
@@ -185,13 +185,13 @@ export default {
     float: left;
 }
 .adm-ri {
-    float: left;
     width: 30px;
     height: 24px;
     font-weight: 700;
     color: #378eef;
     margin-top: 30px;
     cursor: pointer;
+     margin-left: 10px;
 }
 .adm-le p, .adm-ri {
     font-size: 14px;
@@ -201,7 +201,6 @@ export default {
     color: #2f323a;
     margin-top: 8px;
     text-align: right;
-    margin-right:28px;
     white-space:nowrap; 
 }
 .nav-class {
