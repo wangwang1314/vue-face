@@ -87,8 +87,8 @@
                           <div>
                             <p>设备地址 ： {{child.device_address}}</p>
                             <p>场地名称 ： {{item.place_address}}</p>
-                            <p>出入类型 ： <span class="reder" v-if="child.device_id%2!=0">出</span><span class="reder" v-else>入</span></p>
-                            <img src="../../assets/images/out.png" v-if="child.device_id%2!=0">
+                            <p>出入类型 ： <span class="reder" v-if="child.device_id%2==0">出</span><span class="reder" v-else>入</span></p>
+                            <img src="../../assets/images/out.png" v-if="child.device_id%2==0">
                             <img src="../../assets/images/to.png" v-else>
                           </div>
                         </div>
