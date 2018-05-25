@@ -211,7 +211,7 @@
               <!--   <p class="tit-tou">上传头像</p> -->
                 <p class="name-ipt">
                   <span><i class="red">*</i>姓名</span>
-                  <input type="text" name="" disabled placeholder="请输入姓名，20字以内，必须填"  v-model="setobj.name">
+                  <input type="text" name="" disabled placeholder="请输入姓名，20字以内，必填"  v-model="setobj.name">
                 </p>
                 <p class="name-ipt">
                   <span><i class="red"></i>类型</span>
