@@ -10,7 +10,7 @@
             </template>
            </select>
            <span>拍摄时间</span>
-           <el-date-picker
+           <!-- <el-date-picker
             v-model="value3"
             type="datetimerange"
             range-separator="至"
@@ -20,9 +20,25 @@
             value-format="yyyy-MM-dd hh:mm:ss"
             :disabled="isselect"
             >
+          </el-date-picker> -->
+          <el-date-picker
+            v-model="start1"
+            type="datetime"
+            value-format="yyyy-MM-dd hh:mm:ss"
+            :disabled="isselect"
+            class="time-class"
+            placeholder="选择开始时间">
+          </el-date-picker>
+          <el-date-picker
+            v-model="end1"
+            type="datetime"
+            value-format="yyyy-MM-dd hh:mm:ss"
+            :disabled="isselect"
+            class="time-class mar-59"
+            placeholder="选择结束时间">
           </el-date-picker>
            <span>过滤时间</span>
-           <el-date-picker
+          <!--  <el-date-picker
             v-model="value4"
             type="datetimerange"
             range-separator="至"
@@ -31,9 +47,39 @@
             class="data-class"
             value-format="yyyy-MM-dd hh:mm:ss"
             :disabled="isselect"
-            >
+            > -->
+           <!--  <el-time-picker
+              is-range
+              v-model="value4"
+              range-separator="至"
+              start-placeholder="开始时间"
+              end-placeholder="结束时间"
+              value-format="hh:mm:ss"
+              :disabled="isselect"
+              class="mar-59"
+              placeholder="选择时间范围">
+            </el-time-picker> -->
+            <el-time-picker
+              v-model="startTime"
+              :disabled="isselect"
+              format="HH:mm:ss"
+              value-format="HH:mm:ss"
+              :picker-options="{
+              }"
+              class="time-class"
+              placeholder="开始时间">
+            </el-time-picker>
+            <el-time-picker
+              v-model="endTime"
+              :disabled="isselect"
+              format="HH:mm:ss"
+              value-format="HH:mm:ss"
+              :picker-options="{
+              }"
+              placeholder="结束时间" class="time-class mar-59">
+            </el-time-picker>
           </el-date-picker>
-          <el-button type="primary" v-if="(!isselect)&&value3&&value3.length>0" @click="searchFn1">查&nbsp;&nbsp;询</el-button>
+          <el-button type="primary" v-if="(!isselect)&&start1&&end1" @click="searchFn1">查&nbsp;&nbsp;询</el-button>
           <el-button type="info"  v-else disabled>查&nbsp;&nbsp;询</el-button> 
           <br>
           <span style="margin-right:10px;"><el-radio v-model="isselect" :label="true">条件二</el-radio></span>
@@ -66,7 +112,7 @@
             </el-option>
           </el-select> -->
           <span>拍摄时间</span>
-           <el-date-picker
+           <!-- <el-date-picker
             v-model="value5"
     
             type="datetimerange"
@@ -77,8 +123,24 @@
             value-format="yyyy-MM-dd hh:mm:ss"
             :disabled="!isselect"
             >
+          </el-date-picker> -->
+          <el-date-picker
+            v-model="start2"
+            type="datetime"
+            value-format="yyyy-MM-dd hh:mm:ss"
+            :disabled="!isselect"
+            class="time-class"
+            placeholder="选择开始时间">
           </el-date-picker>
-           <el-button type="primary" v-if="isselect&&value5&&value5.length>0&&searchimg" @click="searchFn">查&nbsp;&nbsp;询</el-button>
+          <el-date-picker
+            v-model="end2"
+            type="datetime"
+            value-format="yyyy-MM-dd hh:mm:ss"
+            :disabled="!isselect"
+            class="time-class mar-59"
+            placeholder="选择结束时间">
+          </el-date-picker>
+           <el-button type="primary" v-if="isselect&&start2&&end2&&searchimg" @click="searchFn">查&nbsp;&nbsp;询</el-button>
            <el-button type="info" v-else disabled>查&nbsp;&nbsp;询</el-button>
           
         <!--   <div class="ftime">
@@ -101,9 +163,10 @@
           </div> -->
        </div>
       <div v-show="!(total_num == 0 && ajax)">
-       <p class="su-tit">共 <span>{{total_num}}</span> 条数据</p>
+       <p class="su-tit">共 <span>{{showDate.length}}</span> 条数据</p>
        <p class="sur-num">
-         <span @click="getnum">导出数据</span>
+         <span @click="getnum">导出PDF</span>
+         <span @click="handleDownload">导出EXCEL</span>
        </p>
        <div style="height:0;overflow:hidden">
          <table class="sort-tab" id="pdf" >
@@ -257,7 +320,7 @@ export default {
       us_name:"",//姓名
       tstart:0,
       tend:0,
-      value4:[],
+      value4:"",
       value3:[],
       page:1,
       pagesize:20,
@@ -267,7 +330,13 @@ export default {
       selectvalue1:0,
       selectvalue2:0,
       imgtype:"",
-      searchimg:""
+      searchimg:"",
+      start1:"",
+      end1:"",
+      start2:"",
+      end2:"",
+      startTime:"",
+      endTime:""
     }
   },
   mounted(){
@@ -559,6 +628,16 @@ export default {
         //         place_id:this.selectvalue2
         //  }
      
+        
+        let time1 = new Date(this.start2).getTime();
+        let time2 = new Date(this.end2).getTime();
+        if(time1>=time2){
+          this.$message({
+            message:"开始时间不能晚于结束时间",
+            type:"warning"
+          })
+          return
+        }
         this.dataList = [];
         this.realdata = [];
         this.showDate = [];
@@ -567,8 +646,8 @@ export default {
             company_id:this.id,
             face_image_type:this.imgtype,
             face_image_data:this.searchimg,
-            fromTimeStamp:this.value5[0],
-            toTimeStamp:this.value5[1],
+            fromTimeStamp:this.start2,
+            toTimeStamp:this.end2,
             place_id:this.selectvalue1
           },su=>{        
             if(su.code==200){
@@ -619,23 +698,32 @@ export default {
         //         toTimeStamp:this.value3[1],
         //         place_id:this.selectvalue2
         //  }
-        if(this.value4&&this.value4.length>0){
+        let time1 = new Date(this.start1).getTime();
+        let time2 = new Date(this.end1).getTime();
+        if(time1>=time2){
+          this.$message({
+            message:"开始时间不能晚于结束时间",
+            type:"warning"
+          })
+          return
+        }
+        if(this.startTime&&this.endTime){
           data = {
             company_id:this.id,
-            fromTimeStamp:this.value3[0],
-            toTimeStamp:this.value3[1],
+            fromTimeStamp:this.start1,
+            toTimeStamp:this.end1,
             place_id:this.selectvalue2,
             except_date:[
             {
-              begin_time:this.value4[0],
-              end_time:this.value4[1]
+              begin_time:this.startTime,
+              end_time:this.endTime
             }]
           }
         }else{
           data = {
             company_id:this.id,
-            fromTimeStamp:this.value3[0],
-            toTimeStamp:this.value3[1],
+            fromTimeStamp:this.start1,
+            toTimeStamp:this.end1,
             place_id:this.selectvalue2
           }
         }
@@ -684,6 +772,31 @@ export default {
             this.total_num = 0;
               this.ajax = true;
          })
+    },
+    handleDownload(){
+       //this.downloadLoading = true
+       
+       this.showDate.forEach((ele)=>{
+        if(ele.device_id%2==0){
+          ele.device_type = "出"
+        }else{
+          ele.device_type = "入"
+        }
+       })
+        require.ensure([], () => {
+          const { export_json_to_excel } = require('@/vendor/Export2Excel')
+          const tHeader = ['拍摄时间', '出入人姓名', '出入类型','场地名称','设备地址'];
+          const filterVal = ['timeStamp', 'face_user_name', 'device_type','place_address','device_address']
+          const list = this.showDate;
+          const data = this.formatJson(filterVal, list)
+          export_json_to_excel(tHeader, data, '列表excel')
+          //this.downloadLoading = false
+        })
+      
+      
+    },
+    formatJson(filterVal, jsonData) {
+        return jsonData.map(v => filterVal.map(j => v[j]))
     }
 
   }
@@ -944,19 +1057,26 @@ export default {
         left: 5px;
       }
     }
+
 </style>
 <style lang='scss'>
-  .el-range-editor.is-disabled{
+  .time-class.el-input.is-disabled .el-input__inner{
     background-color:#dcdcdc;
     border-color: #CCCCCC ;
     color: #CCCCCC;
   }
-  .el-range-editor{
+  .time-class.el-input{
      border-color: #CCCCCC ;
       color: #CCCCCC;
   }
-  .el-range-editor.is-disabled input{
-     background-color:#dcdcdc;
-    color: #CCCCCC;
-  }
+  // .time-class .el-range-editor.is-disabled input{
+  //    background-color:#dcdcdc;
+  //   color: #CCCCCC;
+  // }
+  .time-class.el-date-editor.el-input{
+      width: 198px;
+    }
+  .mar-59{
+      margin-right: 59px;
+    }
 </style>

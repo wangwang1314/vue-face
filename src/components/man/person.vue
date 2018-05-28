@@ -330,7 +330,7 @@
           <!--   <p class="tit-tou">上传头像</p> -->
             <p class="name-ipt">
               <span><i class="red">*</i>姓名</span>
-              <input type="text" name="" disabled placeholder="请输入姓名，20字以内，必填" :class="{'uncheck':check.input}" v-model="setobj.name">
+              <input type="text" name=""  placeholder="请输入姓名，20字以内，必填" :class="{'uncheck':check.input}" v-model="setobj.name">
             </p>
             <p class="name-ipt">
               <span><i class="red"></i>类型</span>
@@ -1163,7 +1163,8 @@ export default {
       this.$api.post("/client_mng_modify_face_api",{
           company_id:this.id,
           face_id:this.setobj.face_id,
-          face_type:Number(this.type)
+          face_type:Number(this.type),
+          face_name:this.setobj.name
         },
         su=>{
           if(su.code==200){

@@ -114,6 +114,7 @@ export default {
 <style lang='scss' scoped>
 .login{
   height: 100vh;
+  min-height: 800px;
   background:url("../../assets/images/bg-color.png") center no-repeat;
   background-size: cover;
 }
@@ -126,7 +127,7 @@ export default {
   height: 330px;
   background-color: #fff;
   position: absolute;
-  top:50%;
+  top:500px;
   left: 50%;
   margin:-165px 0 0 -189px;
   border-radius: 4px;
