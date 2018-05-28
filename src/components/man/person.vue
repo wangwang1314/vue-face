@@ -330,7 +330,7 @@
           <!--   <p class="tit-tou">上传头像</p> -->
             <p class="name-ipt">
               <span><i class="red">*</i>姓名</span>
-              <input type="text" name=""  placeholder="请输入姓名，20字以内，必填" :class="{'uncheck':check.input}" v-model="setobj.name">
+              <input type="text" name=""  placeholder="请输入姓名，20字以内，必填" maxlength="20" :class="{'uncheck':check.input}" v-model="editname">
             </p>
             <p class="name-ipt">
               <span><i class="red"></i>类型</span>
@@ -527,7 +527,8 @@ export default {
       editdialog:false,
       totaldata:[],
       rightcontent:[],
-      ajax:false
+      ajax:false,
+      editname:""
     }
   },
   mounted(){
@@ -1156,19 +1157,21 @@ export default {
     },
     editman(){
       this.editdialog = true;
-      console.log(this.setobj.face_type);
+      console.log(this.setobj);
       this.type = this.setobj.face_type.toString();
+      this.editname = this.setobj.name;
     },
     editConfirm(){
       this.$api.post("/client_mng_modify_face_api",{
           company_id:this.id,
           face_id:this.setobj.face_id,
           face_type:Number(this.type),
-          face_name:this.setobj.name
+          face_name:this.editname
         },
         su=>{
           if(su.code==200){
             this.setobj.face_type = this.type;
+            this.setobj.name = this.editname;
             this.editdialog = false;
             this.getList();
             this.$message({
