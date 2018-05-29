@@ -12,7 +12,7 @@ export default {
 </script>
 
 <style>
-	.el-main{
+	.notopen .el-main{
 		padding: 0;
 	}
 	.el-message-box__btns button:nth-child(1) {

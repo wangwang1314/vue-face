@@ -1,6 +1,6 @@
 <template> 
 <div @click="closedia">
-    <el-container class="container-warp">
+    <el-container class="container-warp notopen">
    <el-aside width="239px">
     <div class="slider-lt">
       <img src="../../assets/images/slider-logo.png" alt="祺眼logo">
