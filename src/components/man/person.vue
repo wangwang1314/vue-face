@@ -1095,11 +1095,11 @@ export default {
             if(innum.indexOf(placeid)==-1){
               innum.push(placeid);
             }
-            if(deviceout.length<=0){
-              this.err = true;
-              this.errtit = "请选择出口权限";
-              return
-            }
+            // if(deviceout.length<=0){
+            //   this.err = true;
+            //   this.errtit = "请选择出口权限";
+            //   return
+            // }
             let juge = 0;
             for(let x = 0;x< deviceout.length;x++){
               if(deviceout[x].ischeck){
@@ -1107,11 +1107,11 @@ export default {
                 juge++;
               }
             }
-            if(juge==0){
-              this.err = true;
-              this.errtit = "请选择出口权限";
-              return
-            }
+            // if(juge==0){
+            //   this.err = true;
+            //   this.errtit = "请选择出口权限";
+            //   return
+            // }
           }
 
         }
@@ -1125,9 +1125,10 @@ export default {
         }
       }
       //console.log(outnum,innum)
-      if(data.length<=0||outnum.length!=innum.length){
+      // ||outnum.length!=innum.length
+      if(data.length<=0){
         this.err = true;
-        this.errtit = "请选择入口权限";
+        this.errtit = "场地出口权限必须同时设置";
         return
       }
          //console.log(this.setobj)
