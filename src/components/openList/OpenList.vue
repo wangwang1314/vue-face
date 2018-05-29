@@ -3,7 +3,19 @@
 
        <div class="cpn-name">
            公司名称
-           <input type="text" placeholder="请输入公司名称" @blur="fileName" v-model="companyName"/>
+          <!--  <input type="text" placeholder="请输入公司名称" v-model="companyName"/> -->
+  
+             <el-input
+                @keyup.enter.native="fileName"
+                class="cpmna"
+                placeholder="请输入公司名称"
+                v-model="companyName"
+                clearable>
+             </el-input>
+      
+           
+
+           <el-button type="primary"  @click="fileName">搜索</el-button>
        </div>
        <p class="data-all">共 <span>{{allDate}}</span>条数据</p>
        <div class="add-del">
@@ -24,6 +36,7 @@
         :data="realdata"
         tooltip-effect="dark"
         class="text-center"
+        height="550px"
         style="width: 100%"
         @row-click="rowFn"
         v-show="allDate>0"
@@ -597,9 +610,9 @@ export default{
 
 <style scoped>
   .open-list{
-     padding:30px 32px;
+     padding:30px 32px 10px 32px;
      background-color:white;
-     min-height:1000px;
+     min-height:770px;
      position: relative;
   }
   .cpn-name{
@@ -834,7 +847,7 @@ export default{
 
 .pages-cont{
   text-align: center;
-  margin:38px 0 64px 0;
+  margin:38px 0 15px 0;
 }
 
 .cont-add-info h3{
@@ -920,12 +933,21 @@ export default{
 .will-del em{
   color:#378EEF;
 }
+.cpmna{display: inline-block !important;width:auto;margin-right:50px;}
 
+/* .<i class="el-input__icon el-icon-circle-close el-input__clear"></i> */
+.cpmna input{
+   width: 300px;
+}
 </style>
 <style>
 .text-center{
   text-align: center;
  }
+ .cpmna .el-input__clear{
+  position: relative;
+  top:33px;
+}
 .el-table th{
   height:60px;
   background-color:#EAEAEA;

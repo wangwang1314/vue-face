@@ -6,7 +6,7 @@
       <img src="../../assets/images/slider-logo.png" alt="祺眼logo">
     </div>
     <ul class="slider-ul">
-      <router-link to="/openListindex" tag="li">开户管理</router-link>
+      <router-link to="/openListindex/openlist" @click.native="flushCom" tag="li">开户管理</router-link>
     </ul>
   </el-aside>
   <el-container>
@@ -24,15 +24,7 @@
           </div>
         </div>
       </div>
-     <!--  <ul class="nav-class">
-        <li><router-link to="/userman" tag="a">用户管理</router-link></li> 
-     
-        <li><router-link to="/organizational/list" tag="a">会员列表</router-link></li> 
-        <li><router-link to="/teacher/list" tag="a">套餐交易流水</router-link></li>
-        <li><a href="#/home/idset" class="router-link-active">会员身份配置</a></li> 
-        <li><a href="#/home/growset" class="">成长体系</a></li> 
-        <li><a href="#/home/interests" class="">权益配置</a></li>
-      </ul> -->
+ 
       <slot name="nav"></slot>
     </el-header>
     <el-main>
@@ -57,6 +49,9 @@ export default {
     routerFn(){
     
     },
+    flushCom:function(){
+　　　　　　this.$router.go(0);  
+　  },
     exit(){
        this.$confirm('确定要退出吗？', '', {
                 confirmButtonText: '确定',     

@@ -3,7 +3,7 @@
     <open>
       <span class="tit" slot="title">开户管理</span>
       <ul class="nav-class" slot="nav">
-        <li><router-link to="/openListindex" tag="a">开户列表</router-link></li>     
+        <li><router-link to="/openListindex/openlist" @click.native="flushCom" tag="a">开户列表</router-link></li>     
       </ul>
       <div slot="main" class="content-box">
           <router-view></router-view>
@@ -26,7 +26,10 @@ export default {
   methods:{
      closeFn(){
         this.$store.state.slider = false;
-      }
+      },
+      flushCom:function(){
+　　　　　　this.$router.go(0);  
+　　　　}
   }
 }
 </script>

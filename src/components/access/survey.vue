@@ -4,18 +4,27 @@
     <div class="header">
       <span class="time">拍摄时间</span>
        <div class="pick-block">
+     
+
         <el-date-picker
-          v-model="value3"
-          @change="logTimeChange"
-          type="datetimerange"
-          range-separator="至"
-          start-placeholder="开始日期"
-          end-placeholder="结束日期">
-        </el-date-picker>
+            v-model="start1"
+            type="datetime"
+            value-format="yyyy-MM-dd hh:mm:ss"
+            class="time-class"
+            placeholder="选择开始时间">
+          </el-date-picker>
+          <el-date-picker
+            v-model="end1"
+            type="datetime"
+            value-format="yyyy-MM-dd hh:mm:ss"
+            class="time-class"
+            placeholder="选择结束时间">
+          </el-date-picker>
+          <el-button type="primary" @click="logTimeChange">搜索</el-button>
       </div>
     </div>
     <div class="tit">共<span>{{total_num}}</span>人</div>
-    <ul class="list">
+    <ul class="list" v-show="total_num>0">
       <li v-for="(item,ind) in realdata" v-cloak @click="sliderShow(item,$event)">
         <img v-if="item.face_image_data" :src="'data:image/'+item.face_image_type+';base64,'+item.face_image_data">
         <div v-else style="width:150px;height:150px;"></div>
@@ -236,6 +245,8 @@ export default {
     return {
       id:parseInt(sessionStorage.getItem("users")),
       value3:"",
+      start1:"",
+      end1:"",
       nomun:false,
       page:0,
       fromTimeStamp:'2018-1-1 00:22:22',
@@ -307,10 +318,29 @@ export default {
     return Str
     },
     logTimeChange(v){
+      if(!this.start1){
+          this.$message.error('请添加开始时间');
+          return
+      }
+      if(!this.end1){
+          this.$message.error('请添加结束时间');
+          return
+      }
+
+        let time1 = new Date(this.start1).getTime();
+        let time2 = new Date(this.end1).getTime();
+        if(time1>=time2){
+          this.$message({
+            message:"开始时间不能晚于结束时间",
+            type:"warning"
+          })
+          return
+        }
+  
        console.log(v);
        if(v){
-           this.fromTimeStamp = this.GMTToStr(v[0]);
-           this.toTimeStamp = this.GMTToStr(v[1]);
+           this.fromTimeStamp = this.start1;
+           this.toTimeStamp = this.end1;
            console.log(this.fromTimeStamp);
            this.getInout(this.id,this.fromTimeStamp,this.toTimeStamp,this.place_id);
        }
@@ -600,6 +630,7 @@ export default {
     padding: 30px 32px 50px 30px;
     position: relative;
     .header{
+      min-width:750px;
       background:rgba(234,234,234,1);
       height: 80px;
       line-height: 80px;

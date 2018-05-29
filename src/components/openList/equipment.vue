@@ -23,6 +23,7 @@
       <el-table
         ref="multipleTable"
         :data="realdata"
+        height="550px"
         tooltip-effect="dark"
         class="text-center"
         style="width: 100%"
@@ -648,7 +649,7 @@ export default{
   .open-list{
      padding:30px 32px;
      background-color:white;
-     min-height:1000px;
+     min-height:770px;
      position: relative;
   }
   .cpn-name{
@@ -933,7 +934,7 @@ position: relative;
 
 .pages-cont{
   text-align: center;
-  margin:38px 0 64px 0;
+  margin:38px 0 15px 0;
 }
 </style>
 <style>
