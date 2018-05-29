@@ -20,7 +20,7 @@
             class="time-class"
             placeholder="选择结束时间">
           </el-date-picker>
-          <el-button type="primary" @click="logTimeChange">搜索</el-button>
+          <el-button style="margin-left:30px" type="primary" @click="logTimeChange">搜索</el-button>
       </div>
     </div>
     <div class="tit">共<span>{{total_num}}</span>人</div>
