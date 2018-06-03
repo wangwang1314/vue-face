@@ -284,6 +284,7 @@ export default{
          companyName:"",
          cid:'',
          pid:"",
+         pnames:"",
          notEdite:false,
          cpnerr:true,
          pawerr:true,

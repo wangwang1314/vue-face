@@ -15,10 +15,12 @@
            <button type="button" @click="showAddPlace(1)">添加场地</button>
      
        </div>
-     
-
+   
+       
        <template>
+      
       <el-table
+        v-if="realdata"
         ref="multipleTable"
         :data="realdata"
         height="550px"
@@ -50,13 +52,6 @@
           show-overflow-tooltip
          >
         </el-table-column>
-
-       
-          <template slot-scope="scope">
-               {{contNum}}
-          </template>
-        </el-table-column>
-    
       <el-table-column
           prop="place_longitude"
           label="纬度"
