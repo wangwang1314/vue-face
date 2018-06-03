@@ -17,14 +17,14 @@
             start-placeholder="开始日期"
             end-placeholder="结束日期"
             class="data-class"
-            value-format="yyyy-MM-dd hh:mm:ss"
+            value-format="yyyy-MM-dd HH:mm:ss"
             :disabled="isselect"
             >
           </el-date-picker> -->
           <el-date-picker
             v-model="start1"
             type="datetime"
-            value-format="yyyy-MM-dd hh:mm:ss"
+            value-format="yyyy-MM-dd HH:mm:ss"
             :disabled="isselect"
             class="time-class"
             placeholder="选择开始时间">
@@ -32,7 +32,7 @@
           <el-date-picker
             v-model="end1"
             type="datetime"
-            value-format="yyyy-MM-dd hh:mm:ss"
+            value-format="yyyy-MM-dd HH:mm:ss"
             :disabled="isselect"
             class="time-class mar-59"
             placeholder="选择结束时间">
@@ -45,7 +45,7 @@
             start-placeholder="开始日期"
             end-placeholder="结束日期"
             class="data-class"
-            value-format="yyyy-MM-dd hh:mm:ss"
+            value-format="yyyy-MM-dd HH:mm:ss"
             :disabled="isselect"
             > -->
            <!--  <el-time-picker
@@ -54,7 +54,7 @@
               range-separator="至"
               start-placeholder="开始时间"
               end-placeholder="结束时间"
-              value-format="hh:mm:ss"
+              value-format="HH:mm:ss"
               :disabled="isselect"
               class="mar-59"
               placeholder="选择时间范围">
@@ -120,14 +120,14 @@
             start-placeholder="开始日期"
             end-placeholder="结束日期"
             class="data-class"
-            value-format="yyyy-MM-dd hh:mm:ss"
+            value-format="yyyy-MM-dd HH:mm:ss"
             :disabled="!isselect"
             >
           </el-date-picker> -->
           <el-date-picker
             v-model="start2"
             type="datetime"
-            value-format="yyyy-MM-dd hh:mm:ss"
+            value-format="yyyy-MM-dd HH:mm:ss"
             :disabled="!isselect"
             class="time-class"
             placeholder="选择开始时间">
@@ -135,7 +135,7 @@
           <el-date-picker
             v-model="end2"
             type="datetime"
-            value-format="yyyy-MM-dd hh:mm:ss"
+            value-format="yyyy-MM-dd HH:mm:ss"
             :disabled="!isselect"
             class="time-class mar-59"
             placeholder="选择结束时间">
@@ -280,11 +280,11 @@
             </el-table-column>
           </el-table>
       </div>
-      <div style="text-align:center;margin-top:216px;" v-show="total_num == 0 && ajax">
+      <div style="text-align:center;margin-top:216px;" v-show="showDate.length == 0 && ajax">
         <img src="../../assets/images/no-num.png">
         <p style="margin-top:44px;color:#999999;font-size:18px;">抱歉！~暂无数据~</p>
      </div>  
-      <div class="page" v-if="!(total_num == 0 && ajax)">
+      <div class="page" v-if="!(showDate.length == 0 && ajax)">
      <el-pagination
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
@@ -292,7 +292,7 @@
       :page-sizes="[20]"
       :page-size="pagesize"
       layout="prev, pager, next,sizes"
-      :total="total_num">
+      :total="showDate.length">
     </el-pagination>
     </div>
 

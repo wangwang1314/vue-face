@@ -403,20 +403,20 @@
                           type="datetimerange"
                           range-separator="至"
                           start-placeholder="开始日期"
-                          value-format="yyyy-M-d hh:mm:ss"
+                          value-format="yyyy-M-d HH:mm:ss"
                           end-placeholder="结束日期">
                         </el-date-picker> -->
                         <el-date-picker
                           v-model="value1"
                           type="datetime"
-                          value-format="yyyy-M-d hh:mm:ss"
+                          value-format="yyyy-M-d HH:mm:ss"
                           placeholder="选择开始时间">
                         </el-date-picker>
                         <span style="margin:0 18px;font-size:16px;color: #606266;font-weight:normal;">至</span>
                         <el-date-picker
                           v-model="value2"
                           type="datetime"
-                          value-format="yyyy-M-d hh:mm:ss"
+                          value-format="yyyy-M-d HH:mm:ss"
                           placeholder="选择结束时间">
                         </el-date-picker>
                       </p>

@@ -9,14 +9,14 @@
         <el-date-picker
             v-model="start1"
             type="datetime"
-            value-format="yyyy-MM-dd hh:mm:ss"
+            value-format="yyyy-MM-dd HH:mm:ss"
             class="time-class"
             placeholder="选择开始时间">
           </el-date-picker>
           <el-date-picker
             v-model="end1"
             type="datetime"
-            value-format="yyyy-MM-dd hh:mm:ss"
+            value-format="yyyy-MM-dd HH:mm:ss"
             class="time-class"
             placeholder="选择结束时间">
           </el-date-picker>
