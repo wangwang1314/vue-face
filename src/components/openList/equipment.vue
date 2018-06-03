@@ -1002,11 +1002,14 @@ position: relative;
 .add-eq-cont td{
   padding:7px 0;
 }
+.add-eq-cont td:nth-child(1){
+  width: 120px;
+}
 .add-eq-cont td:nth-child(2){
   text-indent: 20px;
 }
 .place-set{
-    width:410px;
+    width:400px;
     height:32px;
     border:1px solid #ccc;
     border-radius: 4px;

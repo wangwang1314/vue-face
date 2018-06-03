@@ -51,12 +51,7 @@
          >
         </el-table-column>
 
-        <el-table-column
-          prop=""
-          label="联系电话"
-          show-overflow-tooltip
-         >
-         
+       
           <template slot-scope="scope">
                {{contNum}}
           </template>
@@ -79,7 +74,7 @@
               <div class="opartion">
                 <span @click="showAddPlace(2,scope.row)">编辑</span>|
                   <span @click="delPlace(scope.row.place_id)">删除</span>|
-                  <router-link class="eq-link" :to="{name:'Equipment',params:{id:id,pid:scope.row.place_id,cname:user_name}}">添加设备</router-link>
+                  <router-link class="eq-link" :to="{name:'Equipment',params:{id:id,pid:scope.row.place_id,cname:user_name}}">设备管理</router-link>
               </div>
           </template>
         </el-table-column>
@@ -293,6 +288,7 @@ export default{
         let start = (this.page-1)*this.pagesize;
         let end = this.page*this.pagesize;
         this.realdata = this.tableData3.slice(start,end);
+        console.log("需要的数据",this.realdata);
       },
       handleSelectionChange(val) {
         this.multipleSelection = val;
@@ -316,6 +312,7 @@ export default{
              this.tableData3 = su.data;
              this.contNum = su.mobile;
              this.alldata = su.num;
+          
              if(su.num==0){
                this.ajax = true;
              }
@@ -331,8 +328,8 @@ export default{
       //添加场地
       showAddPlace(v,d){
          if(v==1){
-            this.dtital="添加场地";
-          this.pliderr=false;
+         this.dtital="添加场地";
+         this.pliderr=false;
          this.plerrtxt="";
          this.isEdite = false;
          this.plname=false;
@@ -767,7 +764,7 @@ position: relative;
   padding-bottom: 40px;
 }
 .addplace-dl td{
-    width: 70px;
+    width: 80px;
     padding:17px 0;
   }
   .place-set{
