@@ -74,7 +74,7 @@
               <div class="opartion">
                 <span @click="showAddPlace(2,scope.row)">编辑</span>|
                   <span @click="delPlace(scope.row.place_id)">删除</span>|
-                  <router-link class="eq-link" :to="{name:'Equipment',params:{id:id,pid:scope.row.place_id,cname:user_name}}">设备管理</router-link>
+                  <router-link class="eq-link" :to="{name:'Equipment',params:{id:id,pid:scope.row.place_id,pname:scope.row.place_address,cname:user_name}}">设备管理</router-link>
               </div>
           </template>
         </el-table-column>
@@ -312,7 +312,7 @@ export default{
              this.tableData3 = su.data;
              this.contNum = su.mobile;
              this.alldata = su.num;
-          
+
              if(su.num==0){
                this.ajax = true;
              }

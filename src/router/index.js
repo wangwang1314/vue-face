@@ -47,7 +47,7 @@ export default new Router({
           component:Places
         },
         {
-          path:"/openListindex/openlist/equipment/:id/:pid/:cname",
+          path:"/openListindex/openlist/equipment/:id/:pid/:pname/:cname",
           name:"Equipment",
           component:Equipment
         },

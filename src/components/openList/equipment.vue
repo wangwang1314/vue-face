@@ -5,11 +5,11 @@
        <div class="back-list">
           <div class="place-sett">
               <span>设备管理</span>
-              <router-link  :to="{name:'openlist'}" class="to-list"><<返回列表</router-link>
+              <router-link  :to="{name :'Places',params:{id:cid,cname:cname}}" class="to-list"><<返回场地</router-link>
           </div>
          
           <h2>
-            {{cname}}（企业ID：{{cid}}）| <span>{{eqplace}}</span>
+            {{cname}}（企业ID：{{cid}}）| <span>{{pnames}}</span>
           </h2>
        </div>
        <p class="data-all">共 <span>{{totalList}}</span>条数据</p>
@@ -344,6 +344,7 @@ export default{
   mounted(){
     this.cid = parseInt(this.$route.params.id);
     this.pid = parseInt(this.$route.params.pid);
+    this.pnames = this.$route.params.pname;
     this.cname = this.$route.params.cname;
     this.initList();
   },
