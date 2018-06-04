@@ -112,7 +112,7 @@
            <td>
             <div class="err-cont">
                 <em v-show="isEdite==true">{{fixid}}</em>
-                <input placeholder="20个字以内，不能重名" @keydown="pliderr=false" v-show="isEdite==false" maxlength="20" v-model="place_id" class='place-set' :class="{'ip-err':pliderr==true}"/>
+                <input placeholder="20个字以内，不能重名" @keydown="pliderr=false" v-show="isEdite==false" maxlength="20" v-model="place_id" oninput="this.value=this.value.replace(/\D/g,'')" class='place-set' :class="{'ip-err':pliderr==true}"/>
                 <span v-show="pliderr==true">
                   <i class="el-icon-warning"></i>
                   {{plerrtxt}}
