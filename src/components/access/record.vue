@@ -168,7 +168,7 @@
          <span @click="getnum">导出PDF</span>
          <span @click="handleDownload">导出EXCEL</span>
        </p>
-       <div style="height:0;overflow:hidden">
+       <div style="height:0;overflow:hidden;">
          <table class="sort-tab" id="pdf" >
            <thead>
              <tr>
@@ -867,6 +867,7 @@ export default {
       font-size:14px;
       color:rgba(77,77,77,1);
       margin-left: 11px; 
+      cursor: pointer;
     }
   }
   .sort-tab{
@@ -876,15 +877,15 @@ export default {
     text-align: center;
     white-space: nowrap;
     border: 1px solid #E6E6E6;
-    margin-top: 18px;
-    margin-bottom: 70px;
+    box-sizing:border-box;
     thead{
       tr{
-         height:60px; 
+          height:100px; 
           background:rgba(234,234,234,1);
-          line-height: 60px;
+          line-height: 99px;
           font-size: 14px;
           color:#1A1A1A;
+          box-sizing:border-box;
       } 
     }
     tbody{
@@ -892,6 +893,7 @@ export default {
         height: 100px;
         line-height: 100px;
         border-bottom: 1px solid #E6E6E6;
+        box-sizing:border-box;
         img{
           width: 55px;
           height: 55px;
