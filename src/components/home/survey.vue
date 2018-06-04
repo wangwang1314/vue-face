@@ -27,8 +27,8 @@
       <div class="sur-new">
         <div>
           <p class="tit">产品最新动态</p>
-          <p class="info">智慧出入功能更新</p>
-          <p class="con">尊敬的用户，您好！<br>智慧出入系统盛大上线了！</p>
+          <p class="info"></p>
+          <p class="con" >尊敬的用户，您好<br>欢迎使用人脸识别出入平台产品！</p>
         </div>
         <div>
           <p class="tit">使用帮助中心</p>
